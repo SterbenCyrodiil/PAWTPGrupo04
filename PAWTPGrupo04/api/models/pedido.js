@@ -1,7 +1,8 @@
 const mongoose = require('mongoose')
 
-const requestSchema = new mongoose.Schema({
 
+const requestSchema = new mongoose.Schema({
+    id: String,
     tecnico_responsavel: Number,
     CC_utente: String,
     infetado: Boolean,
@@ -11,7 +12,6 @@ const requestSchema = new mongoose.Schema({
     encaminhado_saude24: Boolean,
     teste_realizado: Boolean,
     resultado: Boolean,
-    ficheiro: File,
 	updated_at: { type: Date, default: Date.now },
 })
 
