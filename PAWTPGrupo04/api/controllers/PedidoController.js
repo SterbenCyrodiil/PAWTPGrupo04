@@ -6,13 +6,18 @@ const fillPedido = async (req, res) => {
 	res.send(result)
 }
 
+const getAllPedidos = async (req, res) =>{
+	const request = await Pedido.find();
+	res.send(request);
+}
+
 const getPedidobyID = async (req, res) => {
 	try {
 		const request = await Pedido.findById(req.params.id)
 			.catch((e) => {
 				return null
 			})
-		res.send(product)
+		res.send(request)
 	} catch (e) {
 		console.error(e)
 		res.status(404)
@@ -22,7 +27,7 @@ const getPedidobyID = async (req, res) => {
 }
 
 const updatePedido = async (req, res) => {
-	const outdadRequest = await Pedido.findByIdAndUpdate(
+	try{const outdadRequest = await Pedido.findByIdAndUpdate(
 		req.params.id,
 		req.body)
 	const updatedRequest = await Pedido.findById(req.params.id)
@@ -30,9 +35,16 @@ const updatePedido = async (req, res) => {
 		old:outdadRequest,
 		new:updatedRequest
 	})
+	} catch (e){
+		console.log(e)
+		res.status(404)
+		res.send(null)
+	}
 }
 
-module.export = {
+module.exports = {
 	fillPedido,
+	getAllPedidos,
+	getPedidobyID,
 	updatePedido
 }

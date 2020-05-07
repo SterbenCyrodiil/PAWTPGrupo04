@@ -31,6 +31,7 @@ mongoose
 	.catch(console.error)
 
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 app.use('/rest', cors(), apiRouter)
 
 app.listen(PORT, () => {

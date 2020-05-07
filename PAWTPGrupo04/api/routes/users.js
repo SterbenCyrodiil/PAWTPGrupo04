@@ -8,8 +8,6 @@ userrouter.get('/', function(req, res, next) { //Aqui será para fazer login né
   res.send('respond with a resource');
 });
 
-userrouter.post('/', function(req, res){
-  userController.registerUser;
-});
+userrouter.post('/', userController.registerUser);
 
 module.exports = userrouter;

@@ -3,21 +3,14 @@ var requestrouter = express.Router();
 
 const requestController = require('../controllers/PedidoController')
 
-requestrouter.get('/', function(req, res){
-    res.send('REQUEST GET')
-});
+requestrouter.get('/', requestController.getAllPedidos);
 
-requestrouter.post('/', function(req, res){
-    requestController.fillPedido
-});
+requestrouter.post('/', requestController.fillPedido);
 
-requestrouter.get('/:id', function(req, res){ //search for one in specific
+requestrouter.get('/:id',requestController.getPedidobyID); 
 
-}); 
-
-requestrouter.put('/:id', function(req, res){  //to update via the id
-    requestController.updatePedido
-}); 
+requestrouter.put('/:id',  //to update via the id
+    requestController.updatePedido); 
 
 //Só criar, buscar e atualizar. Nunca se apagam os registos, por isso, manter.
 
