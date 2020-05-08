@@ -23,7 +23,11 @@ const getPedidobyID = async (req, res) => {
 		res.status(404)
 		res.send(null)
 	}
+}
 
+const getUserPedido = async (req, res) => {
+		const request = await Pedido.find({CCutente : req.params.CCutente})
+		res.send(request)
 }
 
 const updatePedido = async (req, res) => {
@@ -42,9 +46,27 @@ const updatePedido = async (req, res) => {
 	}
 }
 
+const deletePedido = async (req, res) => {
+	try{const outdadRequest = await Pedido.findByIdAndUpdate(
+		req.params.id,
+		{ deleted: true })
+	const updatedRequest = await Pedido.findById(req.params.id)
+	res.send({
+		old:outdadRequest,
+		new:updatedRequest
+	})
+	} catch (e){
+		console.log(e)
+		res.status(404)
+		res.send(null)
+	}
+}
+
 module.exports = {
 	fillPedido,
 	getAllPedidos,
 	getPedidobyID,
-	updatePedido
+	updatePedido,
+	getUserPedido,
+	deletePedido
 }

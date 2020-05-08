@@ -13,6 +13,7 @@ const requestSchema = new mongoose.Schema({
     resultadoInicial: {type: Boolean, default: false},
     resultadoFinal: {type: Boolean, default: false},
     casoFechado: {type: Boolean}, default: false,
+    deleted : {type: Boolean, default: false},
 	updated_at: { type: Date, default: Date.now },
 })
 

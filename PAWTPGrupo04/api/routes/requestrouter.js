@@ -7,11 +7,13 @@ requestrouter.get('/', requestController.getAllPedidos);
 
 requestrouter.post('/', requestController.fillPedido);
 
+// requestrouter.get('/:CCutente', requestController.getUserPedido); 
+
 requestrouter.get('/:id',requestController.getPedidobyID); 
 
 requestrouter.put('/:id',  //to update via the id
     requestController.updatePedido); 
 
-//Só criar, buscar e atualizar. Nunca se apagam os registos, por isso, manter.
+requestrouter.delete('/:id', requestController.deletePedido);
 
 module.exports = requestrouter;
