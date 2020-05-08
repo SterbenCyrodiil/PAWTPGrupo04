@@ -1,6 +1,6 @@
 const User = require('../models/user')
 
-// Apenas para teste, A sério deverá ser com JWT
+// Estou a, essencialmente, utilizar o ID random do mongo para quase tudo. Isto poderá ser alterado, no entando, creio que funcionará bem assim, se modelarmos bem daqui para a frente.
 
 const registerUser = async (req, res) => {
 	const userData = req.body
@@ -17,6 +17,20 @@ const getAllUsers = async (req, res) => {
 const getUserByID = async (req, res) =>{
 	try {
 		const request = await User.findById(req.params.id)
+			.catch((e) => {
+				return null
+			})
+		res.send(request)
+	} catch (e) {
+		console.error(e)
+		res.status(404)
+		res.send(null)
+	}
+}
+
+const getUserByCC = async (req, res) =>{
+	try {
+		const request = await User.find({CC: req.params.CC})
 			.catch((e) => {
 				return null
 			})
@@ -45,10 +59,28 @@ const deleteUser = async (req, res) => {
 	}
 }
 
+const updateUserInformation = async(req, res) => {
+	try{const outdaded = await User.findByIdAndUpdate(
+		req.params.id,
+		req.body)
+	const updated = await User.findById(req.params.id)
+	res.send({
+		old:outdaded,
+		new:updated
+	})
+	} catch (e){
+		console.log(e)
+		res.status(404)
+		res.send(null)
+	}
+}
+
 
 module.exports = {
 	registerUser,
 	getAllUsers,
 	getUserByID,
-	deleteUser
+	deleteUser,
+	getUserByCC,
+	updateUserInformation
 }
