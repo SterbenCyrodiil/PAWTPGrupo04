@@ -1,24 +1,26 @@
 require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
+const passport = require('passport')
 const cors = require('cors')
+const cookieParser = require('cookie-parser')
 
 const apiRouter = require('./api/routes')
 
 const app = express()
 mongoose.Promise = global.Promise
 
-// Object destructuring ES6
-const {
-	PORT = 3000,
-	MONGO_DB_HOST = 'localhost',
-	MONGO_BD_PORT = 27017,
-	MONGO_DB_NAME = 'covidDB'
-} = process.env
+// // Object destructuring ES6
+// const {
+// 	PORT = 3000,
+// 	MONGO_DB_HOST = 'localhost',
+// 	MONGO_BD_PORT = 27017,
+// 	MONGO_DB_NAME = 'covidDB',
+// } = process.env
 
 mongoose
 	.connect(
-		`mongodb://${ MONGO_DB_HOST }:${ MONGO_BD_PORT }/${ MONGO_DB_NAME }`,
+		`mongodb://${ process.env.MONGO_DB_HOST }:${ process.env.MONGO_BD_PORT }/${ process.env.MONGO_DB_NAME }`,
 		{
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
@@ -30,10 +32,16 @@ mongoose
 	})
 	.catch(console.error)
 
+app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use('/rest', cors(), apiRouter)
 
-app.listen(PORT, () => {
-	console.log(`Server started on http://localhost:${PORT}`)
+app.use(cookieParser())
+
+app.use(passport.initialize());
+
+app.use('/rest', apiRouter)
+
+app.listen(process.env.PORT, () => {
+	console.log(`Server started on http://localhost:${process.env.PORT}`)
 })
