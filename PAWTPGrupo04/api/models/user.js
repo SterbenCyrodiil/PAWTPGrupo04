@@ -30,6 +30,7 @@ const userSchema = new mongoose.Schema({
 	phoneNumber:{type: Number, required: true },
 	role: { type: String, required: true, enum: Object.values(RolesEnum)},
 	estado: {type: String, required:true, enum: Object.values(StateEnum)},
+	deleted: {type: Boolean, default: false},
 	updated_at: { type: Date, default: Date.now },
 })
 
