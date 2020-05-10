@@ -10,13 +10,23 @@ const registerUser = async (req, res) => {
 }
 
 const getAllUsers = async (req, res) => {
-	const request = await User.find();
+	const request = await User.find({},"name genero birthdate phoneNumber");
+	res.send(request);
+}
+
+const getAllUtentes = async (req, res) => {
+	const request = await User.find({role: "utentes"},"name genero birthdate phoneNumber");
+	res.send(request);
+}
+
+const getAllTecnicos = async (req, res) => {
+	const request = await User.find({role: "tecnicos"},"name genero birthdate phoneNumber");
 	res.send(request);
 }
 
 const getUserByID = async (req, res) =>{
 	try {
-		const request = await User.findById(req.params.id)
+		const request = await User.findById(req.params.id,"name genero birthdate phoneNumber")
 			.catch((e) => {
 				return null
 			})
@@ -30,7 +40,35 @@ const getUserByID = async (req, res) =>{
 
 const getUserByCC = async (req, res) =>{
 	try {
-		const request = await User.find({CC: req.params.CC})
+		const request = await User.find({CC: req.params.id}, "name genero birthdate phoneNumber")
+			.catch((e) => {
+				return null
+			})
+		res.send(request)
+	} catch (e) {
+		console.error(e)
+		res.status(404)
+		res.send(null)
+	}
+}
+
+const getUtenteUserByCC = async (req, res) =>{
+	try {
+		const request = await User.find({CC: req.params.id, role: "utente"}, "name genero birthdate phoneNumber")
+			.catch((e) => {
+				return null
+			})
+		res.send(request)
+	} catch (e) {
+		console.error(e)
+		res.status(404)
+		res.send(null)
+	}
+}
+
+const getTecnicoUserByCC = async (req, res) =>{
+	try {
+		const request = await User.find({CC: req.params.id, role: "tecnico"}, "name genero birthdate phoneNumber")
 			.catch((e) => {
 				return null
 			})
@@ -82,5 +120,9 @@ module.exports = {
 	getUserByID,
 	deleteUser,
 	getUserByCC,
-	updateUserInformation
+	updateUserInformation,
+	getAllTecnicos,
+	getAllUtentes,
+	getTecnicoUserByCC,
+	getUtenteUserByCC
 }

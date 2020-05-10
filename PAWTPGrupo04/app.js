@@ -2,6 +2,8 @@ require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
+const swaggerUi = require('swagger-ui-express')
+const swaggerDoc = require('./swagger.json')
 
 const apiRouter = require('./api/routes')
 
@@ -33,6 +35,7 @@ mongoose
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use('/rest', cors(), apiRouter)
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc))
 
 app.listen(PORT, () => {
 	console.log(`Server started on http://localhost:${PORT}`)

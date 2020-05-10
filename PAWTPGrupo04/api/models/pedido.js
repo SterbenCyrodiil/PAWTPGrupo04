@@ -5,7 +5,7 @@ const requestSchema = new mongoose.Schema({
     idRequest: {type: String, required: true},
     dataInicial: {type: Date}, 
     dataFinal: {type: Date}, 
-    tecnicoResponsavel: {type: Number},
+    tecnicoResponsavel: {type: String},
     CCutente: {type: String, required: true},
     trabalhadorDeRisco: {type: Boolean, required: true},
     grupoDeRisco: {type: Boolean, required: true},

@@ -6,7 +6,11 @@ const userController = require('../controllers/UserController');
 
 /* GET users listing. */
 userrouter.get('/', userController.getAllUsers);
-userrouter.get('/procura/:id', userController.getUserByCC); // ID => CC
+
+userrouter.get('/utentes',userController.getAllUtentes);
+userrouter.get('/tecnicos', userController.getAllTecnicos);
+userrouter.get('/utentes/:id', userController.getUtenteUserByCC); // ID => CC
+userrouter.get('/tecnicos/:id', userController.getTecnicoUserByCC);
 userrouter.get('/:id', userController.getUserByID);
 
 userrouter.put('/', userController.updateUserInformation);

@@ -1,0 +1,386 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "pawtpRestAPI",
+        "description": ""
+    },
+    "host": "localhost:3001",
+    "basePath": "/",
+    "tags": [
+        {
+            "name": "Users",
+            "description": "All Users of the platform, both workers and patients"
+        },
+        {
+            "name": "Pedidos",
+            "description": "Requests made by oatients to be  handled by the workers"
+        }
+    ],
+    "schemes": [
+        "http"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/request": {
+            "get": {
+                "tags": [
+                    "Pedidos"
+                ],
+                "summary": "Get all the requests in the DB",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "schema": {
+                            "$ref": "#/definitions/RequestResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Failure, couldn't not find requests, check DB connections"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Pedidos"
+                ],
+                "summary": "Get all the requests in the DB",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "schema": {
+                            "$ref": "#/definitions/RequestRequest"
+                        }
+                    },
+                    "404": {
+                        "description": "Failure, couldn't not post requests, check DB connections or data"
+                    }
+                }
+            }
+        },
+        "/request/{id}": {
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "ID of the targeted Request",
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "tags": [
+                    "Pedidos"
+                ],
+                "summary": "Get the specific request via ID",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "schema": {
+                            "$ref": "#/definitions/RequestResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Failure, couldn't not find requests, check DB connections"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Pedidos"
+                ],
+                "summary": "Update the specific request via the ID",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "schema": {
+                            "$ref": "#/definitions/RequestResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Failure, couldn't not update request, check DB connections or data"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Pedidos"
+                ],
+                "summary": "Marks a specific entry in the DB for deletion, signaling for the DB manager",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "schema": {
+                            "$ref": "#/definitions/RequestResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Failure, couldn't not update request, check DB connections or data"
+                    }
+                }
+            }
+        },
+        "/request/saude24": {
+            "get": {
+                "tags": [
+                    "Pedidos"
+                ],
+                "summary": "Get request in DB which users were send by Saude24 ",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "schema": {
+                            "$ref": "#/definitions/RequestResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                    }
+                }
+            }
+        },
+        "/request/gruposirsco": {
+            "get": {
+                "tags": [
+                    "Pedidos"
+                ],
+                "summary": "Get request in DB in which users belong to a Risk Group ",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "schema": {
+                            "$ref": "#/definitions/RequestResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                    }
+                }
+            }
+        },
+        "/request/trabalhadores": {
+            "get": {
+                "tags": [
+                    "Pedidos"
+                ],
+                "summary": "Get request in DB in which users work in a  Risk job ",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "schema": {
+                            "$ref": "#/definitions/RequestResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                    }
+                }
+            }
+        },
+        "/request/infetados": {
+            "get": {
+                "tags": [
+                    "Pedidos"
+                ],
+                "summary": "Get request in DB in which users were infected at the time of the request ",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "schema": {
+                            "$ref": "#/definitions/RequestResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                    }
+                }
+            }
+        },
+        "/request/testespositivos": {
+            "get": {
+                "tags": [
+                    "Pedidos"
+                ],
+                "summary": "Get request in DB in which users were found positive",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "schema": {
+                            "$ref": "#/definitions/RequestResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                    }
+                }
+            },
+            "/request/infetados": {
+                "get": {
+                    "tags": [
+                        "Pedidos"
+                    ],
+                    "summary": "Get request in DB in which users belong to a Risk Group ",
+                    "responses": {
+                        "200": {
+                            "description": "Task Successful",
+                            "schema": {
+                                "$ref": "#/definitions/RequestResponse"
+                            }
+                        },
+                        "404": {
+                            "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        }
+                    }
+                }
+            },
+            "/request/testesnegativos": {
+                "get": {
+                    "tags": [
+                        "Pedidos"
+                    ],
+                    "summary": "Get request in DB in which users were found negative ",
+                    "responses": {
+                        "200": {
+                            "description": "Task Successful",
+                            "schema": {
+                                "$ref": "#/definitions/RequestResponse"
+                            }
+                        },
+                        "404": {
+                            "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        }
+                    }
+                }
+            },
+            "/request/user/:id": {
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "CC (personal-id) of the targeted user",
+                        "type": "string"
+                    }
+                ],
+                "get": {
+                    "tags": [
+                        "Pedidos"
+                    ],
+                    "summary": "Get request in DB belonging to a certain user",
+                    "responses": {
+                        "200": {
+                            "description": "Task Successful",
+                            "schema": {
+                                "$ref": "#/definitions/RequestResponse"
+                            }
+                        },
+                        "404": {
+                            "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "RequestReponse": {
+            "properties": {
+                "idRequest": {
+                    "type": "string"
+                },
+                "dataInicial": {
+                    "type": "date"
+                },
+                "dataFinal": {
+                    "type": "date"
+                },
+                "tecnicoResponsavel": {
+                    "type": "number"
+                },
+                "CCutente": {
+                    "type": "string"
+                },
+                "trabalhadorDeRisco": {
+                    "type": "boolean"
+                },
+                "grupoDeRisco": {
+                    "type": "boolean"
+                },
+                "encaminhado_saude24": {
+                    "type": "boolean"
+                },
+                "resultadoInicial": {
+                    "type": "boolean"
+                },
+                "resultadoFinal": {
+                    "type": "boolean"
+                },
+                "casoFechado": {
+                    "type": "boolean"
+                },
+                "deleted": {
+                    "type": "boolean"
+                },
+                "updated_at": {
+                    "type": "date"
+                }
+            }
+        },
+        "RequestRequest": {
+            "required": [
+                "idRequest",
+                "CCutente",
+                "trabalhadorDeRisco",
+                "grupoDeRisco",
+                "encaminhado_saude24"
+            ],
+            "properties": {
+                "idRequest": {
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "dataInicial": {
+                    "type": "date"
+                },
+                "dataFinal": {
+                    "type": "date"
+                },
+                "tecnicoResponsavel": {
+                    "type": "number"
+                },
+                "CCutente": {
+                    "type": "string"
+                },
+                "trabalhadorDeRisco": {
+                    "type": "boolean"
+                },
+                "grupoDeRisco": {
+                    "type": "boolean"
+                },
+                "encaminhado_saude24": {
+                    "type": "boolean"
+                },
+                "resultadoInicial": {
+                    "type": "boolean"
+                },
+                "resultadoFinal": {
+                    "type": "boolean"
+                },
+                "casoFechado": {
+                    "type": "boolean"
+                },
+                "deleted": {
+                    "type": "boolean"
+                },
+                "updated_at": {
+                    "type": "date"
+                }
+            }
+        }
+    }
+}
