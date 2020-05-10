@@ -6,6 +6,7 @@ const cors = require('cors')
 const cookieParser = require('cookie-parser')
 
 const apiRouter = require('./api/routes')
+const authMiddleware = require('./api/middleware/authentication')
 
 const app = express()
 mongoose.Promise = global.Promise
@@ -20,7 +21,7 @@ mongoose.Promise = global.Promise
 
 mongoose
 	.connect(
-		`mongodb://${ process.env.MONGO_DB_HOST }:${ process.env.MONGO_BD_PORT }/${ process.env.MONGO_DB_NAME }`,
+		`mongodb://${process.env.MONGO_DB_HOST}:${process.env.MONGO_BD_PORT}/${process.env.MONGO_DB_NAME}`,
 		{
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
@@ -32,16 +33,23 @@ mongoose
 	})
 	.catch(console.error)
 
-app.use(cors())
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+app
+	// Setup da aplicação com cors e body-parser para pedidos HTTP
+	.use(cors())
+	.use(express.json())
+	.use(express.urlencoded({ extended: true }))
 
-app.use(cookieParser())
+	// Setup com cookie-parser
+	.use(cookieParser())
 
-app.use(passport.initialize());
+	// app.use(passport.initialize())
+	// Middleware para autenticação e sessão de login
+	// (Neste caso, a aplicação só pode ser usada por utilizadores com login ativo)
+	.use(authMiddleware)
 
-app.use('/rest', apiRouter)
+	// Setup do API Router
+	.use('/rest', apiRouter)
 
-app.listen(process.env.PORT, () => {
-	console.log(`Server started on http://localhost:${process.env.PORT}`)
-})
+	.listen(process.env.PORT, () => {
+		console.log(`Server started on http://localhost:${process.env.PORT}`)
+	})

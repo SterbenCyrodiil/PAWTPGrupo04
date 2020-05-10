@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken')
-const passport = require('passport');
 
-const loginUser = async (req, res) => {
+const User = require('../models/user')
+
+const signInUser = async (req, res) => {
     try {
         const user = await User.findOne({ // procurar pelo utilizador
             CCutente: req.body.CCutente
@@ -9,44 +10,46 @@ const loginUser = async (req, res) => {
 
         if (!user) 
         { // utilizador não encontrado
-            res.status(401).send({
-                success: false, 
-                msg: 'Authentication failed. User not found.'
-            });
+            res.status(401).send({success: false, msg: 'Authentication failed! User is not registered.'});
         } else 
         { // verificar se a password está correta
-            user.comparePassword(req.body.password, function (err, isMatch) {
-                if (isMatch && !err) {
-                    // se o utilizador for encontrado e a password estiver correta, gera o token
-                    var token = jwt.sign(user, process.env.JWT_SECRET);
-                    // criar cookie para retorno do token para o cliente
-                    res.cookie(
-                        'user-session',
-                        jwtToken,
-                        {
-                            expires: new Date(Date.now() + process.env.SESSION_EXP),
-                            httpOnly: true
-                        }
-                    )
-                    res.status(200).json({
-                        success: true, 
-                        token: 'JWT ' + token
-                    });             
-                } else { // password incorreta
-                    res.status(401).send({
-                        success: false, 
-                        msg: 'Authentication failed. Wrong password.'
-                    });
-                }
-            });
+            const isValid = await user.comparePassword(req.body.password);
+
+            if (isValid) 
+            { // se o utilizador for encontrado e a password estiver correta, gera o token
+                var token = jwt.sign({_id: user._id, CC: user.CC, role: user.role}, process.env.JWT_SECRET);
+                res.cookie( // criar cookie para retorno do token para o cliente
+                    'user-session',
+                    jwtToken,
+                    {
+                        expires: new Date(Date.now() + process.env.SESSION_EXP),
+                        httpOnly: true
+                    }
+                )
+                res.status(200).json({success: true, token: 'JWT ' + token});
+            } else 
+            { // password incorreta
+                res.status(401).send({success: false, msg: 'Authentication failed. Wrong password.'});
+            }
         }
-    } catch (err) {
+    } catch (err) { // Bad Request, dados do request inválidos
         console.log(err);
-        res.json(null);
+        res.status(400).json(null);
     }
 }
 
-const logoutUser = async (req, res) => {
+const getLoggedUser = async (req, res) => {
+    // O request contem os dados do utilizador com login, devido ao middleware de autenticação
+    // res.json(req.user)
+    if (req.user_data) {
+        const user = await User.findById(req.user_data._id, "CC name genero birthdate phoneNumber role");
+        res.status(200).send(user);
+    }
+    // O Middleware já se encarregou de criar o "response" no caso de erros de autenticação
+}
+
+const signOutUser = (req, res) => {
+    // Remover a cookie armazenada com a informação do Token de login
     res.clearCookie('user-session')
     res.status(200).json({ 
         success: 'true' 
@@ -54,6 +57,7 @@ const logoutUser = async (req, res) => {
 }
 
 module.exports = {
-    loginUser,
-    logoutUser
+    signInUser,
+    getLoggedUser,
+    signOutUser
 }

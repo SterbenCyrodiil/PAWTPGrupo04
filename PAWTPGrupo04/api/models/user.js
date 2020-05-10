@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
-const bcrypt = require('bcrypt-nodejs');
+const bcrypt = require('bcrypt-nodejs')
+const validator = require('validator')
 
 const GenderEnum = Object.freeze({
 	Male: 'male',
@@ -14,15 +15,30 @@ const StateEnum = Object.freeze({
 });
 
 const RolesEnum = Object.freeze({
-Admin: 'admin',
-Tecnico: 'tecnico',
-Utente: 'utente',
+    Admin: 'admin',
+    Tecnico: 'tecnico',
+    Utente: 'utente',
 });
 
+/**
+ * TODO acabar as validações dos atributos
+ */
 const userSchema = new mongoose.Schema({
 
-	CC: { type: String, unique: true, required: true },
-    password: { type: String, required: true },
+	CC: { 
+        type: String, 
+        unique: true, 
+        required: true,
+        validate: value => {
+            if (!validator.isIdentityCard(value, 'pt-PT')) {
+                throw new Error({error: 'Invalid Credit Card address'})
+            }
+        }
+    },
+    password: { 
+        type: String, 
+        required: true 
+    },
     
 	name:{ type: String, required: true },
 	genero: {type: String, required: true, enum: Object.values(GenderEnum)},
@@ -37,36 +53,31 @@ const userSchema = new mongoose.Schema({
 /** 
  * Para segurança, encripta e guarda a password do user utilizando o Bcrypt.
  */
-userSchema.pre('save', function (next) {
-    var user = this;
-    if (this.isModified('password') || this.isNew) {
-        bcrypt.genSalt(10, function (err, salt) {
-            if (err) {
-                return next(err);
-            }
-            bcrypt.hash(user.password, salt, null, function (err, hash) {
-                if (err) {
-                    return next(err);
-                }
-                user.password = hash;
-                next();
-            });
-        });
-    } else {
-        return next();
+userSchema.pre('save', async (next) => {
+    try {
+        const user = this;
+        if (this.isModified('password') || this.isNew) {
+            const salt = await bcrypt.genSalt(10);
+            user.password = await bcrypt.hash(user.password, salt);
+        }
+        next();
+    } catch (err) {
+        return next(err);
     }
-});
+})
 
 /**
  * Disponibiliza um método para permitir comparar a password encriptada
  */
-userSchema.methods.comparePassword = function (passw, callback) {
-    bcrypt.compare(passw, this.password, function (err, isMatch) {
-        if (err) {
-            return callback(err);
+userSchema.methods.comparePassword = async (passw) => {
+    return new Promise( (resolve, reject) => {
+        try {
+            const isPasswValid = await bcrypt.compare(passw, this.password);
+            resolve(isPasswValid);
+        } catch(err) {
+            reject(err);
         }
-        callback(null, isMatch);
-    });
-};
+    })
+}
 
 module.exports = mongoose.model('User', userSchema)

@@ -4,12 +4,10 @@ const sessionControler = require('../controllers/SessionController')
 
 const sessionRouter = express.Router()
 
-sessionRouter.post('/login', sessionControler.loginUser);
+sessionRouter.post('/sign-in', sessionControler.signInUser);
 
-sessionRouter.get('/user', (req, res) => {
-	res.json(req.user)
-})
+sessionRouter.get('/user-profile', sessionControler.getLoggedUser)
 
-sessionRouter.post('/logout', sessionControler.logoutUser)
+sessionRouter.post('/sign-out', sessionControler.signOutUser)
 
 module.exports = sessionRouter;
