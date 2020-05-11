@@ -4,6 +4,8 @@ const mongoose = require('mongoose')
 const passport = require('passport')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
+const swaggerUi = require('swagger-ui-express')
+const swaggerDoc = require('./swagger.json')
 
 const apiRouter = require('./api/routes')
 const authMiddleware = require('./api/middleware/authentication')
@@ -38,6 +40,7 @@ app
 	.use(cors())
 	.use(express.json())
 	.use(express.urlencoded({ extended: true }))
+  .use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc))
 
 	// Setup com cookie-parser
 	.use(cookieParser())
