@@ -10,7 +10,7 @@ const signInUser = async (req, res) => {
 
         if (!user) 
         { // utilizador não encontrado
-            res.status(401).send({success: false, msg: 'Authentication failed! User is not registered.'});
+            res.status(401).json({success: false, msg: 'Authentication failed! User is not registered.'});
         } else 
         { // verificar se a password está correta
             const isValid = await user.comparePassword(req.body.password);
@@ -29,7 +29,7 @@ const signInUser = async (req, res) => {
                 res.status(200).json({success: true, token: 'JWT ' + token});
             } else 
             { // password incorreta
-                res.status(401).send({success: false, msg: 'Authentication failed. Wrong password.'});
+                res.status(401).json({success: false, msg: 'Authentication failed. Wrong password.'});
             }
         }
     } catch (err) { // Bad Request, dados do request inválidos
@@ -39,8 +39,7 @@ const signInUser = async (req, res) => {
 }
 
 const getLoggedUser = async (req, res) => {
-    // O request contem os dados do utilizador com login, devido ao middleware de autenticação
-    // res.json(req.user)
+    // res.json(req.user_data)
     if (req.user_data) {
         const user = await User.findById(req.user_data._id, "CC name genero birthdate phoneNumber role");
         res.status(200).send(user);

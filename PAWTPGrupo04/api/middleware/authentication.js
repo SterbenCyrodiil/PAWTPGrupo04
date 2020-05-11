@@ -8,12 +8,12 @@ const sessionMiddleware = (req, res, next) => {
 			req.user_data = user_data;
 		} else {
             req.user_data = null;
-            res.status(401).send('Access Denied');
+			// res.status(401).send('Access Denied');
 		}
 	} catch(err) {
 		console.error(err);
-        req.user_data = null;
-        res.status(400).send('Invalid Token');
+		req.user_data = null;
+		// res.status(400).send('Invalid Token');
 	}
 	next();
 }

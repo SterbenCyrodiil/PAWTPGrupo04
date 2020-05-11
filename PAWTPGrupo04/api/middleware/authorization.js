@@ -1,20 +1,20 @@
-/*
-* TODO acabar de rever a autorização
-*/
 const authorize = (opts) => {
 
-	opts = opts || []
+	opts = opts || [];
 
-	return (req, res, next) => {
-		if (!req.user) {
-			next('Not authenticated')
+	return (req, _, next) => {
+		if (!req.user_data)
+		{
+			res.status(401).send('Not authenticated. Access Denied');
 		}
-		const hasAuthorization = opts.includes(req.user.role)
+		const hasAuthorization = opts.includes(req.user_data.role);
 		
-		if (hasAuthorization) {
-			next()
-		} else {
-			next('Not authorized')
+		if (hasAuthorization)
+		{
+			next();
+		} else 
+		{
+			res.status(403).send('Not authorized. Access Denied');
 		}
 	}
 }
