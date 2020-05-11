@@ -284,6 +284,62 @@
                         }
                     }
                 }
+            },
+            "/request/testinfo/:id": {
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "Mongo ID of the request",
+                        "type": "string"
+                    }
+                ],
+                "put": {
+                    "tags": [
+                        "Pedidos"
+                    ],
+                    "summary": "Update the request with the tests info",
+                    "responses": {
+                        "200": {
+                            "description": "Task Successful",
+                            "schema": {
+                                "$ref": "#/definitions/RequestResponse"
+                            }
+                        },
+                        "404": {
+                            "description": "Failure, couldn't not find requests to update, check DB connections or DB data"
+                        }
+                    }
+                }
+            },
+            "/request/requestResponsible/:id": {
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "Mongo ID of the request",
+                        "type": "string"
+                    }
+                ],
+                "put": {
+                    "tags": [
+                        "Pedidos"
+                    ],
+                    "summary": "Update the request with the responsible worker id",
+                    "responses": {
+                        "200": {
+                            "description": "Task Successful",
+                            "schema": {
+                                "$ref": "#/definitions/RequestResponse"
+                            }
+                        },
+                        "404": {
+                            "description": "Failure, couldn't not find requests to update, check DB connections or DB data"
+                        }
+                    }
+                }
             }
         }
     },
