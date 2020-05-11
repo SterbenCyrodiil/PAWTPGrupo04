@@ -1,26 +1,29 @@
 require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
+const passport = require('passport')
 const cors = require('cors')
+const cookieParser = require('cookie-parser')
 const swaggerUi = require('swagger-ui-express')
 const swaggerDoc = require('./swagger.json')
 
 const apiRouter = require('./api/routes')
+const authMiddleware = require('./api/middleware/authentication')
 
 const app = express()
 mongoose.Promise = global.Promise
 
-// Object destructuring ES6
-const {
-	PORT = 3000,
-	MONGO_DB_HOST = 'localhost',
-	MONGO_BD_PORT = 27017,
-	MONGO_DB_NAME = 'covidDB'
-} = process.env
+// // Object destructuring ES6
+// const {
+// 	PORT = 3000,
+// 	MONGO_DB_HOST = 'localhost',
+// 	MONGO_BD_PORT = 27017,
+// 	MONGO_DB_NAME = 'covidDB',
+// } = process.env
 
 mongoose
 	.connect(
-		`mongodb://${ MONGO_DB_HOST }:${ MONGO_BD_PORT }/${ MONGO_DB_NAME }`,
+		`mongodb://${process.env.MONGO_DB_HOST}:${process.env.MONGO_BD_PORT}/${process.env.MONGO_DB_NAME}`,
 		{
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
@@ -32,11 +35,24 @@ mongoose
 	})
 	.catch(console.error)
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-app.use('/rest', cors(), apiRouter)
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc))
+app
+	// Setup da aplicação com cors e body-parser para pedidos HTTP
+	.use(cors())
+	.use(express.json())
+	.use(express.urlencoded({ extended: true }))
+  .use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc))
 
-app.listen(PORT, () => {
-	console.log(`Server started on http://localhost:${PORT}`)
-})
+	// Setup com cookie-parser
+	.use(cookieParser())
+
+	// app.use(passport.initialize())
+	// Middleware para autenticação e sessão de login
+	// (Neste caso, a aplicação só pode ser usada por utilizadores com login ativo)
+	.use(authMiddleware)
+
+	// Setup do API Router
+	.use('/rest', apiRouter)
+
+	.listen(process.env.PORT, () => {
+		console.log(`Server started on http://localhost:${process.env.PORT}`)
+	})
