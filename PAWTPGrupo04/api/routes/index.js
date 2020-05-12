@@ -3,6 +3,7 @@ var router = express.Router();
 
 const userRouter = require('./users')
 const requestRouter = require('./requestrouter')
+const sessionRouter = require('./session')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -11,6 +12,6 @@ router.get('/', function(req, res, next) {
 
 router.use('/user', userRouter);
 router.use('/request', requestRouter);
-
+router.user(sessionRouter);
 
 module.exports = router;
