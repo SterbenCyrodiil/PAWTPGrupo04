@@ -1,13 +1,14 @@
 require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
-const passport = require('passport')
+
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
+
 const swaggerUi = require('swagger-ui-express')
 const swaggerDoc = require('./swagger.json')
 
-const apiRouter = require('./api/routes')
+const apiRouter = require('./api')
 const authMiddleware = require('./api/middleware/authentication')
 
 const app = express()
@@ -40,7 +41,7 @@ app
 	.use(cors())
 	.use(express.json())
 	.use(express.urlencoded({ extended: true }))
-  .use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc))
+	.use(express.static('public'))
 
 	// Setup com cookie-parser
 	.use(cookieParser())
@@ -53,6 +54,11 @@ app
 	// Setup do API Router
 	.use('/rest', apiRouter)
 
+	// Setup Swagger API Docs
+	.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc))
+
 	.listen(process.env.PORT, () => {
 		console.log(`Server started on http://localhost:${process.env.PORT}`)
 	})
+
+module.exports = app;

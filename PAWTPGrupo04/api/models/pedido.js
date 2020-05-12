@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 
-
 const requestSchema = new mongoose.Schema({
     idRequest: {type: String, required: true},
     dataInicial: {type: Date}, 
