@@ -95,13 +95,13 @@ const updateResultadoPrimeiroTeste = async (req, res) => {
 	else if (req.body.resultadoInicial != null && req.body.dataFinal != null) {
 		try {
 			// ## Marcar o resultado do primeiro teste # Será o segundo update para o diagnostico
-			if (pedido.dataInicial != null) { // Atualizar o resultado do primeiro teste só se existir a data indicada
-				if (req.body.resultadoInicial === 'false') { // Marcar a data para o segundo teste se o primeiro teste der negativo
+			if (pedido.dataInicial != null) { // Atualizar o resultado do primeiro teste só se existir a data indicada 
+				if (req.body.resultadoInicial === 'false' && ((req.body.dataFinal - pedido.dataInicial)/3,600,000)>=48) { // Marcar a data para o segundo teste (48 horas de diferença) se o primeiro teste der negativo
 					await Pedido.findByIdAndUpdate(req.params.id, { resultadoInicial: req.body.resultadoInicial, dataFinal: req.body.dataFinal });
 				} else if (req.body.resultadoInicial === 'true'){ // caso o primeiro teste seja positivo, dá-se o diagnóstico como fechado
 					await Pedido.findByIdAndUpdate(req.params.id, { resultadoInicial: req.body.resultadoInicial, casoFechado: true, infetado: true });
 				} else{
-					console.log("Entrou" + req.body.resultadoInicial)
+					res.status(404).send('O teste não foi agendado! Verifique a informação enviada...');
 				}
 				const updatedPedido = await Pedido.findById(req.params.id);
 				res.status(200).send({
