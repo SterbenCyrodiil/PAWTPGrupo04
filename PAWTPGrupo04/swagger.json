@@ -99,7 +99,7 @@
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/RequestResponse"
+                            "$ref": "#/definitions/RequestUpdate"
                         }
                     },
                     "404": {
@@ -116,7 +116,7 @@
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/RequestResponse"
+                            "$ref": "#/definitions/RequestUpdate"
                         }
                     },
                     "404": {
@@ -312,7 +312,8 @@
                         }
                     }
                 }
-            },"/request/update/firstDate{id}":{
+            },
+            "/request/update/firstDate{id}": {
                 "parameters": [
                     {
                         "name": "id",
@@ -331,7 +332,7 @@
                         "200": {
                             "description": "Task Successful",
                             "schema": {
-                                "$ref": "#/definitions/RequestResponse"
+                                "$ref": "#/definitions/RequestUpdate"
                             }
                         },
                         "404": {
@@ -341,7 +342,7 @@
                 }
             }
         },
-        "/request/update/firstTest{id}":{
+        "/request/update/firstTest{id}": {
             "parameters": [
                 {
                     "name": "id",
@@ -360,7 +361,7 @@
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/RequestResponse"
+                            "$ref": "#/definitions/RequestUpdate"
                         }
                     },
                     "404": {
@@ -369,7 +370,7 @@
                 }
             }
         },
-        "/request/update/secondTest{id}":{
+        "/request/update/secondTest{id}": {
             "parameters": [
                 {
                     "name": "id",
@@ -388,7 +389,7 @@
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/RequestResponse"
+                            "$ref": "#/definitions/RequestUpdate"
                         }
                     },
                     "404": {
@@ -397,7 +398,7 @@
                 }
             }
         },
-        "/request/update/worker{id}":{
+        "/request/update/worker{id}": {
             "parameters": [
                 {
                     "name": "id",
@@ -416,7 +417,199 @@
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/RequestResponse"
+                            "$ref": "#/definitions/RequestUpdate"
+                        }
+                    },
+                    "404": {
+                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                    }
+                }
+            }
+        },
+        "/user/": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get all the users in the DB",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "schema": {
+                            "$ref": "#/definitions/UserResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Failure, couldn't not find users, check DB connections"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Post a user to the DB",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "schema": {
+                            "$ref": "#/definitions/UserRequest"
+                        }
+                    },
+                    "404": {
+                        "description": "Failure, couldn't not post user, check DB connections or data"
+                    }
+                }
+            }
+        },
+        "/utentes": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Gets All Pacients",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "schema": {
+                            "$ref": "#/definitions/UserResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                    }
+                }
+            }
+        },
+        "/tecnicos": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Gets All Pacients",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "schema": {
+                            "$ref": "#/definitions/UserResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                    }
+                }
+            }
+        },
+        "/utentes/{id}": {
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "User CC-id",
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Gets a certain Pacient using its CC-id",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "schema": {
+                            "$ref": "#/definitions/UserResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                    }
+                }
+            }
+        },
+        "/tecnicos/{id}": {
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "Worker CC-id",
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Gets a certain Worker using its CC-id",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "schema": {
+                            "$ref": "#/definitions/UserResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                    }
+                }
+            }
+        },
+        "/{id}": {
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "User MongoDB id",
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Gets a certain Pacient using its MongoDB id",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "schema": {
+                            "$ref": "#/definitions/UserResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Updates a certain user with its MongoDB ID",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "schema": {
+                            "$ref": "#/definitions/UserUpdate"
+                        }
+                    },
+                    "404": {
+                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Marks a certain user for deletion",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "schema": {
+                            "$ref": "#/definitions/UserResponse"
                         }
                     },
                     "404": {
@@ -518,6 +711,245 @@
                 },
                 "updated_at": {
                     "type": "date"
+                }
+            }
+        },
+        "RequestUpdate": {
+            "properties": {
+                "old": {
+                    "idRequest": {
+                        "type": "string"
+                    },
+                    "dataInicial": {
+                        "type": "date"
+                    },
+                    "dataFinal": {
+                        "type": "date"
+                    },
+                    "tecnicoResponsavel": {
+                        "type": "number"
+                    },
+                    "CCutente": {
+                        "type": "string"
+                    },
+                    "trabalhadorDeRisco": {
+                        "type": "boolean"
+                    },
+                    "grupoDeRisco": {
+                        "type": "boolean"
+                    },
+                    "encaminhado_saude24": {
+                        "type": "boolean"
+                    },
+                    "resultadoInicial": {
+                        "type": "boolean"
+                    },
+                    "resultadoFinal": {
+                        "type": "boolean"
+                    },
+                    "casoFechado": {
+                        "type": "boolean"
+                    },
+                    "deleted": {
+                        "type": "boolean"
+                    },
+                    "updated_at": {
+                        "type": "date"
+                    }
+                },
+                "new": {
+                    "idRequest": {
+                        "type": "string"
+                    },
+                    "dataInicial": {
+                        "type": "date"
+                    },
+                    "dataFinal": {
+                        "type": "date"
+                    },
+                    "tecnicoResponsavel": {
+                        "type": "number"
+                    },
+                    "CCutente": {
+                        "type": "string"
+                    },
+                    "trabalhadorDeRisco": {
+                        "type": "boolean"
+                    },
+                    "grupoDeRisco": {
+                        "type": "boolean"
+                    },
+                    "encaminhado_saude24": {
+                        "type": "boolean"
+                    },
+                    "resultadoInicial": {
+                        "type": "boolean"
+                    },
+                    "resultadoFinal": {
+                        "type": "boolean"
+                    },
+                    "casoFechado": {
+                        "type": "boolean"
+                    },
+                    "deleted": {
+                        "type": "boolean"
+                    },
+                    "updated_at": {
+                        "type": "date"
+                    }
+                }
+            },
+            "RequestReponse": {
+                "properties": {
+                    "idRequest": {
+                        "type": "string"
+                    },
+                    "dataInicial": {
+                        "type": "date"
+                    },
+                    "dataFinal": {
+                        "type": "date"
+                    },
+                    "tecnicoResponsavel": {
+                        "type": "number"
+                    },
+                    "CCutente": {
+                        "type": "string"
+                    },
+                    "trabalhadorDeRisco": {
+                        "type": "boolean"
+                    },
+                    "grupoDeRisco": {
+                        "type": "boolean"
+                    },
+                    "encaminhado_saude24": {
+                        "type": "boolean"
+                    },
+                    "resultadoInicial": {
+                        "type": "boolean"
+                    },
+                    "resultadoFinal": {
+                        "type": "boolean"
+                    },
+                    "casoFechado": {
+                        "type": "boolean"
+                    },
+                    "deleted": {
+                        "type": "boolean"
+                    },
+                    "updated_at": {
+                        "type": "date"
+                    }
+                }
+            },
+            "UserReponse": {
+                "properties": {
+                    "CC": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "genero": {
+                        "type": "string"
+                    },
+                    "phoneNumber": {
+                        "type": "number"
+                    },
+                    "birthdate": {
+                        "type": "date"
+                    },
+                    "estado": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "type": "string"
+                    }
+                }
+            },
+            "UserRequest": {
+                "required": [
+                    "CC",
+                    "password",
+                    "name",
+                    "genero",
+                    "birthdate",
+                    "phoneNumber",
+                    "role",
+                    "estado"
+                ],
+                "properties": {
+                    "CC": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "genero": {
+                        "type": "string"
+                    },
+                    "phoneNumber": {
+                        "type": "number"
+                    },
+                    "birthdate": {
+                        "type": "date"
+                    },
+                    "estado": {
+                        "type": "string"
+                    }
+                }
+            },
+            "UserUpdate": {
+                "properties": {
+                    "old": {
+                        "CC": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "genero": {
+                            "type": "string"
+                        },
+                        "phoneNumber": {
+                            "type": "number"
+                        },
+                        "birthdate": {
+                            "type": "date"
+                        },
+                        "estado": {
+                            "type": "string"
+                        },
+                        "role": {
+                            "type": "string"
+                        }
+                    },
+                    "new": {
+                        "CC": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "genero": {
+                            "type": "string"
+                        },
+                        "phoneNumber": {
+                            "type": "number"
+                        },
+                        "birthdate": {
+                            "type": "date"
+                        },
+                        "estado": {
+                            "type": "string"
+                        },
+                        "role": {
+                            "type": "string"
+                        }
+                    }
                 }
             }
         }
