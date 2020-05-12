@@ -257,7 +257,35 @@
                     }
                 }
             },
-            "/request/user/:id": {
+            "/request/countDay/{id}": {
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "Targeted Date to get count",
+                        "type": "string"
+                    }
+                ],
+                "get": {
+                    "tags": [
+                        "Pedidos"
+                    ],
+                    "summary": "Get request in DB belonging to a certain user",
+                    "responses": {
+                        "200": {
+                            "description": "Task Successful",
+                            "schema": {
+                                "$ref": ""
+                            }
+                        },
+                        "404": {
+                            "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        }
+                    }
+                }
+            },
+            "/request/user/{id}": {
                 "parameters": [
                     {
                         "name": "id",
@@ -284,14 +312,13 @@
                         }
                     }
                 }
-            },
-            "/request/testinfo/:id": {
+            },"/request/update/firstDate{id}":{
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
                         "required": true,
-                        "description": "Mongo ID of the request",
+                        "description": "Personal ID",
                         "type": "string"
                     }
                 ],
@@ -299,7 +326,7 @@
                     "tags": [
                         "Pedidos"
                     ],
-                    "summary": "Update the request with the tests info",
+                    "summary": "Update the first date in a specific ",
                     "responses": {
                         "200": {
                             "description": "Task Successful",
@@ -308,36 +335,92 @@
                             }
                         },
                         "404": {
-                            "description": "Failure, couldn't not find requests to update, check DB connections or DB data"
+                            "description": "Failure, couldn't not find requests, check DB connections or DB data"
                         }
                     }
                 }
-            },
-            "/request/requestResponsible/:id": {
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "description": "Mongo ID of the request",
-                        "type": "string"
-                    }
+            }
+        },
+        "/request/update/firstTest{id}":{
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "Personal ID",
+                    "type": "string"
+                }
+            ],
+            "put": {
+                "tags": [
+                    "Pedidos"
                 ],
-                "put": {
-                    "tags": [
-                        "Pedidos"
-                    ],
-                    "summary": "Update the request with the responsible worker id",
-                    "responses": {
-                        "200": {
-                            "description": "Task Successful",
-                            "schema": {
-                                "$ref": "#/definitions/RequestResponse"
-                            }
-                        },
-                        "404": {
-                            "description": "Failure, couldn't not find requests to update, check DB connections or DB data"
+                "summary": "Puts the results of the first test in the required request, schedules the next if negative ",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "schema": {
+                            "$ref": "#/definitions/RequestResponse"
                         }
+                    },
+                    "404": {
+                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                    }
+                }
+            }
+        },
+        "/request/update/secondTest{id}":{
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "Personal ID",
+                    "type": "string"
+                }
+            ],
+            "put": {
+                "tags": [
+                    "Pedidos"
+                ],
+                "summary": "Puts the results of the second test in the required request, marks the patients diagnosis ",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "schema": {
+                            "$ref": "#/definitions/RequestResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                    }
+                }
+            }
+        },
+        "/request/update/worker{id}":{
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "Personal ID",
+                    "type": "string"
+                }
+            ],
+            "put": {
+                "tags": [
+                    "Pedidos"
+                ],
+                "summary": "Puts the technician id in the attributed request",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "schema": {
+                            "$ref": "#/definitions/RequestResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
                     }
                 }
             }

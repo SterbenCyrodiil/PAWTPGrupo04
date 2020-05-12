@@ -12,6 +12,7 @@ const requestSchema = new mongoose.Schema({
     encaminhado_saude24: {type: Boolean, required: true},
     resultadoInicial: {type: Boolean, default: false},
     resultadoFinal: {type: Boolean},
+    infetado: {type: Boolean},
     casoFechado: {type: Boolean}, default: false,
     deleted : {type: Boolean, default: false},
 	updated_at: { type: Date, default: Date.now },
