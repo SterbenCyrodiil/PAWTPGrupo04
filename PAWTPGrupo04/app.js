@@ -1,13 +1,14 @@
 require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
-const passport = require('passport')
+
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
+
 const swaggerUi = require('swagger-ui-express')
 const swaggerDoc = require('./swagger.json')
 
-const apiRouter = require('./api/routes')
+const apiRouter = require('./api')
 const authMiddleware = require('./api/middleware/authentication')
 
 const app = express()
@@ -59,3 +60,5 @@ app
 	.listen(process.env.PORT, () => {
 		console.log(`Server started on http://localhost:${process.env.PORT}`)
 	})
+
+module.exports = app;

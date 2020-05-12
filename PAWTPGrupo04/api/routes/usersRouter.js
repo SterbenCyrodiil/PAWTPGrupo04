@@ -1,7 +1,6 @@
 const express = require('express');
 
 const userController = require('../controllers/userController');
-
 const userrouter = express.Router();
 
 /* GET users listing. */

@@ -1,7 +1,6 @@
 const express = require('express');
 
 const requestController = require('../controllers/pedidoController')
-
 const requestrouter = express.Router();
 
 requestrouter.get('/', requestController.getAllPedidos);
