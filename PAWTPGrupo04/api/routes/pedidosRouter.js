@@ -1,7 +1,8 @@
-var express = require('express');
-var requestrouter = express.Router();
+const express = require('express');
 
-const requestController = require('../controllers/PedidoController')
+const requestController = require('../controllers/pedidoController')
+
+const requestrouter = express.Router();
 
 requestrouter.get('/', requestController.getAllPedidos);
 requestrouter.get('/saude24', requestController.getSaude24Pedidos);

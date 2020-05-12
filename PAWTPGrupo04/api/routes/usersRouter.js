@@ -1,8 +1,8 @@
-var express = require('express');
-var userrouter = express.Router();
+const express = require('express');
 
-const userController = require('../controllers/UserController');
-// const requestController = require('../controllers/PedidoController')
+const userController = require('../controllers/userController');
+
+const userrouter = express.Router();
 
 /* GET users listing. */
 userrouter.get('/', userController.getAllUsers);

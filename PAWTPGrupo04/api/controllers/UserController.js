@@ -1,6 +1,7 @@
 const User = require('../models/user')
 
-// Estou a, essencialmente, utilizar o ID random do mongo para quase tudo. Isto poderá ser alterado, no entando, creio que funcionará bem assim, se modelarmos bem daqui para a frente.
+// Estou a, essencialmente, utilizar o ID random do mongo para quase tudo. 
+// Isto poderá ser alterado, no entando, creio que funcionará bem assim, se modelarmos bem daqui para a frente.
 
 const registerUser = async (req, res) => {
 	const userData = req.body
