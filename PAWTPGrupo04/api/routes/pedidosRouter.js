@@ -19,7 +19,7 @@ requestrouter.get('/user/:id', authorization(['admin', 'tecnico', 'utente']), re
 requestrouter.get('/:id', authorization(['admin', 'tecnico']), requestController.getPedidobyID);
 
 
-requestrouter.put('/:id',  authorization(['admin', 'tecnico']), //to update everything possible without verifications via the id
+requestrouter.put('/:id',  authorization(['admin']), //to update everything possible without verifications via the id
     requestController.updatePedido);
 
 requestrouter.put('/update/firstDate/:id', authorization(['admin', 'tecnico']),
