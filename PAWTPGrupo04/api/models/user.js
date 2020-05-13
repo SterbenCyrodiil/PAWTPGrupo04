@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const bcrypt = require('bcrypt-nodejs')
+const bcrypt = require('bcryptjs')
 const validator = require('validator')
 
 const GenderEnum = Object.freeze({
@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
         unique: true, 
         required: true,
         validate: value => {
-            if (!validator.isIdentityCard(value, 'pt-PT')) {
+            if (!validator.isIdentityCard(value, 'PT')) {
                 throw new Error({error: 'Invalid Credit Card address'})
             }
         }
@@ -44,8 +44,8 @@ const userSchema = new mongoose.Schema({
 	genero: {type: String, required: true, enum: Object.values(GenderEnum)},
 	birthdate: {type: Date, required: true},
 	phoneNumber:{type: Number, required: true },
-	role: { type: String, required: true, enum: Object.values(RolesEnum)},
-	estado: {type: String, required:true, enum: Object.values(StateEnum)},
+	role: { type: String, required: true, default: 'utente', enum: Object.values(RolesEnum)},
+	estado: {type: String, required:true, default: 'suspeito', enum: Object.values(StateEnum)},
 	deleted: {type: Boolean, default: false},
 	updated_at: { type: Date, default: Date.now },
 })
@@ -53,23 +53,19 @@ const userSchema = new mongoose.Schema({
 /** 
  * Para segurança, encripta e guarda a password do user utilizando o Bcrypt.
  */
-userSchema.pre('save', async (next) => {
-    try {
-        const user = this;
-        if (this.isModified('password') || this.isNew) {
-            const salt = await bcrypt.genSalt(10);
-            user.password = await bcrypt.hash(user.password, salt);
-        }
-        next();
-    } catch (err) {
-        return next(err);
+userSchema.pre('save', async function(next) {
+    const user = this;
+    if (this.isModified('password') || this.isNew) {
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(user.password, salt);
     }
+    next();
 })
 
 /**
  * Disponibiliza um método para permitir comparar a password encriptada
  */
-userSchema.methods.comparePassword = async (passw) => {
+userSchema.methods.comparePassword = async function(passw) {
     return new Promise( async (resolve, reject) => {
         try {
             const isPasswValid = await bcrypt.compare(passw, this.password);

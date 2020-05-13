@@ -3,38 +3,43 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 
 const signInUser = async (req, res) => {
-    try {
-        const user = await User.findOne({ // procurar pelo utilizador
-            CCutente: req.body.CCutente
-        })
+    
+    if (req.body.CC && req.body.password) {
+        try {
+            const user = await User.findOne({ // procurar pelo utilizador
+                CC: req.body.CC
+            })
 
-        if (!user) 
-        { // utilizador não encontrado
-            res.status(401).json({success: false, msg: 'Authentication failed! User is not registered.'});
-        } else 
-        { // verificar se a password está correta
-            const isValid = await user.comparePassword(req.body.password);
-
-            if (isValid) 
-            { // se o utilizador for encontrado e a password estiver correta, gera o token
-                var token = jwt.sign({_id: user._id, CC: user.CC, role: user.role}, process.env.JWT_SECRET);
-                res.cookie( // criar cookie para retorno do token para o cliente
-                    'user-session',
-                    jwtToken,
-                    {
-                        expires: new Date(Date.now() + process.env.SESSION_EXP),
-                        httpOnly: true
-                    }
-                )
-                res.status(200).json({success: true, token: 'JWT ' + token});
+            if (!user) 
+            { // utilizador não encontrado
+                res.status(401).json({success: false, msg: 'Authentication failed! User is not registered.'});
             } else 
-            { // password incorreta
-                res.status(401).json({success: false, msg: 'Authentication failed. Wrong password.'});
+            { // verificar se a password está correta
+                const isValid = await user.comparePassword(req.body.password);
+
+                if (isValid) 
+                { // se o utilizador for encontrado e a password estiver correta, gera o token
+                    var token = jwt.sign({_id: user._id, CC: user.CC, role: user.role}, process.env.JWT_SECRET);
+                    res.cookie( // criar cookie para retorno do token para o cliente
+                        'user-session',
+                        token,
+                        {
+                            expires: new Date(Date.now() + process.env.SESSION_EXP),
+                            httpOnly: true
+                        }
+                    )
+                    res.status(200).json({success: true, token: 'JWT ' + token});
+                } else 
+                { // password incorreta
+                    res.status(401).json({success: false, msg: 'Authentication failed. Wrong password.'});
+                }
             }
+        } catch (err) { // Bad Request, dados do request inválidos
+            console.log(err);
+            res.status(400).send(null);
         }
-    } catch (err) { // Bad Request, dados do request inválidos
-        console.log(err);
-        res.status(400).json(null);
+    } else {
+        res.status(400).send('Bad Request. Dados em falta!');
     }
 }
 
