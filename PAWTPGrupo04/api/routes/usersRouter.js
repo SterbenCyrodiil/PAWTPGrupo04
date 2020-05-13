@@ -1,25 +1,24 @@
 const express = require('express');
 
+const authorization = require('../middleware/authorization')
 const userController = require('../controllers/userController');
 const userrouter = express.Router();
 
 /* GET users listing. */
-userrouter.get('/', userController.getAllUsers);
+userrouter.get('/', authorization(['admin']),userController.getAllUsers);
 
-userrouter.get('/utentes',userController.getAllUtentes);
-userrouter.get('/tecnicos', userController.getAllTecnicos);
-userrouter.get('/utentes/:id', userController.getUtenteUserByCC); // ID => CC
-userrouter.get('/tecnicos/:id', userController.getTecnicoUserByCC);
-userrouter.get('/:id', userController.getUserByID);
+userrouter.get('/utentes', authorization(['admin', 'tecnico']), userController.getAllUtentes);
+userrouter.get('/tecnicos', authorization(['admin']), userController.getAllTecnicos);
+userrouter.get('/utentes/:id', authorization(['admin', 'tecnico', 'utente']), userController.getUtenteUserByCC); // ID => CC
+userrouter.get('/tecnicos/:id', authorization(['admin']), userController.getTecnicoUserByCC);
+userrouter.get('/:id', authorization(['admin']), userController.getUserByID);
 
-userrouter.put('/', userController.updateUserInformation);
+userrouter.put('/:id', authorization(['admin', 'utente']), userController.updateUserInformation);
 
 userrouter.post('/', userController.registerUser);
 
-userrouter.delete('/', userController.deleteUser);
+userrouter.delete('/:id', authorization(['admin', 'utente']), userController.deleteUser);
 
 //userrouter.get('/userreq/:CC',requestController.getUserPedido); //Funciona, provavelmente deprecated
-
-userrouter.post('/', userController.registerUser);
 
 module.exports = userrouter;

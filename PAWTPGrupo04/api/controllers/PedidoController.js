@@ -92,22 +92,32 @@ const updateResultadoPrimeiroTeste = async (req, res) => {
 	else if (pedido.casoFechado === true) {
 		res.status(404).send('Pedido de Diagnóstico já foi concluído!')
 	}
-	else if (req.body.resultadoInicial != null && req.body.dataFinal != null) {
+	else if (req.body.resultadoInicial != null) { //Vai ser necessário modificar estes ifs. Não irá ser dificil, mas trabalhoso
 		try {
-			// ## Marcar o resultado do primeiro teste # Será o segundo update para o diagnostico
-			if (pedido.dataInicial != null) { // Atualizar o resultado do primeiro teste só se existir a data indicada
-				if (req.body.resultadoInicial === 'false') { // Marcar a data para o segundo teste se o primeiro teste der negativo
-					await Pedido.findByIdAndUpdate(req.params.id, { resultadoInicial: req.body.resultadoInicial, dataFinal: req.body.dataFinal });
-				} else if (req.body.resultadoInicial === 'true'){ // caso o primeiro teste seja positivo, dá-se o diagnóstico como fechado
+			if (pedido.dataInicial != null) { // Atualizar o resultado do primeiro teste só se existir a data indicada 
+
+				if (req.body.resultadoInicial === 'false' && req.body.dataFinal != null) { // Marcar a data para o segundo teste (48 horas de diferença) se o primeiro teste der negativo
+					if (((req.body.dataFinal - pedido.dataInicial) / 3, 600, 000) >= 48) {
+						await Pedido.findByIdAndUpdate(req.params.id, { resultadoInicial: req.body.resultadoInicial, dataFinal: req.body.dataFinal });
+						const updatedPedido = await Pedido.findById(req.params.id);
+						res.status(200).send({
+							old: pedido,
+							new: updatedPedido
+						});
+					}else{
+						res.status(404).send('O teste não foi agendado! Verifique a data enviada, o teste deve ser agendado com uma diferença de 48 horas...')
+					}
+				} else if (req.body.resultadoInicial === 'true') { // caso o primeiro teste seja positivo, dá-se o diagnóstico como fechado
 					await Pedido.findByIdAndUpdate(req.params.id, { resultadoInicial: req.body.resultadoInicial, casoFechado: true, infetado: true });
-				} else{
-					console.log("Entrou" + req.body.resultadoInicial)
+					const updatedPedido = await Pedido.findById(req.params.id);
+					res.status(200).send({
+						old: pedido,
+						new: updatedPedido
+					});
+				} else {
+					res.status(400).send('Bad Request. Dados em falta!');
 				}
-				const updatedPedido = await Pedido.findById(req.params.id);
-				res.status(200).send({
-					old: pedido,
-					new: updatedPedido
-				});
+
 			} else {
 				res.status(404).send('O teste não foi agendado!');
 			}
@@ -118,7 +128,7 @@ const updateResultadoPrimeiroTeste = async (req, res) => {
 	}
 	else {
 		res.status(400).send('Bad Request. Dados em falta!')
-	} 
+	}
 
 }
 
