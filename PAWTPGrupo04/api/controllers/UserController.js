@@ -4,10 +4,15 @@ const User = require('../models/user')
 // Isto poderá ser alterado, no entando, creio que funcionará bem assim, se modelarmos bem daqui para a frente.
 
 const registerUser = async (req, res) => {
-	const userData = req.body
-	console.log("DATA", userData)
-	const result = await new User(userData).save()
-	res.send(result)
+	try {
+		const userData = req.body;
+		console.log("DATA", userData);
+		const result = await new User(userData).save();
+		res.status(200).json({success: true, msg: result});
+	} catch (err) {
+		console.log(err);
+		res.status(404).json({success: false, msg: 'Dados incorretos!'});
+	}
 }
 
 const getAllUsers = async (req, res) => {

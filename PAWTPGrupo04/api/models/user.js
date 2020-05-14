@@ -29,11 +29,11 @@ const userSchema = new mongoose.Schema({
         type: String, 
         unique: true, 
         required: true,
-        validate: value => {
-            if (!validator.isIdentityCard(value, 'PT')) {
-                throw new Error({error: 'Invalid Credit Card address'})
-            }
-        }
+        // validate: value => {
+        //     if (!validator.isIdentityCard(value, 'PT')) {
+        //         throw new Error({error: 'Invalid Credit Card address'})
+        //     }
+        // }
     },
     password: { 
         type: String, 
