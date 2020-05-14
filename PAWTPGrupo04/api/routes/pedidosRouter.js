@@ -30,6 +30,8 @@ requestrouter.put('/update/firstTest/:id', authorization(['admin', 'tecnico']),
     requestController.updateSegundaData);
 requestrouter.put('/update/secondTest/:id', authorization(['admin', 'tecnico']),
     requestController.updateResultadoSegundoTeste);
+requestrouter.put('/update/filepath/:id', authorization(['admin', 'tecnico']),
+    requestController.updateFilePath);
 
 requestrouter.put('/update/worker/:id',  authorization(['admin', 'tecnico']), //to update via the id
     requestController.updateTecnicoResponsavel);

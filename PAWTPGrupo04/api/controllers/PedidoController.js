@@ -201,7 +201,7 @@ const updateResultadoSegundoTeste = async (req, res) => {
 
 const updateTecnicoResponsavel = async (req, res) => {
 	//lógicas de negócio aqui
-	if (tecnicoResponsavel !== null) {
+	if (req.body.tecnicoResponsavel !== null) {
 		try {
 			const outdadRequest = await Pedido.findByIdAndUpdate(
 				req.params.id,
@@ -216,6 +216,30 @@ const updateTecnicoResponsavel = async (req, res) => {
 			res.status(404)
 			res.send(null)
 		}
+	}
+}
+
+const updateFilePath = async (req, res) => {
+	const pedido = await Pedido.findById(req.params.id);
+	if(pedido.casoFechado===false){
+		
+	}else if (!req.body.filepath) {
+		try {
+			const outdatedRequest = await Pedido.findByIdAndUpdate(
+				req.params.id,
+				{ filepath: req.body.filepath })
+			const updatedRequest = await Pedido.findById(req.params.id)
+			res.send({
+				old: outdatedRequest,
+				new: updatedRequest
+			})
+		} catch (e) {
+			console.log(e)
+			res.status(404)
+			res.send(null)
+		}
+	}else{
+		res.status(404).send('O teste não foi agendado!');
 	}
 }
 
@@ -295,5 +319,6 @@ module.exports = {
 	updateResultadoSegundoTeste,
 	updateTecnicoResponsavel,
 	countPerDay,
-	updateSegundaData
+	updateSegundaData,
+	updateFilePath
 }

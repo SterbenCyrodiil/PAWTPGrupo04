@@ -5,7 +5,7 @@
         "title": "pawtpRestAPI",
         "description": ""
     },
-    "host": "localhost:3001",
+    "host": "localhost:3000",
     "basePath": "/",
     "tags": [
         {
@@ -313,7 +313,7 @@
                     }
                 }
             },
-            "/request/update/firstDate{id}": {
+            "/request/update/firstDate/{id}": {
                 "parameters": [
                     {
                         "name": "id",
@@ -327,7 +327,7 @@
                     "tags": [
                         "Pedidos"
                     ],
-                    "summary": "Update the first date in a specific ",
+                    "summary": "Update the first date in a specific Request",
                     "responses": {
                         "200": {
                             "description": "Task Successful",
@@ -337,12 +337,15 @@
                         },
                         "404": {
                             "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        },
+                        "400": {
+                            "description": "Failure, could not process given information"
                         }
                     }
                 }
             }
         },
-        "/request/update/firstTest{id}": {
+        "/request/update/firstTest/{id}": {
             "parameters": [
                 {
                     "name": "id",
@@ -366,11 +369,45 @@
                     },
                     "404": {
                         "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                    },
+                    "400": {
+                        "description": "Failure, could not process given information"
                     }
                 }
             }
         },
-        "/request/update/secondTest{id}": {
+        "/request/update/secondDate/{id}": {
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "Personal ID",
+                    "type": "string"
+                }
+            ],
+            "put": {
+                "tags": [
+                    "Pedidos"
+                ],
+                "summary": "Update the second date in a specific Request",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "schema": {
+                            "$ref": "#/definitions/RequestUpdate"
+                        }
+                    },
+                    "404": {
+                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                    },
+                    "400": {
+                        "description": "Failure, could not process given information"
+                    }
+                }
+            }
+        },
+        "/request/update/secondTest/{id}": {
             "parameters": [
                 {
                     "name": "id",
@@ -394,11 +431,45 @@
                     },
                     "404": {
                         "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                    },
+                    "400": {
+                        "description": "Failure, could not process given information"
                     }
                 }
             }
         },
-        "/request/update/worker{id}": {
+        "/request/update/filepath/{id}": {
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "Personal ID",
+                    "type": "string"
+                }
+            ],
+            "put": {
+                "tags": [
+                    "Pedidos"
+                ],
+                "summary": "Update the filepath in the DB instance",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "schema": {
+                            "$ref": "#/definitions/RequestUpdate"
+                        }
+                    },
+                    "404": {
+                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                    },
+                    "400": {
+                        "description": "Failure, could not process given information"
+                    }
+            }
+        }
+    },
+        "/request/update/worker/{id}": {
             "parameters": [
                 {
                     "name": "id",
@@ -422,6 +493,9 @@
                     },
                     "404": {
                         "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                    },
+                    "400": {
+                        "description": "Failure, could not process given information"
                     }
                 }
             }
@@ -443,44 +517,44 @@
                         "description": "Failure, couldn't not find users, check DB connections"
                     }
                 }
-            },
-            "post": {
-                "tags": [
-                    "Users"
-                ],
-                "summary": "Post a user to the DB",
-                "responses": {
-                    "200": {
-                        "description": "Task Successful",
-                        "content": {
-                            "application/json": {
-                                "type": "object",
-                                "properties": {
-                                    "success": {
-                                        "type": "boolean"
-                                    },
-                                    "msg": {
-                                        "type": "array",
-                                        "schema": {
-                                            "$ref": "#/definitions/UserRequest"
-                                        }
+            }
+        },
+        "post": {
+            "tags": [
+                "Users"
+            ],
+            "summary": "Post a user to the DB",
+            "responses": {
+                "200": {
+                    "description": "Task Successful",
+                    "content": {
+                        "application/json": {
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "msg": {
+                                    "type": "array",
+                                    "schema": {
+                                        "$ref": "#/definitions/UserRequest"
                                     }
                                 }
                             }
                         }
-                    },
-                    "404": {
-                        "description": "Failure, couldn't not post user, check DB connections or data",
-                        "content": {
-                            "application/json": {
-                                "type": "object",
-                                "properties": {
-                                    "success": {
-                                        "type": "boolean"
-                                    },
-                                    "msg": {
-                                        "type": "string"
-                                    }
+                    }
+                },
+                "404": {
+                    "description": "Failure, couldn't not post user, check DB connections or data",
+                    "content": {
+                        "application/json": {
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "type": "boolean"
+                                },
+                                "msg": {
+                                    "type": "string"
                                 }
                             }
                         }
