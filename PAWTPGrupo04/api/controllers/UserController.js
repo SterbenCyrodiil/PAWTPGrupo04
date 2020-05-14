@@ -8,10 +8,24 @@ const registerUser = async (req, res) => {
 		const userData = req.body;
 		console.log("DATA", userData);
 		const result = await new User(userData).save();
-		res.status(200).json({success: true, msg: result});
+		const user = new User({
+			_id: result._id,
+			CC: result.CC,
+			name: result.name,
+			role: result.role,
+			estado: result.estado,
+			genero: result.genero,
+			birthdate: result.birthdate,
+			phoneNumber: result.phoneNumber
+		})
+		res.status(200).json({success: true, msg: user});
 	} catch (err) {
-		console.log(err);
-		res.status(404).json({success: false, msg: 'Dados incorretos!'});
+		if (err.code === 11000) { // utilizador ja existe
+			res.status(404).json({success: false, msg: 'O utilizador já se encontra registado!'});
+		} else {
+			console.log(err);
+			res.status(404).json({success: false, msg: 'Dados em falta, incorretos!'});
+		}
 	}
 }
 

@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
-const validator = require('validator')
 
 const GenderEnum = Object.freeze({
 	Male: 'male',
@@ -25,25 +24,34 @@ const RolesEnum = Object.freeze({
  */
 const userSchema = new mongoose.Schema({
 
-	CC: { 
-        type: String, 
-        unique: true, 
-        required: true,
-        // validate: value => {
-        //     if (!validator.isIdentityCard(value, 'PT')) {
-        //         throw new Error({error: 'Invalid Credit Card address'})
-        //     }
-        // }
-    },
-    password: { 
-        type: String, 
-        required: true 
-    },
+	CC: { type: String, unique: true, required: true,validate: {
+        validator: function(value) {
+            return new Promise( function (resolve, reject) {
+                const isValid = /^[0-9]{8} [0-9] [A-Z]{2}[0-9]$/.test(value);
+                if (isValid) {
+                    resolve(true);
+                } else {
+                    reject(new Error(`${value} não é um número de CC válido!`));
+                }
+            });
+        }
+    }},
+    password: { type: String, required: true, minlength: 6, maxlength: 36 },
     
-	name:{ type: String, required: true },
+    name:{ type: String, required: true },
 	genero: {type: String, required: true, enum: Object.values(GenderEnum)},
 	birthdate: {type: Date, required: true},
-	phoneNumber:{type: Number, required: true },
+    phoneNumber:{type: Number, required: true, validate: {
+        validator: function(value) {
+            return new Promise( function (resolve, reject) {
+                const isValid = /^(9[1236][0-9]) ?([0-9]{3}) ?([0-9]{3})$/.test(value);
+                if (isValid)
+                    resolve(true);
+                else
+                    reject(new Error(`${value} não é um número de telefone válido!`));
+            })
+        }
+    }},
 	role: { type: String, required: true, default: 'utente', enum: Object.values(RolesEnum)},
 	estado: {type: String, required:true, default: 'suspeito', enum: Object.values(StateEnum)},
 	deleted: {type: Boolean, default: false},
