@@ -26,6 +26,8 @@ requestrouter.put('/update/firstDate/:id', authorization(['admin', 'tecnico']),
     requestController.updateDataPrimeiroTeste);
 requestrouter.put('/update/firstTest/:id', authorization(['admin', 'tecnico']),
     requestController.updateResultadoPrimeiroTeste);
+    requestrouter.put('/update/secondDate/:id', authorization(['admin', 'tecnico']),
+    requestController.updateSegundaData);
 requestrouter.put('/update/secondTest/:id', authorization(['admin', 'tecnico']),
     requestController.updateResultadoSegundoTeste);
 

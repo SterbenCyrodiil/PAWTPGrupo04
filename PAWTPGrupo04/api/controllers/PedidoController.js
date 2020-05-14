@@ -97,14 +97,14 @@ const updateResultadoPrimeiroTeste = async (req, res) => {
 			if (pedido.dataInicial != null) { // Atualizar o resultado do primeiro teste só se existir a data indicada 
 
 				if (req.body.resultadoInicial === 'false' && req.body.dataFinal != null) { // Marcar a data para o segundo teste (48 horas de diferença) se o primeiro teste der negativo
-					if (((req.body.dataFinal - pedido.dataInicial) / 3, 600, 000) >= 48) {
+					if (((req.body.dataFinal - pedido.dataInicial) / 3600000) >= 48) {
 						await Pedido.findByIdAndUpdate(req.params.id, { resultadoInicial: req.body.resultadoInicial, dataFinal: req.body.dataFinal });
 						const updatedPedido = await Pedido.findById(req.params.id);
 						res.status(200).send({
 							old: pedido,
 							new: updatedPedido
 						});
-					}else{
+					} else {
 						res.status(404).send('O teste não foi agendado! Verifique a data enviada, o teste deve ser agendado com uma diferença de 48 horas...')
 					}
 				} else if (req.body.resultadoInicial === 'true') { // caso o primeiro teste seja positivo, dá-se o diagnóstico como fechado
@@ -130,6 +130,35 @@ const updateResultadoPrimeiroTeste = async (req, res) => {
 		res.status(400).send('Bad Request. Dados em falta!')
 	}
 
+}
+
+const updateSegundaData = async (req, res) => {
+	const pedido = await Pedido.findById(req.params.id);
+
+	if (!pedido) {
+		res.status(404).send('Pedido de Diagnóstico não existe!')
+	}
+	else if (pedido.casoFechado === true) {
+		res.status(404).send('Pedido de Diagnóstico já foi concluído!')
+	}
+	else if (!req.body.resultadoFinal) {
+		res.status(400).send('Bad Request. Dados em falta!')
+	} else {
+		if (pedido.dataInicial != null && pedido.resultadoInicial != null && pedido.casoFechado == false && pedido.dataFinal!=null) {
+			if (((req.body.dataFinal - pedido.dataInicial) / 3600000) >= 48) {
+				await Pedido.findByIdAndUpdate(req.params.id, { dataFinal: req.body.dataFinal });
+				const updatedPedido = await Pedido.findById(req.params.id);
+					res.status(200).send({
+						old: pedido,
+						new: updatedPedido
+					});
+			}else{
+				res.status(400).send('Bad Request. Dados mal colocados!')
+			}
+		}else{
+			res.status(404).send('Pedido de Diagnóstico não pode ser atualizado!')
+		}
+	}
 }
 
 const updateResultadoSegundoTeste = async (req, res) => {
@@ -265,5 +294,6 @@ module.exports = {
 	updateResultadoPrimeiroTeste,
 	updateResultadoSegundoTeste,
 	updateTecnicoResponsavel,
-	countPerDay
+	countPerDay,
+	updateSegundaData
 }
