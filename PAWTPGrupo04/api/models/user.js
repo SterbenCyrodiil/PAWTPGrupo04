@@ -69,9 +69,10 @@ userSchema.pre('save', async (next) => {
 /**
  * Disponibiliza um método para permitir comparar a password encriptada
  */
-userSchema.methods.comparePassword = async (passw) => {
+userSchema.methods.comparePassword = async function (passw) {
     return new Promise( async (resolve, reject) => {
         try {
+            console.log(passw, "\n",this.password)
             const isPasswValid = await bcrypt.compare(passw, this.password);
             resolve(isPasswValid);
         } catch(err) {
