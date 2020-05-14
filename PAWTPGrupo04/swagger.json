@@ -452,12 +452,38 @@
                 "responses": {
                     "200": {
                         "description": "Task Successful",
-                        "schema": {
-                            "$ref": "#/definitions/UserRequest"
+                        "content": {
+                            "application/json": {
+                                "type": "object",
+                                "properties": {
+                                    "success": {
+                                        "type": "boolean"
+                                    },
+                                    "msg": {
+                                        "type": "array",
+                                        "schema": {
+                                            "$ref": "#/definitions/UserRequest"
+                                        }
+                                    }
+                                }
+                            }
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not post user, check DB connections or data"
+                        "description": "Failure, couldn't not post user, check DB connections or data",
+                        "content": {
+                            "application/json": {
+                                "type": "object",
+                                "properties": {
+                                    "success": {
+                                        "type": "boolean"
+                                    },
+                                    "msg": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

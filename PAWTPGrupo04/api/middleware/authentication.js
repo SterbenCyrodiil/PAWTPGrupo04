@@ -1,13 +1,13 @@
 const jwt = require('jsonwebtoken')
 
-const sessionMiddleware = (req, res, next) => {
-	const sessionToken = req.cookies.session;
+const sessionMiddleware = (req, _, next) => {
+	const sessionToken = req.cookies.user_session;
     try {
 		if (sessionToken) {
 			const user_data = jwt.verify(sessionToken, process.env.JWT_SECRET);
 			req.user_data = user_data;
 		} else {
-            req.user_data = null;
+			req.user_data = null;
 			// res.status(401).send('Access Denied');
 		}
 	} catch(err) {
