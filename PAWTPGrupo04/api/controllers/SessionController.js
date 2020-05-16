@@ -35,8 +35,7 @@ const signInUser = async (req, res) => {
         }
     } catch (err) {
         console.log(err);
-        res.status(404).json({success: false, 
-            msg: 'Authentication failed. Something went wrong with your request.'});
+        res.json({success: false, msg: 'Authentication failed. Something went wrong with your request.'});
     }
 }
 
@@ -51,9 +50,7 @@ const signOutUser = (req, res) => {
     // Remover a cookie armazenada com a informação do Token de login
     // ## No futuro isto será alterado para utilização de headers possivelmente
     res.clearCookie('user_session')
-    res.status(200).json({ 
-        success: 'true' 
-    })
+    res.status(200).send("User signed out successfully.");
 }
 
 module.exports = {

@@ -1,14 +1,38 @@
 const Pedido = require('../models/pedido')
 
 const fillPedido = async (req, res) => {
-	const requestData = req.body
-	const result = await new Pedido(requestData).save()
-	res.send(result)
+	try {
+		console.log("BODY DATA", req.body);
+		// ## Guardar só informação correta, uma vez que pode chegar qualquer coisa pelo body
+		const requestData = {
+			idRequest: req.body.id, CCutente: req.body.CCutente,
+			trabalhadorDeRisco: req.body.trabalhadorDeRisco,
+			grupoDeRisco: req.body.grupoDeRisco,
+			encaminhado_saude24: req.body.encaminhado_saude24
+		}
+		const result = await new Pedido(requestData).save();
+		console.log("SAVED DATA", result);
+		// ## Enviar de volta só informação relevante, evitando reenviar informação sensível ou irrelevante
+		const request = {
+			idRequest: result.idRequest, CCutente: result.CCutente,
+			trabalhadorDeRisco: result.trabalhadorDeRisco,
+			grupoDeRisco: result.grupoDeRisco,
+			encaminhado_saude24: result.encaminhado_saude24
+		}
+		res.status(200).json({success: true, data: request});
+	} catch (err) {
+		console.log(err);
+		if (err.code === 11000) {
+			res.json({success: false, msg: 'O pedido já se encontra registado!'});
+		} else {
+			res.json({success: false, msg: 'Dados em falta, incorretos!'});
+		}
+	}
 }
 
 const getAllPedidos = async (req, res) => {
 	const request = await Pedido.find();
-	res.send(request);
+	res.status(200).send(request);
 }
 
 const getPedidobyID = async (req, res) => {
@@ -17,36 +41,45 @@ const getPedidobyID = async (req, res) => {
 			.catch((e) => {
 				return null
 			})
-		res.send(request)
+		res.status(200).send(request)
 	} catch (e) {
 		console.error(e)
-		res.status(404)
 		res.send(null)
 	}
 }
 
 const getUserPedido = async (req, res) => {
-	const request = await Pedido.find({ CCutente: req.params.id })
-	res.send(request)
-}
-
-//Qualquer update básico funciona neste método. Podemos modificar partes do body consoante certas condições. O objetivo principal aqui é alterar os resultados e fechar o caso.
-const updatePedido = async (req, res) => {
-	try {
-		const outdadRequest = await Pedido.findByIdAndUpdate(
-			req.params.id,
-			req.body)
-		const updatedRequest = await Pedido.findById(req.params.id)
-		res.send({
-			old: outdadRequest,
-			new: updatedRequest
-		})
-	} catch (e) {
-		console.log(e)
-		res.status(404)
-		res.send(null)
+	// ## Só será possível retornar a informação se o próprio utilizador estiver com a sessão ativa ou o utilizador é um admin
+	if (req.user_data !== 'admin' && req.params.id !== req.user_data.CC) {
+		res.status(403).send('Necessário ter a sessão iniciada deste utilizador para retornar os dados');
+	} else {
+		try {
+			const request = await Pedido.find({ CCutente: req.params.id })
+			res.status(200).send(request)
+		} catch (e) {
+			console.log(err)
+			res.send(null)
+		}
 	}
 }
+
+// ## Este método permitiria atualizar os dados de um pedido, no entanto foi substituido ## Deprecated
+// const updatePedido = async (req, res) => {
+// 	try {
+// 		const outdadRequest = await Pedido.findByIdAndUpdate(
+// 			req.params.id,
+// 			req.body)
+// 		const updatedRequest = await Pedido.findById(req.params.id)
+// 		res.send({
+// 			old: outdadRequest,
+// 			new: updatedRequest
+// 		})
+// 	} catch (e) {
+// 		console.log(e)
+// 		res.status(404)
+// 		res.send(null)
+// 	}
+// }
 
 const updateDataPrimeiroTeste = async (req, res) => {
 	const pedido = await Pedido.findById(req.params.id); // guardar o pedido que vai ser atualizado
@@ -58,7 +91,7 @@ const updateDataPrimeiroTeste = async (req, res) => {
 		res.status(404).send('Pedido de Diagnóstico já foi concluído!')
 	}
 	else if (!req.body.dataInicial) {
-		res.status(400).send('Bad Request. Dados em falta!')
+		res.status(400).send('Bad Request. Dados sobre a data do teste em falta!')
 	}
 	else {
 		try {
@@ -78,7 +111,7 @@ const updateDataPrimeiroTeste = async (req, res) => {
 
 		} catch (e) {
 			console.log(e);
-			res.status(404).end();
+			res.send(null);
 		}
 	}
 }
@@ -86,6 +119,7 @@ const updateDataPrimeiroTeste = async (req, res) => {
 const updateResultadoPrimeiroTeste = async (req, res) => {
 	const pedido = await Pedido.findById(req.params.id); // guardar o pedido que vai ser atualizado
 	console.log(req.body.resultadoInicial, "\n", typeof req.body.resultadoInicial)
+
 	if (!pedido) {
 		res.status(404).send('Pedido de Diagnóstico não existe!')
 	}
@@ -104,7 +138,7 @@ const updateResultadoPrimeiroTeste = async (req, res) => {
 							new: updatedPedido
 						});
 					} else {
-						res.status(404).send('O teste não foi agendado! Verifique a data enviada, o teste deve ser agendado com uma diferença de 48 horas...')
+						res.status(404).send('O teste não foi agendado! A diferença de datas não deverá ser superior a 48 horas!')
 					}
 				} else if (req.body.resultadoInicial === 'true') { // caso o primeiro teste seja positivo, dá-se o diagnóstico como fechado
 					await Pedido.findByIdAndUpdate(req.params.id, { resultadoInicial: req.body.resultadoInicial, casoFechado: true, infetado: true });
@@ -114,7 +148,7 @@ const updateResultadoPrimeiroTeste = async (req, res) => {
 						new: updatedPedido
 					});
 				} else {
-					res.status(400).send('Bad Request. Dados em falta!');
+					res.status(400).send('Bad Request. Dados sobre data do teste em falta!');
 				}
 
 			} else {
@@ -122,11 +156,11 @@ const updateResultadoPrimeiroTeste = async (req, res) => {
 			}
 		} catch (e) {
 			console.log(e);
-			res.status(404).end();
+			res.send(null);
 		}
 	}
 	else {
-		res.status(400).send('Bad Request. Dados em falta!')
+		res.status(400).send('Bad Request. Dados sobre o resultado do teste em falta!')
 	}
 
 }
@@ -141,9 +175,9 @@ const updateSegundaData = async (req, res) => {
 		res.status(404).send('Pedido de Diagnóstico já foi concluído!')
 	}
 	else if (!req.body.dataFinal) {
-		res.status(400).send('Bad Request. Dados em falta!')
+		res.status(400).send('Bad Request. Dados sobre a data do teste em falta!')
 	} else {
-		if (pedido.dataInicial != null && pedido.dataFinal!=null) {
+		if (pedido.dataInicial != null && pedido.dataFinal != null) {
 			if (((new Date (req.body.dataFinal).getTime() - pedido.dataInicial.getTime()) / 3600000) >= 48) {
 				await Pedido.findByIdAndUpdate(req.params.id, { dataFinal: req.body.dataFinal });
 				const updatedPedido = await Pedido.findById(req.params.id);
@@ -151,10 +185,10 @@ const updateSegundaData = async (req, res) => {
 						old: pedido,
 						new: updatedPedido
 					});
-			}else{
-				res.status(400).send('Bad Request. Dados mal colocados!')
+			} else {
+				res.status(404).send('A diferença de datas não deverá ser superior a 48 horas!')
 			}
-		}else{
+		} else {
 			res.status(404).send('Pedido de Diagnóstico não pode ser atualizado!')
 		}
 	}
@@ -169,7 +203,7 @@ const updateResultadoSegundoTeste = async (req, res) => {
 		res.status(404).send('Pedido de Diagnóstico já foi concluído!')
 	}
 	else if (!req.body.resultadoFinal) {
-		res.status(400).send('Bad Request. Dados em falta!')
+		res.status(400).send('Bad Request. Dados sobre o resultado do teste em falta!')
 	}
 	else {
 		try {
@@ -188,123 +222,125 @@ const updateResultadoSegundoTeste = async (req, res) => {
 				});
 			}
 			else {
-				res.status(404).send('O teste não foi agendado!');
+				res.status(404).send('O teste não pôde ser agendado!');
 			}
 
 		} catch (e) {
 			console.log(e);
-			res.status(404).end();
+			res.send(null);
 		}
 	}
 }
 
 const updateTecnicoResponsavel = async (req, res) => {
-	//lógicas de negócio aqui
 	if (req.body.tecnicoResponsavel !== null) {
 		try {
 			const outdadRequest = await Pedido.findByIdAndUpdate(
 				req.params.id,
 				{ tecnicoResponsavel: req.body.tecnicoResponsavel })
 			const updatedRequest = await Pedido.findById(req.params.id)
-			res.send({
+			res.status(200).send({
 				old: outdadRequest,
 				new: updatedRequest
 			})
 		} catch (e) {
 			console.log(e)
-			res.status(404)
 			res.send(null)
 		}
+	} else {
+		res.status(400).send('Bad Request. Dados sobre o tecnico em falta!');
 	}
 }
 
 const updateFilePath = async (req, res) => {
 	const pedido = await Pedido.findById(req.params.id);
-	console.log(pedido.casoFechado)
-	if(pedido.casoFechado==false){
-		res.status(404).send('O teste não está concluído!');
-	}else if (req.body.filepath) {
+
+	if (pedido.casoFechado === false) {
+		res.status(404).send('O diagnóstico ainda não foi concluído!');
+	} else if (req.body.filepath) {
 		try {
 			const outdatedRequest = await Pedido.findByIdAndUpdate(
 				req.params.id,
 				{ filepath: req.body.filepath })
 			const updatedRequest = await Pedido.findById(req.params.id)
-			res.send({
+			res.status(200).send({
 				old: outdatedRequest,
 				new: updatedRequest
 			})
 		} catch (e) {
 			console.log(e)
-			res.status(404)
-			res.send(null)
+			res.status(404).send(null);
 		}
-	}else{
-		res.status(404).send('O teste não foi agendado!');
+	} else {
+		res.status(400).send('Bad Request. Dados sobre o ficheiro em falta!');
 	}
 }
 
 const deletePedido = async (req, res) => {
 	try {
-		const outdadRequest = await Pedido.findByIdAndUpdate(
-			req.params.id,
-			{ deleted: true })
-		const updatedRequest = await Pedido.findById(req.params.id)
-		res.send({
-			old: outdadRequest,
-			new: updatedRequest
-		})
+		let oldRequestInfo = await Pedido.findById(req.params.id);
+
+		if (oldRequestInfo.deleted === true) {
+			res.status(404).send('Pedido já foi eliminado!');
+		} else {
+			oldRequestInfo = await Pedido.findByIdAndUpdate(
+				req.params.id, { deleted: true })
+			res.status(200).send({
+				old: oldRequestInfo
+			})
+		}
 	} catch (e) {
 		console.log(e)
-		res.status(404)
 		res.send(null)
 	}
 }
 
 const getSaude24Pedidos = async (req, res) => {
 	const request = await Pedido.find({ encaminhado_saude24: true })
-	res.send(request)
+	res.status(200).send(request)
 }
 
 const getGrupoRiscoPedidos = async (req, res) => {
 	const request = await Pedido.find({ grupoDeRisco: true })
-	res.send(request)
+	res.status(200).send(request)
 }
 
 const getTrabalhadoresRisco = async (req, res) => {
 	const request = await Pedido.find({ trabalhadorDeRisco: true })
-	res.send(request)
+	res.status(200).send(request)
 }
 
 const getInfetados = async (req, res) => {
 	const request = await Pedido.find({ infetado: true })
-	res.send(request)
+	res.status(200).send(request)
 }
 
 const getCasosAbertos = async (req, res) => {
 	const request = await Pedido.find({ casofechado: false })
-	res.send(request)
+	res.status(200).send(request)
 }
 
 const getPositivos = async (req, res) => {
 	const request = await Pedido.find({ casoFechado: true, infetado: true })
-	res.send(request)
+	res.status(200).send(request)
 }
 
 const getNegativos = async (req, res) => {
-	const request = await Pedido.find({ casoFechado: true, infetado: false })//({ $or: [{ casoFechado: true, resultadoInicial: false }, { casoFechado: true, resultadoInicial: true, resultadoFinal: false }] })
-	res.send(request)
+	//({ $or: [{ casoFechado: true, resultadoInicial: false }, { casoFechado: true, resultadoInicial: true, resultadoFinal: false }] })
+	const request = await Pedido.find({ casoFechado: true, infetado: false })
+	res.status(200).send(request)
 }
 
 const countPerDay = async (req, res) => {
 	const request = await Pedido.countDocuments({ $or: [{ dataInicial: req.body.id }, { dataFinal: req.body.id }] })
-	res.send(request)
+	res.status(200).send(request)
 }
 
 module.exports = {
+	// updatePedido, ## Deprecated
 	fillPedido,
 	getAllPedidos,
 	getPedidobyID,
-	updatePedido,
 	getUserPedido,
 	deletePedido,
 	getSaude24Pedidos,

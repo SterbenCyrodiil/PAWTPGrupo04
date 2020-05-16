@@ -6,28 +6,24 @@
         "description": ""
     },
     "host": "localhost:3000",
-    "basePath": "/",
+    "basePath": "/rest",
     "tags": [
         {
+            "name": "Session",
+            "description": "JWT token session"
+        },
+        {
             "name": "Users",
-            "description": "All Users of the platform, both workers and patients"
+            "description": "All Users of the platform, both 'utente', 'tecnico' and 'admin'"
         },
         {
             "name": "Pedidos",
-            "description": "Requests made by oatients to be  handled by the workers"
+            "description": "Requests made by 'utente's to be handled by the workers"
         }
     ],
     "schemes": [
         "http"
     ],
-    "securityDefinitions": {
-        "JWT": {
-            "type": "apiKey",
-            "name": "user_session",
-            "description": "JWT authorization of an API",
-            "in": "cookie"
-        }
-    },
     "consumes": [
         "application/json"
     ],
@@ -35,6 +31,89 @@
         "application/json"
     ],
     "paths": {
+        "/sign-in": {
+            "post": {
+                "tags": [
+                    "Session"
+                ],
+                "summary": "Allow a user to sign-in with a registered account",
+                "description": "Check if account exists and if credentials are correct, creating a JWT token session",
+                "parameters": [
+                    {
+                        "name": "userAuthInfo",
+                        "in": "body",
+                        "description": "User Citizen Card number (works as username) and Password",
+                        "schema": {
+                            "$ref": "#definitions/AuthInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns success with the JWT token",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "description": "Boolean telling the operation success",
+                                    "type": "boolean"
+                                },
+                                "token": {
+                                    "description": "The generated JWT token for this session",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "User was not authenticated",
+                        "schema": {
+                            "$ref": "#definitions/JsonError"
+                        }
+                    },
+                    "404": {
+                        "description": "Issues while authenticating user",
+                        "schema": {
+                            "$ref": "#definitions/JsonError"
+                        }
+                    }
+                }
+            }
+        },
+        "/sign-out": {
+            "post": {
+                "tags": [
+                    "Session"
+                ],
+                "summary": "Allow a user to sign-out of it's session",
+                "description": "Signals clearing of the JWT session token",
+                "responses": {
+                    "200": {
+                        "description": "Returns a success message",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/user-profile": {
+            "get": {
+                "tags": [
+                    "Session"
+                ],
+                "summary": "Returns profile data related to the session's User",
+                "description": "If there is a user in session, returns it's model details",
+                "responses": {
+                    "200": {
+                        "description": "User profile data",
+                        "schema": {
+                            "$ref": "#definitions/UserInfo"
+                        }
+                    }
+                }
+            }
+        },
         "/request": {
             "get": {
                 "tags": [
@@ -45,11 +124,11 @@
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/RequestResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#definitions/PedidoInfo"
+                            }
                         }
-                    },
-                    "404": {
-                        "description": "Failure, couldn't not find requests, check DB connections"
                     }
                 }
             },
@@ -57,16 +136,39 @@
                 "tags": [
                     "Pedidos"
                 ],
-                "summary": "Get all the requests in the DB",
+                "summary": "Create and save a new Request",
+                "description": "Checks if the User is an 'utente' and if the request already exists, then saves the correct data do the DB",
+                "parameters": [
+                    {
+                        "name": "PedidoInfo",
+                        "in": "body",
+                        "description": "Required information to create a new Pedido",
+                        "schema": {
+                            "$ref": "#definitions/PedidoRequiredInfo"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/RequestRequest"
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "description": "Boolean telling the operation success",
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "$ref": "#definitions/PedidoRequiredInfo"
+                                }
+                            }
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not post requests, check DB connections or data"
+                        "description": "Failure, couldn't create request",
+                        "schema": {
+                            "$ref": "#definitions/JsonError"
+                        }
                     }
                 }
             }
@@ -86,32 +188,16 @@
                     "Pedidos"
                 ],
                 "summary": "Get the specific request via ID",
+                "description": "Finds the Request related to the 'id' parameter and returns it's information",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/RequestResponse"
+                            "$ref": "#definitions/PedidoInfo"
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not find requests, check DB connections"
-                    }
-                }
-            },
-            "put": {
-                "tags": [
-                    "Pedidos"
-                ],
-                "summary": "Update the specific request via the ID",
-                "responses": {
-                    "200": {
-                        "description": "Task Successful",
-                        "schema": {
-                            "$ref": "#/definitions/RequestUpdate"
-                        }
-                    },
-                    "404": {
-                        "description": "Failure, couldn't not update request, check DB connections or data"
+                        "description": "Failure, could not find request"
                     }
                 }
             },
@@ -120,15 +206,16 @@
                     "Pedidos"
                 ],
                 "summary": "Marks a specific entry in the DB for deletion, signaling for the DB manager",
+                "description": "Finds the Request related to the 'id' parameter and performs the delete task",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/RequestUpdate"
+                            "$ref": "#definitions/PedidoInfo"
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not update request, check DB connections or data"
+                        "description": "Failure, something went wrong. Request may already been deleted."
                     }
                 }
             }
@@ -138,16 +225,19 @@
                 "tags": [
                     "Pedidos"
                 ],
-                "summary": "Get request in DB which users were send by Saude24 ",
+                "summary": "Get requests in DB in which users were sent by Saude24",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/RequestResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#definitions/PedidoInfo"
+                            }
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        "description": "Failure, could not find requests, check DB connections or DB data"
                     }
                 }
             }
@@ -157,16 +247,19 @@
                 "tags": [
                     "Pedidos"
                 ],
-                "summary": "Get request in DB in which users belong to a Risk Group ",
+                "summary": "Get requests in DB in which users belong to a Risk Group",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/RequestResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#definitions/PedidoInfo"
+                            }
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        "description": "Failure, could not find requests, check DB connections or DB data"
                     }
                 }
             }
@@ -176,16 +269,19 @@
                 "tags": [
                     "Pedidos"
                 ],
-                "summary": "Get request in DB in which users work in a  Risk job ",
+                "summary": "Get requests in DB in which users work in a Risk job",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/RequestResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#definitions/PedidoInfo"
+                            }
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        "description": "Failure, could not find requests, check DB connections or DB data"
                     }
                 }
             }
@@ -195,16 +291,19 @@
                 "tags": [
                     "Pedidos"
                 ],
-                "summary": "Get request in DB in which users were infected at the time of the request ",
+                "summary": "Get requests in DB in which users were infected at the time of the request",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/RequestResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#definitions/PedidoInfo"
+                            }
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        "description": "Failure, could not find requests, check DB connections or DB data"
                     }
                 }
             }
@@ -214,16 +313,19 @@
                 "tags": [
                     "Pedidos"
                 ],
-                "summary": "Get request in DB in which users were found positive",
+                "summary": "Get requests in DB in which users were found positive",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/RequestResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#definitions/PedidoInfo"
+                            }
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        "description": "Failure, could not find requests, check DB connections or DB data"
                     }
                 }
             }
@@ -233,16 +335,19 @@
                 "tags": [
                     "Pedidos"
                 ],
-                "summary": "Get request in DB in which users were found negative ",
+                "summary": "Get requests in DB in which users were found negative",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/RequestResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#definitions/PedidoInfo"
+                            }
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        "description": "Failure, could not find requests, check DB connections or DB data"
                     }
                 }
             }
@@ -253,7 +358,7 @@
                     "name": "id",
                     "in": "path",
                     "required": true,
-                    "description": "Targeted Date to get count",
+                    "description": "Date related to the day to search",
                     "type": "string"
                 }
             ],
@@ -261,16 +366,16 @@
                 "tags": [
                     "Pedidos"
                 ],
-                "summary": "Get request in DB belonging to a certain user",
+                "summary": "Get the total number of Tests made in a certain day",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": ""
+                            "type": "number"
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        "description": "Failure, check if parameters are well written!"
                     }
                 }
             }
@@ -281,7 +386,7 @@
                     "name": "id",
                     "in": "path",
                     "required": true,
-                    "description": "CC (personal-id) of the targeted user",
+                    "description": "CC (Citizen Card number) of the targeted user",
                     "type": "string"
                 }
             ],
@@ -289,16 +394,23 @@
                 "tags": [
                     "Pedidos"
                 ],
-                "summary": "Get request in DB belonging to a certain user",
+                "summary": "Get requests in DB belonging to a certain user",
+                "description": "Gets the requests only if the user has it's session active, or the user is an 'admin'",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/RequestResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#definitions/PedidoInfo"
+                            }
                         }
                     },
+                    "403": {
+                        "description": "User doesn't have the session active or is not an 'admin'"
+                    },
                     "404": {
-                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        "description": "Failure, could not find requests, check DB connections or DB data"
                     }
                 }
             }
@@ -309,7 +421,7 @@
                     "name": "id",
                     "in": "path",
                     "required": true,
-                    "description": "Personal ID",
+                    "description": "Request identification (Mongo ObjectID)",
                     "type": "string"
                 }
             ],
@@ -317,19 +429,19 @@
                 "tags": [
                     "Pedidos"
                 ],
-                "summary": "Update the first date in a specific Request",
+                "summary": "Updates the first test date of a specific Request",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/RequestUpdate"
+                            "$ref": "#definitions/PedidoUpdate"
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        "description": "Failure, something went wrong while trying to update the request. Check returned message!"
                     },
                     "400": {
-                        "description": "Failure, could not process given information"
+                        "description": "Failure, missing information"
                     }
                 }
             }
@@ -340,7 +452,7 @@
                     "name": "id",
                     "in": "path",
                     "required": true,
-                    "description": "Personal ID",
+                    "description": "Request identification (Mongo ObjectID)",
                     "type": "string"
                 }
             ],
@@ -348,19 +460,20 @@
                 "tags": [
                     "Pedidos"
                 ],
-                "summary": "Puts the results of the first test in the required request, schedules the next if negative ",
+                "summary": "Updates the first Test result of a Request",
+                "description": "A second Test may be scheduled if the result is 'false'. In this case the second Test date is mandatory. Otherwise, diagnosis is finished",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/RequestUpdate"
+                            "$ref": "#definitions/PedidoUpdate"
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        "description": "Failure, something went wrong while trying to update the request. Check returned message!"
                     },
                     "400": {
-                        "description": "Failure, could not process given information"
+                        "description": "Failure, missing information"
                     }
                 }
             }
@@ -371,7 +484,7 @@
                     "name": "id",
                     "in": "path",
                     "required": true,
-                    "description": "Personal ID",
+                    "description": "Request identification (Mongo ObjectID)",
                     "type": "string"
                 }
             ],
@@ -379,19 +492,19 @@
                 "tags": [
                     "Pedidos"
                 ],
-                "summary": "Update the second date in a specific Request",
+                "summary": "Updates the second Test date of a specific Request",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/RequestUpdate"
+                            "$ref": "#definitions/PedidoUpdate"
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        "description": "Failure, something went wrong while trying to update the request. Check returned message!"
                     },
                     "400": {
-                        "description": "Failure, could not process given information"
+                        "description": "Failure, missing information"
                     }
                 }
             }
@@ -402,7 +515,7 @@
                     "name": "id",
                     "in": "path",
                     "required": true,
-                    "description": "Personal ID",
+                    "description": "Request identification (Mongo ObjectID)",
                     "type": "string"
                 }
             ],
@@ -410,19 +523,20 @@
                 "tags": [
                     "Pedidos"
                 ],
-                "summary": "Puts the results of the second test in the required request, marks the patients diagnosis ",
+                "summary": "Updates the second Test result of a Request",
+                "description": "After this Test the diagnosis if finished. A new Request needs to be made if more Tests are needed",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/RequestUpdate"
+                            "$ref": "#definitions/PedidoUpdate"
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        "description": "Failure, something went wrong while trying to update the request. Check returned message!"
                     },
                     "400": {
-                        "description": "Failure, could not process given information"
+                        "description": "Failure, missing information"
                     }
                 }
             }
@@ -433,7 +547,7 @@
                     "name": "id",
                     "in": "path",
                     "required": true,
-                    "description": "Personal ID",
+                    "description": "Request identification (Mongo ObjectID)",
                     "type": "string"
                 }
             ],
@@ -441,19 +555,19 @@
                 "tags": [
                     "Pedidos"
                 ],
-                "summary": "Update the filepath in the DB instance",
+                "summary": "Updates the PDF file name related to the conclusion of this Request",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/RequestUpdate"
+                            "$ref": "#definitions/PedidoUpdate"
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        "description": "Failure, something went wrong while trying to update the request. Check returned message!"
                     },
                     "400": {
-                        "description": "Failure, could not process given information"
+                        "description": "Failure, missing information"
                     }
                 }
             }
@@ -464,7 +578,7 @@
                     "name": "id",
                     "in": "path",
                     "required": true,
-                    "description": "Personal ID",
+                    "description": "Request identification (Mongo ObjectID)",
                     "type": "string"
                 }
             ],
@@ -472,19 +586,19 @@
                 "tags": [
                     "Pedidos"
                 ],
-                "summary": "Puts the technician id in the attributed request",
+                "summary": "Updates the Worker ('tecnico') who's in charge of this Request",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/RequestUpdate"
+                            "$ref": "#definitions/PedidoUpdate"
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        "description": "Failure, something went wrong while trying to update the request. Check returned message!"
                     },
                     "400": {
-                        "description": "Failure, could not process given information"
+                        "description": "Failure, missing information"
                     }
                 }
             }
@@ -499,11 +613,14 @@
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/UserResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#definitions/UserInfo"
+                            }
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not find users, check DB connections"
+                        "description": "Failure, could not find users, check DB connections"
                     }
                 }
             },
@@ -511,41 +628,38 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "Post a user to the DB",
+                "summary": "Create and save a new User into de DB",
+                "description": "Checks if the User CC already exists, then saves the correct data do the DB",
+                "parameters": [
+                    {
+                        "name": "userInfo",
+                        "in": "body",
+                        "description": "Required information to create a new User",
+                        "schema": {
+                            "$ref": "#definitions/UserRequiredInfo"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Task Successful",
-                        "content": {
-                            "application/json": {
-                                "type": "object",
-                                "properties": {
-                                    "success": {
-                                        "type": "boolean"
-                                    },
-                                    "msg": {
-                                        "type": "array",
-                                        "schema": {
-                                            "$ref": "#/definitions/UserRequest"
-                                        }
-                                    }
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "description": "Boolean telling the operation success",
+                                    "type": "boolean"
+                                },
+                                "data": {
+                                    "$ref": "#definitions/UserInfo"
                                 }
                             }
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not post user, check DB connections or data",
-                        "content": {
-                            "application/json": {
-                                "type": "object",
-                                "properties": {
-                                    "success": {
-                                        "type": "boolean"
-                                    },
-                                    "msg": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
+                        "description": "Failure, couldn't create User",
+                        "schema": {
+                            "$ref": "#definitions/JsonError"
                         }
                     }
                 }
@@ -556,16 +670,19 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "Gets All Pacients",
+                "summary": "Gets all Users with role 'utente'",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/UserResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#definitions/UserUtenteInfo"
+                            }
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        "description": "Failure, could not find users, check DB connections or DB data"
                     }
                 }
             }
@@ -575,16 +692,19 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "Gets All Pacients",
+                "summary": "Gets all Users with role 'tecnico'",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/UserResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#definitions/UserTecnicoInfo"
+                            }
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        "description": "Failure, could not find users, check DB connections or DB data"
                     }
                 }
             }
@@ -595,7 +715,7 @@
                     "name": "id",
                     "in": "path",
                     "required": true,
-                    "description": "User CC-id",
+                    "description": "User 'utente' CC-id",
                     "type": "string"
                 }
             ],
@@ -603,16 +723,16 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "Gets a certain Pacient using its CC-id",
+                "summary": "Gets a certain User 'utente' using its CC-id",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/UserResponse"
+                            "$ref": "#definitions/UserUtenteInfo"
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        "description": "Failure, could not find user, check DB connections or DB data"
                     }
                 }
             }
@@ -623,7 +743,7 @@
                     "name": "id",
                     "in": "path",
                     "required": true,
-                    "description": "Worker CC-id",
+                    "description": "User 'tecnico' CC-id",
                     "type": "string"
                 }
             ],
@@ -631,16 +751,16 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "Gets a certain Worker using its CC-id",
+                "summary": "Gets a certain User 'tecnico' using its CC-id",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/UserResponse"
+                            "$ref": "#definitions/UserTecnicoInfo"
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        "description": "Failure, could not find user, check DB connections or DB data"
                     }
                 }
             }
@@ -651,7 +771,7 @@
                     "name": "id",
                     "in": "path",
                     "required": true,
-                    "description": "User MongoDB id",
+                    "description": "User MongoDB ObjectId",
                     "type": "string"
                 }
             ],
@@ -659,16 +779,16 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "Gets a certain Pacient using its MongoDB id",
+                "summary": "Gets a certain User using its MongoDB ObjectId",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/UserResponse"
+                            "$ref": "#definitions/UserInfo"
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        "description": "Failure, could not find user, check DB connections or DB data"
                     }
                 }
             },
@@ -676,16 +796,20 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "Updates a certain user with its MongoDB ID",
+                "summary": "Updates a certain User searching by it's ID",
+                "description": "Only updates if the ID refers to a User with the session active or the logged User is an 'admin'",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/UserUpdate"
+                            "$ref": "#definitions/UserUpdate"
                         }
                     },
+                    "403": {
+                        "description": "Logged User doesn't have the same ID has de parameter or is not an 'admin'"
+                    },
                     "404": {
-                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        "description": "Failure, could not find user, check DB connections or DB data"
                     }
                 }
             },
@@ -693,16 +817,17 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "Marks a certain user for deletion",
+                "summary": "Marks a User entry in the DB for deletion, signaling for the DB manager",
+                "description": "Finds the User related to the 'id' parameter and performs the delete task",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/UserResponse"
+                            "$ref": "#definitions/UserInfo"
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        "description": "Failure, something went wrong. User may have already been deleted."
                     }
                 }
             }
@@ -726,304 +851,262 @@
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#/definitions/UserResponse"
+                            "$ref": "#definitions/UserInfo"
                         }
                     },
                     "404": {
-                        "description": "Failure, couldn't not find requests, check DB connections or DB data"
+                        "description": "Failure, could not find requests, check DB connections or DB data"
                     }
                 }
             }
         }
     },
     "definitions": {
-        "RequestReponse": {
+        "JsonError": {
+            "type": "object",
             "properties": {
-                "idRequest": {
+                "success": {
+                    "description": "Boolean telling the operation success",
+                    "type": "boolean"
+                },
+                "msg": {
+                    "description": "The error message",
                     "type": "string"
-                },
-                "dataInicial": {
-                    "type": "date"
-                },
-                "dataFinal": {
-                    "type": "date"
-                },
-                "tecnicoResponsavel": {
-                    "type": "number"
-                },
-                "CCutente": {
-                    "type": "string"
-                },
-                "trabalhadorDeRisco": {
-                    "type": "boolean"
-                },
-                "grupoDeRisco": {
-                    "type": "boolean"
-                },
-                "encaminhado_saude24": {
-                    "type": "boolean"
-                },
-                "resultadoInicial": {
-                    "type": "boolean"
-                },
-                "resultadoFinal": {
-                    "type": "boolean"
-                },
-                "casoFechado": {
-                    "type": "boolean"
-                },
-                "deleted": {
-                    "type": "boolean"
-                },
-                "updated_at": {
-                    "type": "date"
                 }
             }
         },
-        "RequestRequest": {
-            "required": [
-                "idRequest",
-                "CCutente",
-                "trabalhadorDeRisco",
-                "grupoDeRisco",
-                "encaminhado_saude24"
-            ],
-            "properties": {
-                "idRequest": {
-                    "type": "string",
-                    "uniqueItems": true
-                },
-                "dataInicial": {
-                    "type": "date"
-                },
-                "dataFinal": {
-                    "type": "date"
-                },
-                "tecnicoResponsavel": {
-                    "type": "number"
-                },
-                "CCutente": {
-                    "type": "string"
-                },
-                "trabalhadorDeRisco": {
-                    "type": "boolean"
-                },
-                "grupoDeRisco": {
-                    "type": "boolean"
-                },
-                "encaminhado_saude24": {
-                    "type": "boolean"
-                },
-                "resultadoInicial": {
-                    "type": "boolean"
-                },
-                "resultadoFinal": {
-                    "type": "boolean"
-                },
-                "casoFechado": {
-                    "type": "boolean"
-                },
-                "deleted": {
-                    "type": "boolean"
-                },
-                "updated_at": {
-                    "type": "date"
-                }
-            }
-        },
-        "RequestUpdate": {
-            "properties": {
-                "old": {
-                    "idRequest": {
-                        "type": "string"
-                    },
-                    "dataInicial": {
-                        "type": "date"
-                    },
-                    "dataFinal": {
-                        "type": "date"
-                    },
-                    "tecnicoResponsavel": {
-                        "type": "number"
-                    },
-                    "CCutente": {
-                        "type": "string"
-                    },
-                    "trabalhadorDeRisco": {
-                        "type": "boolean"
-                    },
-                    "grupoDeRisco": {
-                        "type": "boolean"
-                    },
-                    "encaminhado_saude24": {
-                        "type": "boolean"
-                    },
-                    "resultadoInicial": {
-                        "type": "boolean"
-                    },
-                    "resultadoFinal": {
-                        "type": "boolean"
-                    },
-                    "casoFechado": {
-                        "type": "boolean"
-                    },
-                    "deleted": {
-                        "type": "boolean"
-                    },
-                    "updated_at": {
-                        "type": "date"
-                    }
-                },
-                "new": {
-                    "idRequest": {
-                        "type": "string"
-                    },
-                    "dataInicial": {
-                        "type": "date"
-                    },
-                    "dataFinal": {
-                        "type": "date"
-                    },
-                    "tecnicoResponsavel": {
-                        "type": "number"
-                    },
-                    "CCutente": {
-                        "type": "string"
-                    },
-                    "trabalhadorDeRisco": {
-                        "type": "boolean"
-                    },
-                    "grupoDeRisco": {
-                        "type": "boolean"
-                    },
-                    "encaminhado_saude24": {
-                        "type": "boolean"
-                    },
-                    "resultadoInicial": {
-                        "type": "boolean"
-                    },
-                    "resultadoFinal": {
-                        "type": "boolean"
-                    },
-                    "casoFechado": {
-                        "type": "boolean"
-                    },
-                    "deleted": {
-                        "type": "boolean"
-                    },
-                    "updated_at": {
-                        "type": "date"
-                    }
-                }
-            }
-        },
-        "UserReponse": {
+        "AuthInfo": {
+            "type": "object",
             "properties": {
                 "CC": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "genero": {
-                    "type": "string"
-                },
-                "phoneNumber": {
-                    "type": "number"
-                },
-                "birthdate": {
-                    "type": "date"
-                },
-                "estado": {
-                    "type": "string"
-                },
-                "role": {
-                    "type": "string"
-                }
-            }
-        },
-        "UserRequest": {
-            "required": [
-                "CC",
-                "password",
-                "name",
-                "genero",
-                "birthdate",
-                "phoneNumber",
-                "role",
-                "estado"
-            ],
-            "properties": {
-                "CC": {
+                    "description": "User citizen card number (works as username)",
                     "type": "string"
                 },
                 "password": {
+                    "description": "User password",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "CC",
+                "password"
+            ]
+        },
+
+        "UserRequiredInfo": {
+            "type": "object",
+            "properties": {
+                "CC": {
+                    "description": "Citizen Card number pt-PT",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "User password",
                     "type": "string"
                 },
                 "name": {
+                    "description": "User name",
                     "type": "string"
                 },
                 "genero": {
+                    "description": "User gender",
                     "type": "string"
                 },
-                "phoneNumber": {
-                    "type": "number"
-                },
                 "birthdate": {
+                    "description": "User birthdate",
                     "type": "date"
                 },
+                "phoneNumber": {
+                    "description": "User phone number",
+                    "type": "string"
+                }
+            }
+        },
+        "UserUtenteInfo": {
+            "type": "object",
+            "properties": {
+                "CC": {
+                    "description": "Citizen Card number pt-PT",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "User name",
+                    "type": "string"
+                },
+                "genero": {
+                    "description": "User gender",
+                    "type": "string"
+                },
+                "birthdate": {
+                    "description": "User birthdate",
+                    "type": "date"
+                },
+                "phoneNumber": {
+                    "description": "User phone number",
+                    "type": "string"
+                },
                 "estado": {
+                    "description": "User current health state",
+                    "type": "string"
+                }
+            }
+        },
+        "UserTecnicoInfo": {
+            "type": "object",
+            "properties": {
+                "CC": {
+                    "description": "Citizen Card number pt-PT",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "User name",
+                    "type": "string"
+                },
+                "genero": {
+                    "description": "User gender",
+                    "type": "string"
+                },
+                "birthdate": {
+                    "description": "User birthdate",
+                    "type": "date"
+                },
+                "phoneNumber": {
+                    "description": "User phone number",
+                    "type": "string"
+                }
+            }
+        },
+        "UserInfo": {
+            "type": "object",
+            "properties": {
+                "CC": {
+                    "description": "Citizen Card number pt-PT",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "User name",
+                    "type": "string"
+                },
+                "genero": {
+                    "description": "User gender",
+                    "type": "string"
+                },
+                "birthdate": {
+                    "description": "User birthdate",
+                    "type": "date"
+                },
+                "phoneNumber": {
+                    "description": "User phone number",
+                    "type": "string"
+                },
+                "role": {
+                    "description": "User role",
                     "type": "string"
                 }
             }
         },
         "UserUpdate": {
+            "type": "object",
             "properties": {
                 "old": {
-                    "CC": {
-                        "type": "string"
-                    },
-                    "name": {
-                        "type": "string"
-                    },
-                    "genero": {
-                        "type": "string"
-                    },
-                    "phoneNumber": {
-                        "type": "number"
-                    },
-                    "birthdate": {
-                        "type": "date"
-                    },
-                    "estado": {
-                        "type": "string"
-                    },
-                    "role": {
-                        "type": "string"
-                    }
+                    "$ref": "#definitions/UserInfo"
                 },
                 "new": {
-                    "CC": {
-                        "type": "string"
-                    },
-                    "name": {
-                        "type": "string"
-                    },
-                    "genero": {
-                        "type": "string"
-                    },
-                    "phoneNumber": {
-                        "type": "number"
-                    },
-                    "birthdate": {
-                        "type": "date"
-                    },
-                    "estado": {
-                        "type": "string"
-                    },
-                    "role": {
-                        "type": "string"
-                    }
+                    "$ref": "#definitions/UserInfo"
+                }
+            }
+        },
+
+        "PedidoRequiredInfo": {
+            "type": "object",
+            "properties": {
+                "idRequest": {
+                    "description": "Request ID",
+                    "type": "string"
+                },
+                "CCutente": {
+                    "description": "Request User identification",
+                    "type": "string"
+                },
+                "trabalhadorDeRisco": {
+                    "description": "Request User priority attribute",
+                    "type": "boolean"
+                },
+                "grupoDeRisco": {
+                    "description": "Request User priority attribute",
+                    "type": "boolean"
+                },
+                "encaminhado_saude24": {
+                    "description": "Request User priority attribute",
+                    "type": "boolean"
+                }
+            }
+        },
+        "PedidoInfo": {
+            "type": "object",
+            "properties": {
+                "idRequest": {
+                    "description": "Request ID",
+                    "type": "string"
+                },
+                "CCutente": {
+                    "description": "Request User identification",
+                    "type": "string"
+                },
+                "trabalhadorDeRisco": {
+                    "description": "Request User priority attribute",
+                    "type": "boolean"
+                },
+                "grupoDeRisco": {
+                    "description": "Request User priority attribute",
+                    "type": "boolean"
+                },
+                "encaminhado_saude24": {
+                    "description": "Request User priority attribute",
+                    "type": "boolean"
+                },
+                "tecnicoResponsavel": {
+                    "description": "Request responsible worker identification",
+                    "type": "number"
+                },
+                "dataInicial": {
+                    "description": "Request first test date",
+                    "type": "date"
+                },
+                "resultadoInicial": {
+                    "description": "Request first test result",
+                    "type": "boolean"
+                },
+                "dataFinal": {
+                    "description": "Request second test date",
+                    "type": "date"
+                },
+                "resultadoFinal": {
+                    "description": "Request second test result",
+                    "type": "boolean"
+                },
+                "casoFechado": {
+                    "description": "Tells if the request is finished",
+                    "type": "boolean"
+                },
+                "deleted": {
+                    "description": "Tells if the request is deleted",
+                    "type": "boolean"
+                },
+                "updated_at": {
+                    "description": "Request last update date",
+                    "type": "date"
+                }
+            }
+        },
+        "PedidoUpdate": {
+            "type": "object",
+            "properties": {
+                "old": {
+                    "$ref": "#definitions/PedidoInfo"
+                },
+                "new": {
+                    "$ref": "#definitions/PedidoInfo"
                 }
             }
         }

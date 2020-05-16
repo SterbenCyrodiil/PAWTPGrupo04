@@ -19,9 +19,6 @@ const RolesEnum = Object.freeze({
     Utente: 'utente',
 });
 
-/**
- * TODO acabar as validações dos atributos
- */
 const userSchema = new mongoose.Schema({
 
 	CC: { type: String, unique: true, required: true,validate: {
@@ -76,7 +73,6 @@ userSchema.pre('save', async function(next) {
 userSchema.methods.comparePassword = async function (passw) {
     return new Promise( async (resolve, reject) => {
         try {
-            console.log(passw, "\n",this.password)
             const isPasswValid = await bcrypt.compare(passw, this.password);
             resolve(isPasswValid);
         } catch(err) {

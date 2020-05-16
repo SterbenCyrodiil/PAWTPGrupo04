@@ -17,6 +17,7 @@ userrouter.get('/tecnicos/:id', authorization(['admin']), userController.getTecn
 
 // Registo, atualização e remoção de Utilizadores
 userrouter.post('/', userController.registerUser);
+// ## Só será possível retornar a informação desta rota se o próprio utilizador estiver com a sessão ativa ou o utilizador é um admin
 userrouter.put('/:id', authorization(['admin', 'utente']), userController.updateUserInformation);
 userrouter.delete('/:id', authorization(['admin', 'utente']), userController.deleteUser);
 

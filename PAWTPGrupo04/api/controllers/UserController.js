@@ -17,34 +17,33 @@ const registerUser = async (req, res) => {
 		console.log("SAVED DATA", result);
 		// ## Enviar de volta só informação relevante, evitando reenviar a password encriptada
 		const user = {
-			_id: result._id, CC: result.CC, name: result.name,
-			genero: req.body.genero, birthdate: req.body.birthdate, phoneNumber: req.body.phoneNumber,
-			role: result.role,estado: result.estado
+			_id: result._id, CC: result.CC, name: result.name, genero: req.body.genero, 
+			birthdate: req.body.birthdate, phoneNumber: req.body.phoneNumber, role: result.role
 		}
-		res.status(200).json({success: true, msg: user});
+		res.status(200).json({success: true, data: user});
 	} catch (err) {
 		if (err.code === 11000) { // utilizador ja existe
-			res.status(404).json({success: false, msg: 'O utilizador já se encontra registado!'});
+			res.json({success: false, msg: 'O utilizador já se encontra registado!'});
 		} else {
 			console.log(err);
-			res.status(404).json({success: false, msg: 'Dados em falta, incorretos!'});
+			res.json({success: false, msg: 'Dados em falta, incorretos!'});
 		}
 	}
 }
 
 const getAllUsers = async (req, res) => {
 	const request = await User.find({}, userRes);
-	res.send(request);
+	res.status(200).send(request);
 }
 
 const getAllUtentes = async (req, res) => {
 	const request = await User.find({role: "utentes"}, userResUtente);
-	res.send(request);
+	res.status(200).send(request);
 }
 
 const getAllTecnicos = async (req, res) => {
 	const request = await User.find({role: "tecnicos"}, userResTecnico);
-	res.send(request);
+	res.status(200).send(request);
 }
 
 const getUserByID = async (req, res) =>{
@@ -53,10 +52,10 @@ const getUserByID = async (req, res) =>{
 			.catch((e) => {
 				return null
 			})
-		res.send(request)
+		res.status(200).send(request)
 	} catch (e) {
 		console.error(e)
-		res.status(404).send(null)
+		res.send(null)
 	}
 }
 
@@ -66,10 +65,10 @@ const getUserByCC = async (req, res) =>{
 			.catch((e) => {
 				return null
 			})
-		res.send(request)
+		res.status(200).send(request)
 	} catch (e) {
 		console.error(e)
-		res.status(404).send(null)
+		res.send(null)
 	}
 }
 
@@ -79,10 +78,10 @@ const getUtenteUserByCC = async (req, res) =>{
 			.catch((e) => {
 				return null
 			})
-		res.send(request)
+		res.status(200).send(request)
 	} catch (e) {
 		console.error(e)
-		res.status(404).send(null)
+		res.send(null)
 	}
 }
 
@@ -92,10 +91,9 @@ const getTecnicoUserByCC = async (req, res) =>{
 			.catch((e) => {
 				return null
 			})
-		res.send(request)
+		res.status(200).send(request)
 	} catch (e) {
 		console.error(e)
-		res.status(404)
 		res.send(null)
 	}
 }
@@ -105,18 +103,18 @@ const deleteUser = async (req, res) => {
 		let oldUserInfo = await User.findById(req.params.id)
 
 		if (oldUserInfo.deleted === true) {
-			res.status(403).send('Utilizador já ');
+			res.status(404).send('Utilizador já foi eliminado.' 
+					+ 'No entanto, o mesmo CC só poderá ser registado após a entrada na BD ser removida!');
 		} else {
 			oldUserInfo = await User.findByIdAndUpdate(
 				req.params.id, { deleted: true }).select(userRes)
-			const updatedUser = await User.findById(req.params.id)
 			res.status(200).send({
-				old:oldUserInfo
+				old: oldUserInfo
 			})
 		}
-	} catch (e){
+	} catch (e) {
 		console.log(e)
-		res.status(404).send(null)
+		res.send(null)
 	}
 }
 
@@ -147,13 +145,13 @@ const updateUserInformation = async (req, res) => {
 
 			const updated = await User.findById(
 				req.params.id, userRes)
-			res.send({
+			res.status(200).send({
 				old:outdated,
 				new:updated
 			})
 		} catch (err){
 			console.log(err)
-			res.status(404).send(null)
+			res.send(null)
 		}
 	}
 }
