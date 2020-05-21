@@ -1,16 +1,19 @@
-Definir Rotas
-    
-Construir API corretamente
-    Nesse aspeto, implementar JWT, e verificações para roles e afins
+## 2º Milestone
 
-Redesenhar modelos mais friendly
+> ...
+
+## 1º Milestone
+
+> Definir Rotas    
+> Construir API corretamente
+    Nesse aspeto, implementar JWT, e verificações para roles e afins
+> Redesenhar modelos mais friendly
     Provavelmente, meter User e Tecnico como simples roles no mesmo modelos
     Implementar restrições nos modelos
 
-O Importante nesta entrega é precisamente fazer uma boa estrutura lógica do projeto e colocar a funcionar tudo com estas pequenas nuances.
+> O Importante nesta entrega é precisamente fazer uma boa estrutura lógica do projeto e colocar a funcionar tudo com estas pequenas nuances.
 
-
-Arquitetura Espectável:
+> Arquitetura Espectável:
     Models: User(User+Tecnico); Pedido (Pedido inicial + modificação com base nos testes)
         User: 
         Pedido: tecnico_responsavel: Number,
@@ -28,5 +31,3 @@ Arquitetura Espectável:
         Authentication: JWT
         Roles: Verificar Roles 
         Pedidos: Tudo o que envolver a gestão do pedido (creio ser desnecessário haver controladores para o pedido e para o teste, podendo-se simplesmente atualizar o pedido)
-
-    

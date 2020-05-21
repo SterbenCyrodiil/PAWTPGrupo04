@@ -11,15 +11,16 @@ Para  agilizar todo  o processo foi decidido que o centro de análises deve ser 
 </blockquote>
 </p>
 
-## REST API Frameworks
+## MEAN Stack
 
-- [Node.js](https://nodejs.org/en/)
-- [Express.js](https://expressjs.com/)
 - [Mongoose](https://mongoosejs.com/)
+- [Express.js](https://expressjs.com/)
+- [Angular](https://angular.io/)
+- [Node.js](https://nodejs.org/en/)
 
 ### SETUP
 
-Deverá ser aberta uma consola do sistema na diretoria principal do projeto e executadas as seguintes linhas.
+O Setup específico para cada componente está presente no README dentro da respetiva diretoria, no entanto os comandos seguintes funcionam para os dois componentes.
 
 - Instalar todas as dependências
 ```
