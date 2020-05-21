@@ -30,3 +30,18 @@ $ npm install
 ```
 $ npm start
 ```
+
+## REPOSITORY
+
+O repositório divide-se em três branchs principais:
+
+### master
+- Contém a documentação geral de todo o projeto (este README e outros ficheiros relevantes) tal como versões funcionais do back-end e front-end, desenvolvidos nos respetivos branchs.
+
+### restBackEnd
+- Serve de repositório para todo o desenvolvimento relativo à REST API para o Back-End Server do projeto.
+
+### angularFrontEnd
+- Serve de repositório para todo o desenvolvimento relativo a um Front-End Client do projeto, desenvolvido em Angular.
+
+Todos os updates devem ser atualizados para o *master branch*, através de *pull requests* ou *local merges*, dos branchs de desenvolvimento!
