@@ -10,7 +10,7 @@ const requestSchema = new mongoose.Schema({
     tecnicoResponsavel: {type: String},
 
     dataInicial: {type: Date},
-    resultadoInicial: {type: Boolean, default: false}, 
+    resultadoInicial: {type: Boolean}, 
     dataFinal: {type: Date},
     resultadoFinal: {type: Boolean},
     
