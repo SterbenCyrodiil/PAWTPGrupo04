@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
             });
         }
     }},
-    password: { type: String, required: true, minlength: 6, maxlength: 36 },
+    password: { type: String, required: true, minlength: 6 },
     
     name:{ type: String, required: true },
 	genero: {type: String, required: true, enum: Object.values(GenderEnum)},

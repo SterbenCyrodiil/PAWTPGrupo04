@@ -23,10 +23,10 @@ const registerUser = async (req, res) => {
 		res.status(200).json({success: true, data: user});
 	} catch (err) {
 		if (err.code === 11000) { // utilizador ja existe
-			res.json({success: false, msg: 'O utilizador já se encontra registado!'});
+			res.status(404).json({success: false, msg: 'O utilizador já se encontra registado!'});
 		} else {
 			console.log(err);
-			res.json({success: false, msg: 'Dados em falta, incorretos!'});
+			res.status(404).json({success: false, msg: 'Dados em falta, incorretos!'});
 		}
 	}
 }
@@ -49,52 +49,60 @@ const getAllTecnicos = async (req, res) => {
 const getUserByID = async (req, res) =>{
 	try {
 		const request = await User.findById(req.params.id, userRes)
-			.catch((e) => {
-				return null
-			})
-		res.status(200).send(request)
+
+		if (request) 
+			res.status(200).send(request)
+		else
+			res.status(404).send("User could not be found")
 	} catch (e) {
-		console.error(e)
-		res.send(null)
+		if (e.name === 'CastError') {
+			res.status(404).send("User could not be found")
+		} else {
+			console.error(e)
+			res.status(500).send(null)
+		}
 	}
 }
 
 const getUserByCC = async (req, res) =>{
 	try {
-		const request = await User.find({CC: req.params.id}, userRes)
-			.catch((e) => {
-				return null
-			})
-		res.status(200).send(request)
+		const request = await User.findOne({CC: req.params.id}, userRes)
+		
+		if (request) 
+			res.status(200).send(request)
+		else
+			res.status(404).send("User could not be found")
 	} catch (e) {
 		console.error(e)
-		res.send(null)
+		res.status(500).send(null)
 	}
 }
 
 const getUtenteUserByCC = async (req, res) =>{
 	try {
-		const request = await User.find({CC: req.params.id, role: "utente"}, userResUtente)
-			.catch((e) => {
-				return null
-			})
-		res.status(200).send(request)
+		const request = await User.findOne({CC: req.params.id, role: "utente"}, userResUtente)
+		
+		if (request) 
+			res.status(200).send(request)
+		else
+			res.status(404).send("User could not be found")
 	} catch (e) {
 		console.error(e)
-		res.send(null)
+		res.status(500).send(null)
 	}
 }
 
 const getTecnicoUserByCC = async (req, res) =>{
 	try {
-		const request = await User.find({CC: req.params.id, role: "tecnico"}, userResTecnico)
-			.catch((e) => {
-				return null
-			})
-		res.status(200).send(request)
+		const request = await User.findOne({CC: req.params.id, role: "tecnico"}, userResTecnico)
+		
+		if (request) 
+			res.status(200).send(request)
+		else
+			res.status(404).send("User could not be found")
 	} catch (e) {
 		console.error(e)
-		res.send(null)
+		res.status(500).send(null)
 	}
 }
 
@@ -102,8 +110,11 @@ const deleteUser = async (req, res) => {
 	try {
 		let oldUserInfo = await User.findById(req.params.id)
 
-		if (oldUserInfo.deleted === true) {
-			res.status(404).send('Utilizador já foi eliminado.' 
+		if (!oldUserInfo) {
+			res.status(404).send("User could not be found")
+		}
+		else if (oldUserInfo.deleted === true) {
+			res.status(404).send('Utilizador já foi eliminado. ' 
 					+ 'No entanto, o mesmo CC só poderá ser registado após a entrada na BD ser removida!');
 		} else {
 			oldUserInfo = await User.findByIdAndUpdate(
@@ -113,45 +124,57 @@ const deleteUser = async (req, res) => {
 			})
 		}
 	} catch (e) {
-		console.log(e)
-		res.send(null)
+		if (e.name === 'CastError') {
+			res.status(404).send("User could not be found")
+		} else {
+			console.error(e)
+			res.status(500).send(null)
+		}
 	}
 }
 
 const updateUserInformation = async (req, res) => {
 	// ## Só será possível atualizar a informação se o próprio utilizador estiver com a sessão ativa
 	// ## ou o utilizador é um admin (isto poderá ser alterado para aumentar a segurança)
-	if (req.user_data !== 'admin' && req.params.id !== req.user_data._id) {
+	if (req.user_data.role !== 'admin' && req.params.id !== req.user_data._id) {
 		res.status(403).send('Necessário ter a sessão iniciada deste utilizador para atualizar os dados');
 	} else {
 		try {
-			// ## Atualizar só informação correta, uma vez que pode chegar qualquer coisa pelo body
-			const userData = {};
-			if (req.body.password) {
-				const salt = await bcrypt.genSalt(10);
-        		userData.password = await bcrypt.hash(req.body.password, salt);
+			const outdated = await User.findById(req.params.id, userRes)
+
+			if (outdated) {
+				// ## Atualizar só informação correta, uma vez que pode chegar qualquer coisa pelo body
+				const userData = {};
+				if (req.body.password) {
+					const salt = await bcrypt.genSalt(10);
+					userData.password = await bcrypt.hash(req.body.password, salt);
+				}
+				if (req.body.name)
+					userData.name = req.body.name;
+				if (req.body.genero)
+					userData.genero = req.body.genero;
+				if (req.body.birthdate)
+					userData.birthdate = req.body.birthdate;
+				if (req.body.phoneNumber)
+					userData.phoneNumber = req.body.phoneNumber;
+
+				const updated = await User.findByIdAndUpdate( req.params.id, userData, { runValidators: true })
+					.select(userRes).setOptions({new: true})
+
+				res.status(200).send({
+					old:outdated,
+					new:updated
+				})
+			} else {
+				res.status(404).send("User could not be found")
 			}
-			if (req.body.name)
-				userData.name = req.body.name;
-			if (req.body.genero)
-				userData.genero = req.body.genero;
-			if (req.body.birthdate)
-				userData.birthdate = req.body.birthdate;
-			if (req.body.phoneNumber)
-				userData.phoneNumber = req.body.phoneNumber;
-
-			const outdated = await User.findByIdAndUpdate( req.params.id, userData )
-				.select(userRes)
-
-			const updated = await User.findById(
-				req.params.id, userRes)
-			res.status(200).send({
-				old:outdated,
-				new:updated
-			})
 		} catch (err){
-			console.log(err)
-			res.send(null)
+			if (err.name === 'CastError') {
+				res.status(404).send("User could not be found")
+			} else {
+				console.error(err)
+				res.status(500).send(null)
+			}
 		}
 	}
 }

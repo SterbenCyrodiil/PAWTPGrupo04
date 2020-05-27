@@ -8,6 +8,6 @@ sessionRouter.post('/sign-in', sessionControler.signInUser);
 
 sessionRouter.get('/user-profile', authorization(['admin', 'tecnico', 'utente']), sessionControler.getLoggedUser);
 
-sessionRouter.post('/sign-out', authorization(['admin', 'tecnico', 'utente']),sessionControler.signOutUser);
+sessionRouter.post('/sign-out', authorization(['admin', 'tecnico', 'utente']), sessionControler.signOutUser);
 
 module.exports = sessionRouter;

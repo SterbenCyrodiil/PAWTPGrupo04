@@ -138,14 +138,39 @@
                 ],
                 "summary": "Create and save a new Request",
                 "description": "Checks if the User is an 'utente' and if the request already exists, then saves the correct data do the DB",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
                 "parameters": [
                     {
-                        "name": "PedidoInfo",
-                        "in": "body",
-                        "description": "Required information to create a new Pedido",
-                        "schema": {
-                            "$ref": "#definitions/PedidoRequiredInfo"
-                        }
+                        "name": "id",
+                        "in": "formData",
+                        "description": "Request ID",
+                        "type": "string"
+                    },
+                    {
+                        "name": "CCutente",
+                        "in": "formData",
+                        "description": "Request User identification",
+                        "type": "string"
+                    },
+                    {
+                        "name": "trabalhadorDeRisco",
+                        "in": "formData",
+                        "description": "Request User priority attribute",
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "grupoDeRisco",
+                        "in": "formData",
+                        "description": "Request User priority attribute",
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "encaminhado_saude24",
+                        "in": "formData",
+                        "description": "Request User priority attribute",
+                        "type": "boolean"
                     }
                 ],
                 "responses": {
@@ -211,7 +236,12 @@
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#definitions/PedidoInfo"
+                            "type": "object",
+                            "properties": {
+                                "old": {
+                                    "$ref": "#definitions/PedidoInfo"
+                                }
+                            }
                         }
                     },
                     "404": {
@@ -423,6 +453,23 @@
                     "required": true,
                     "description": "Request identification (Mongo ObjectID)",
                     "type": "string"
+                },
+                {
+                    "name": "RequestInfo",
+                    "in": "body",
+                    "required": true,
+                    "description": "Information to update the Request.",
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "testDate": {
+                                "required": true,
+                                "description": "Date information for the Test (yyyy-mm-dd)",
+                                "type": "string",
+                                "format": "date"
+                            }
+                        }
+                    }
                 }
             ],
             "put": {
@@ -454,6 +501,27 @@
                     "required": true,
                     "description": "Request identification (Mongo ObjectID)",
                     "type": "string"
+                },
+                {
+                    "name": "RequestInfo",
+                    "in": "body",
+                    "required": true,
+                    "description": "Information to update the Request. NOTE: 'secondTestDate' needed only if 'testResult' is false!",
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "testResult": {
+                                "required": true,
+                                "description": "Result information about the Test",
+                                "type": "boolean"
+                            },
+                            "secondTestDate": {
+                                "description": "Date information for the next Test (yyyy-mm-dd).",
+                                "type": "string",
+                                "format": "date"
+                            }
+                        }
+                    }
                 }
             ],
             "put": {
@@ -486,6 +554,23 @@
                     "required": true,
                     "description": "Request identification (Mongo ObjectID)",
                     "type": "string"
+                },
+                {
+                    "name": "RequestInfo",
+                    "in": "body",
+                    "required": true,
+                    "description": "Information to update the Request.",
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "testDate": {
+                                "required": true,
+                                "description": "Date information for the Test (yyyy-mm-dd)",
+                                "type": "string",
+                                "format": "date"
+                            }
+                        }
+                    }
                 }
             ],
             "put": {
@@ -517,6 +602,22 @@
                     "required": true,
                     "description": "Request identification (Mongo ObjectID)",
                     "type": "string"
+                },
+                {
+                    "name": "RequestInfo",
+                    "in": "body",
+                    "required": true,
+                    "description": "Information to update the Request.",
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "testResult": {
+                                "required": true,
+                                "description": "Result information about the Test",
+                                "type": "boolean"
+                            }
+                        }
+                    }
                 }
             ],
             "put": {
@@ -541,7 +642,7 @@
                 }
             }
         },
-        "/request/update/filepath/{id}": {
+        "/request/update/worker/{id}": {
             "parameters": [
                 {
                     "name": "id",
@@ -549,13 +650,27 @@
                     "required": true,
                     "description": "Request identification (Mongo ObjectID)",
                     "type": "string"
+                },
+                {
+                    "name": "body",
+                    "in": "body",
+                    "required": true,
+                    "description": "Identification of the Worker responsible for the Request",
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "tecnico": {
+                                "type": "string"
+                            }
+                        }
+                    }
                 }
             ],
             "put": {
                 "tags": [
                     "Pedidos"
                 ],
-                "summary": "Updates the PDF file name related to the conclusion of this Request",
+                "summary": "Updates the Worker ('tecnico') who's in charge of this Request",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
@@ -572,7 +687,7 @@
                 }
             }
         },
-        "/request/update/worker/{id}": {
+        "/request/update/upload/{id}": {
             "parameters": [
                 {
                     "name": "id",
@@ -580,13 +695,22 @@
                     "required": true,
                     "description": "Request identification (Mongo ObjectID)",
                     "type": "string"
+                },
+                {
+                    "name": "RequestResult",
+                    "in": "formData",
+                    "description": "The results PDF file finishing the Request",
+                    "type": "file"
                 }
             ],
-            "put": {
+            "consumes": [
+                "multipart/form-data"
+            ],
+            "post": {
                 "tags": [
                     "Pedidos"
                 ],
-                "summary": "Updates the Worker ('tecnico') who's in charge of this Request",
+                "summary": "Uploads the file with this Request results",
                 "responses": {
                     "200": {
                         "description": "Task Successful",
@@ -630,14 +754,47 @@
                 ],
                 "summary": "Create and save a new User into de DB",
                 "description": "Checks if the User CC already exists, then saves the correct data do the DB",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
                 "parameters": [
                     {
-                        "name": "userInfo",
-                        "in": "body",
-                        "description": "Required information to create a new User",
-                        "schema": {
-                            "$ref": "#definitions/UserRequiredInfo"
-                        }
+                        "name": "CC",
+                        "in": "formData",
+                        "description": "Citizen Card number pt-PT",
+                        "type": "string"
+                    },
+                    {
+                        "name": "password",
+                        "in": "formData",
+                        "description": "User password",
+                        "type": "string",
+                        "format": "password"
+                    },
+                    {
+                        "name": "name",
+                        "in": "formData",
+                        "description": "User name",
+                        "type": "string"
+                    },
+                    {
+                        "name": "genero",
+                        "in": "formData",
+                        "description": "User gender",
+                        "type": "string"
+                    },
+                    {
+                        "name": "birthdate",
+                        "in": "formData",
+                        "description": "User birthdate",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    {
+                        "name": "phoneNumber",
+                        "in": "formData",
+                        "description": "User phone number",
+                        "type": "string"
                     }
                 ],
                 "responses": {
@@ -798,6 +955,16 @@
                 ],
                 "summary": "Updates a certain User searching by it's ID",
                 "description": "Only updates if the ID refers to a User with the session active or the logged User is an 'admin'",
+                "parameters": [
+                    {
+                        "name": "UserInfo",
+                        "in": "body",
+                        "description": "Information to update a User. Any property may be removed.",
+                        "schema": {
+                            "$ref": "#definitions/UserRequiredInfo"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Task Successful",
@@ -823,7 +990,12 @@
                     "200": {
                         "description": "Task Successful",
                         "schema": {
-                            "$ref": "#definitions/UserInfo"
+                            "type": "object",
+                            "properties": {
+                                "old": {
+                                    "$ref": "#definitions/UserInfo"
+                                }
+                            }
                         }
                     },
                     "404": {
@@ -914,7 +1086,8 @@
                 },
                 "birthdate": {
                     "description": "User birthdate",
-                    "type": "date"
+                    "type": "string",
+                    "format": "date"
                 },
                 "phoneNumber": {
                     "description": "User phone number",
@@ -939,7 +1112,8 @@
                 },
                 "birthdate": {
                     "description": "User birthdate",
-                    "type": "date"
+                    "type": "string",
+                    "format": "date"
                 },
                 "phoneNumber": {
                     "description": "User phone number",
@@ -968,7 +1142,8 @@
                 },
                 "birthdate": {
                     "description": "User birthdate",
-                    "type": "date"
+                    "type": "string",
+                    "format": "date"
                 },
                 "phoneNumber": {
                     "description": "User phone number",
@@ -993,7 +1168,8 @@
                 },
                 "birthdate": {
                     "description": "User birthdate",
-                    "type": "date"
+                    "type": "string",
+                    "format": "date"
                 },
                 "phoneNumber": {
                     "description": "User phone number",
@@ -1071,7 +1247,8 @@
                 },
                 "dataInicial": {
                     "description": "Request first test date",
-                    "type": "date"
+                    "type": "string",
+                    "format": "date"
                 },
                 "resultadoInicial": {
                     "description": "Request first test result",
@@ -1079,7 +1256,8 @@
                 },
                 "dataFinal": {
                     "description": "Request second test date",
-                    "type": "date"
+                    "type": "string",
+                    "format": "date"
                 },
                 "resultadoFinal": {
                     "description": "Request second test result",
@@ -1095,13 +1273,17 @@
                 },
                 "updated_at": {
                     "description": "Request last update date",
-                    "type": "date"
+                    "type": "string",
+                    "format": "date"
                 }
             }
         },
         "PedidoUpdate": {
             "type": "object",
             "properties": {
+                "msg": {
+                    "type": "string"
+                },
                 "old": {
                     "$ref": "#definitions/PedidoInfo"
                 },

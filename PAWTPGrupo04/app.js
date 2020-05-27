@@ -14,14 +14,6 @@ const authMiddleware = require('./api/middleware/authentication')
 const app = express()
 mongoose.Promise = global.Promise
 
-// // Object destructuring ES6
-// const {
-// 	PORT = 3000,
-// 	MONGO_DB_HOST = 'localhost',
-// 	MONGO_BD_PORT = 27017,
-// 	MONGO_DB_NAME = 'covidDB',
-// } = process.env
-
 mongoose
 	.connect(
 		`mongodb://${process.env.MONGO_DB_HOST}:${process.env.MONGO_BD_PORT}/${process.env.MONGO_DB_NAME}`,
@@ -41,14 +33,14 @@ app
 	.use(cors())
 	.use(express.json())
 	.use(express.urlencoded({ extended: true }))
-	.use(express.static('public'))
+	//.use(express.static('public'))
 
 	// Setup com cookie-parser
 	.use(cookieParser())
 
 	// app.use(passport.initialize())
-	// Middleware para autenticação e sessão de login
-	// (Neste caso, a aplicação só pode ser usada por utilizadores com login ativo)
+	// Middleware para autenticação e sessão
+	// (todo o acesso à aplicação está interdito a utilizadores com sessão ativa)
 	.use(authMiddleware)
 
 	// Setup do API Router
