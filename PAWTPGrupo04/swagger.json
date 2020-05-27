@@ -445,6 +445,36 @@
                 }
             }
         },
+        "/request/download/{id}": {
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "Request identification (Mongo ObjectID)",
+                    "type": "string"
+                }
+            ],
+            "produces": [
+                "application/pdf"
+            ],
+            "get": {
+                "tags": [
+                    "Pedidos"
+                ],
+                "summary": "Get File related to the Request for download",
+                "description": "Gets the File only if the User is an 'admin' or 'tecnico'",
+                "responses": {
+                    "200": {
+                        "description": "Task Successful",
+                        "type": "file"
+                    },
+                    "404": {
+                        "description": "Failure, could not find requests, check DB connections or DB data"
+                    }
+                }
+            }
+        },
         "/request/update/firstDate/{id}": {
             "parameters": [
                 {
