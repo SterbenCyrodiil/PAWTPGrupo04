@@ -16,7 +16,7 @@ const registerUser = async (req, res, next) => {
 		console.log("SAVED DATA", result);
 		result.password = result.deleted = undefined
 		res.json({
-			data: result
+			user: result
 		});
 	} else {
 		next({

@@ -25,9 +25,8 @@ const signInUser = async (req, res, next) => {
                 }
             )
             // ## No futuro isto será alterado para utilização de headers possivelmente
-            user.password = undefined;
             res.json({
-                user: user,
+                user: { cc: user.CC, role: user.role },
                 token: 'JWT ' + token
             });
         } else {
@@ -47,7 +46,10 @@ const getLoggedUser = async (req, res) => {
             });
         res.json(user);
     } else {
-        res.send(null)
+        next({
+            message: 'You should be logged in to retrieve the info',
+            status: 401
+        })
     }
 }
 
@@ -55,9 +57,9 @@ const signOutUser = (req, res) => {
     if (req.session) {
         // Remover a cookie armazenada com a informação do Token de login
         res.clearCookie('session')
-        res.send("User signed out successfully.");
+        res.send("Session cleared. User signed out successfully");
     } else {
-        res.send(null)
+        res.send("No session is active at the moment")
     }
 }
 

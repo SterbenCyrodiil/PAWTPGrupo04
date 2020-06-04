@@ -5,9 +5,7 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 
-const swaggerUi = require('swagger-ui-express')
-const swaggerDoc = require('./swagger.json')
-
+const swagger = require('./api/swagger/swaggerRouter')
 const apiRouter = require('./api')
 const authMiddleware = require('./api/middleware/authentication')
 
@@ -46,7 +44,8 @@ app
 	.use('/api', cors(), apiRouter)
 
 	// Setup Swagger API Docs
-	.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc))
+	// .use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc))
+	.use(swagger)
 
 	.listen(process.env.PORT, () => {
 		console.log(`Server started on http://localhost:${process.env.PORT}`)

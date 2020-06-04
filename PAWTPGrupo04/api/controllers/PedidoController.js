@@ -13,7 +13,7 @@ const fillPedido = async (req, res, next) => {
 
 	if (result) {
 		console.log("SAVED DATA", result);
-		res.status(200).json({
+		res.json({
 			data: result
 		});
 	} else {
@@ -72,13 +72,13 @@ const getUserPedido = async (req, res, next) => {
 			status: 403
 		})
 	} else {
-		const request = await Pedido.findOne({ CCutente: req.params.id }).catch(next);
+		const request = await Pedido.find({ CCutente: req.params.id }).catch(next);
 
-		if (request) {
+		if (typeof request !== 'undefined' && request.length > 0) {
 			res.json(request)
 		} else {
 			next({
-				message: 'Pedido de diagnóstico não existe',
+				message: 'Não foram encontrados pedidos de diagnóstico :(',
 				status: 404
 			})
 		}
@@ -123,7 +123,7 @@ const getNegativos = async (req, res, next) => {
 
 const countPerDay = async (req, res, next) => {
 	const request = await Pedido.countDocuments({ $or: [{ dataInicial: req.body.id }, { dataFinal: req.body.id }] }).catch(next);
-	res.json(request);
+	res.json({ countPerDay: request });
 }
 
 const downloadResultsFile = async (req, res, next) => {
