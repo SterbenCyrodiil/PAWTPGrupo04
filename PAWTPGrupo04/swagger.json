@@ -6,7 +6,7 @@
         "description": ""
     },
     "host": "localhost:3000",
-    "basePath": "/rest",
+    "basePath": "/api",
     "tags": [
         {
             "name": "Session",

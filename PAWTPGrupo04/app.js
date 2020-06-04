@@ -20,7 +20,8 @@ mongoose
 		{
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
-			useFindAndModify: true
+			useFindAndModify: true,
+			useCreateIndex: true
 		}
 	)
 	.then((mongoose) => {
@@ -29,8 +30,7 @@ mongoose
 	.catch(console.error)
 
 app
-	// Setup da aplicação com cors e body-parser para pedidos HTTP
-	.use(cors())
+	// Setup da aplicação para body-parser para pedidos HTTP
 	.use(express.json())
 	.use(express.urlencoded({ extended: true }))
 	//.use(express.static('public'))
@@ -38,13 +38,12 @@ app
 	// Setup com cookie-parser
 	.use(cookieParser())
 
-	// app.use(passport.initialize())
 	// Middleware para autenticação e sessão
 	// (todo o acesso à aplicação está interdito a utilizadores com sessão ativa)
 	.use(authMiddleware)
 
 	// Setup do API Router
-	.use('/rest', apiRouter)
+	.use('/api', cors(), apiRouter)
 
 	// Setup Swagger API Docs
 	.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc))

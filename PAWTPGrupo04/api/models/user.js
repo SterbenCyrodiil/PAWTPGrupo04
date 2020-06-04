@@ -1,62 +1,71 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 
-const GenderEnum = Object.freeze({
-	Male: 'male',
-	Female: 'female',
-	Other: 'other',
-});
-
-const StateEnum = Object.freeze({
-	Suspeito: 'suspeito',
-	Infetado: 'infetado',
-	Regularizado: 'regularizado'
-});
-
-const RolesEnum = Object.freeze({
-    Admin: 'admin',
-    Tecnico: 'tecnico',
-    Utente: 'utente',
-});
-
 const userSchema = new mongoose.Schema({
 
-	CC: { type: String, unique: true, required: true,validate: {
-        validator: function(value) {
-            return new Promise( function (resolve, reject) {
-                const isValid = /^[0-9]{8} [0-9] [A-Z]{2}[0-9]$/.test(value);
-                if (isValid) {
-                    resolve(true);
-                } else {
-                    reject(new Error(`${value} não é um número de CC válido!`));
-                }
-            });
+	CC: { 
+        type: String, unique: true, required: true, 
+        validate: {
+            validator: function(cc) {
+                const re = /^[0-9]{8} [0-9] [A-Z]{2}[0-9]$/;
+                return re.test(cc)
+            }
         }
-    }},
-    password: { type: String, required: true, minlength: 6 },
-    
-    name:{ type: String, required: true },
-	genero: {type: String, required: true, enum: Object.values(GenderEnum)},
-	birthdate: {type: Date, required: true},
-    phoneNumber:{type: Number, required: true, validate: {
-        validator: function(value) {
-            return new Promise( function (resolve, reject) {
-                const isValid = /^(9[1236][0-9]) ?([0-9]{3}) ?([0-9]{3})$/.test(value);
-                if (isValid)
-                    resolve(true);
-                else
-                    reject(new Error(`${value} não é um número de telefone válido!`));
-            })
+    },
+    password: { 
+        type: String, required: true, minlength: 7,
+        select: false // Prevent password from being populated
+    },
+    firstName:{ 
+        type: String, required: true 
+    },
+    lastName:{ 
+        type: String, required: true 
+    },
+    genero: { 
+        type: String, required: true, 
+        enum: ['MALE', 'FEMALE', 'OTHER']
+    },
+	birthdate: { 
+        type: Date, required: true
+    },
+    email: { 
+        type: String, unique: true, required: true,
+        validate: {
+            validator: function(email) {
+                const re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+                return re.test(email);
+            }
         }
-    }},
-	role: { type: String, required: true, default: 'utente', enum: Object.values(RolesEnum)},
-	estado: {type: String, required:true, default: 'suspeito', enum: Object.values(StateEnum)},
-	deleted: {type: Boolean, default: false},
-	updated_at: { type: Date, default: Date.now },
+    },
+    phoneNumber: { 
+        type: Number, required: true,
+        validate: {
+            validator: function(phone) {
+                const re = /^(9[1236][0-9]) ?([0-9]{3}) ?([0-9]{3})$/;
+                return re.test(phone);
+            }
+        }
+    },
+
+    role: { 
+        type: String, required: true, default: 'UTENTE', 
+        enum: ['ADMIN', 'TECNICO', 'UTENTE'], index: true
+    },
+	estado: {
+        type: String, required: true, default: 'SUSPEITO', 
+        enum: ['INFETADO', 'SUSPEITO', 'REGULARIZADO'],
+        select: false // Prevent from being populated
+    },
+
+    deleted: { type: Boolean, default: false,
+        select: false // Prevent from being populated
+    },
+	updated_at: { type: Date, default: Date.now() },
 })
 
 /** 
- * Para segurança, encripta e guarda a password do user utilizando o Bcrypt.
+ * Encripta e guarda a password do User utilizando o Bcrypt, antes de realizar 'save'
  */
 userSchema.pre('save', async function(next) {
     const user = this;
@@ -71,14 +80,17 @@ userSchema.pre('save', async function(next) {
  * Disponibiliza um método para permitir comparar a password encriptada
  */
 userSchema.methods.comparePassword = async function (passw) {
-    return new Promise( async (resolve, reject) => {
-        try {
-            const isPasswValid = await bcrypt.compare(passw, this.password);
-            resolve(isPasswValid);
-        } catch(err) {
-            reject(err);
-        }
-    })
+    const isPasswValid = await bcrypt.compare(passw, this.password);
+    return isPasswValid;
+    // # Qualquer erro encontrado é automaticamente inserido na Promisse chain pelo 'async'
+    // return new Promise( async (resolve, reject) => {
+    //     try {
+    //         const isPasswValid = await bcrypt.compare(passw, this.password);
+    //         resolve(isPasswValid);
+    //     } catch(err) {
+    //         reject(err);
+    //     }
+    // })
 }
 
 module.exports = mongoose.model('User', userSchema)

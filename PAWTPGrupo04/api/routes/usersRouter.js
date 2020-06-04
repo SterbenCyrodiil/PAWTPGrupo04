@@ -2,23 +2,18 @@ const express = require('express');
 
 const authorization = require('../middleware/authorization')
 const userController = require('../controllers/userController');
-const userrouter = express.Router();
+const userRouter = express.Router();
 
-// Listagens de Utilizadores
-userrouter.get('/', authorization(['admin']),userController.getAllUsers);
-/* Listagem por Role */
-userrouter.get('/utentes', authorization(['admin', 'tecnico']), userController.getAllUtentes);
-userrouter.get('/tecnicos', authorization(['admin']), userController.getAllTecnicos);
-/* Listagem por Utilizador unico (por Mongo _id ou por CC) */
-userrouter.get('/:id', authorization(['admin']), userController.getUserByID);
-userrouter.get('/CC/:id', authorization(['admin']), userController.getUserByCC);
-userrouter.get('/utentes/:id', authorization(['admin', 'tecnico']), userController.getUtenteUserByCC);
-userrouter.get('/tecnicos/:id', authorization(['admin']), userController.getTecnicoUserByCC);
+// Registo de um novo User
+userRouter.post('/', userController.registerUser);
 
-// Registo, atualização e remoção de Utilizadores
-userrouter.post('/', userController.registerUser);
+// Atualização dos dados de um utilizador
 // ## Só será possível retornar a informação desta rota se o próprio utilizador estiver com a sessão ativa ou o utilizador é um admin
-userrouter.put('/:id', authorization(['admin', 'utente']), userController.updateUserInformation);
-userrouter.delete('/:id', authorization(['admin', 'utente']), userController.deleteUser);
+userRouter.put('/:id', authorization(['ADMIN']), userController.updateUserRole);
+// ## Rota abaixo só funciona se o próprio utilizador estiver com a sessão ativa ou o utilizador é um admin
+userRouter.put('/:id', authorization(['ADMIN', 'UTENTE']), userController.updateUserInformation);
 
-module.exports = userrouter;
+// Delete User
+userRouter.delete('/:id', authorization(['ADMIN', 'UTENTE']), userController.deleteUser);
+
+module.exports = userRouter;
