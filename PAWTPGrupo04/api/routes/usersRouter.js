@@ -6,9 +6,9 @@ const userRouter = express.Router();
 
 /**
  * @swagger
- * /user/:
+ * /users/:
  *   post:
- *     summary: Create and save a new User into de DB
+ *     summary: Create and save a new 'Utente' User into de DB
  *     description: Checks if the User CC already exists, then saves the correct data do the DB
  *     tags: [Users]
  *     consumes:
@@ -39,7 +39,40 @@ userRouter.post('/', userController.registerUser);
 
 /**
  * @swagger
- * /user/{id}:
+ * /users/tecnico:
+ *   post:
+ *     summary: Create and save a new 'Tecnico' User into de DB
+ *     description: Checks if the User CC already exists, then saves the correct data do the DB
+ *     tags: [Users]
+ *     consumes:
+ *       - application/x-www-form-urlencoded
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - $ref: '#/parameters/cc'
+ *       - $ref: '#/parameters/password'
+ *       - $ref: '#/parameters/firstName'
+ *       - $ref: '#/parameters/lastName'
+ *       - $ref: '#/parameters/genero'
+ *       - $ref: '#/parameters/birthdate'
+ *       - $ref: '#/parameters/email'
+ *       - $ref: '#/parameters/phoneNumber'
+ *     responses:
+ *       200: 
+ *         description: Task successful
+ *         schema:
+ *           type: object
+ *           properties:
+ *             user:
+ *               $ref: '#/definitions/UserInfo'
+ *       404:
+ *         $ref: '#/responses/ErrorMessage'
+ */
+userRouter.post('/', authorization(['ADMIN']), userController.registerUserTecnico);
+
+/**
+ * @swagger
+ * /users/role/{id}:
  *   put:
  *     summary: Updates a certain User's role
  *     description: Finds the User related to the 'id' parameter and performs the update task
@@ -70,12 +103,12 @@ userRouter.post('/', userController.registerUser);
  *       404:
  *         $ref: '#/responses/ErrorMessage'
  */
-userRouter.put('/:id', authorization(['ADMIN']), userController.updateUserRole);
+userRouter.put('/role/:id', authorization(['ADMIN']), userController.updateUserRole);
 
 // ## Só será possível retornar a informação desta rota se o próprio utilizador estiver com a sessão ativa ou o utilizador é um admin
 /**
  * @swagger
- * /user/{id}:
+ * /users/{id}:
  *   put:
  *     summary: Updates a certain User searching by it's ID
  *     description: Only updates if the ID refers to a User with the session active or the logged User is an 'admin'
@@ -99,7 +132,7 @@ userRouter.put('/:id', authorization(['ADMIN', 'UTENTE']), userController.update
 
 /**
  * @swagger
- * /user/{id}:
+ * /users/{id}:
  *   delete:
  *     summary: Marks a User entry in the DB for deletion, signaling for the DB manager
  *     description: Finds the User related to the 'id' parameter and performs the delete task

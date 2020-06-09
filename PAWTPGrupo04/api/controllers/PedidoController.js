@@ -51,6 +51,24 @@ const getAllPedidos = async (req, res, next) => {
 	res.json(request);
 }
 
+const getTecnicoPedidos = async (req, res, next) => {
+	const request = await Pedido.find({ tecnicoResponsavel: req.params.id }).catch(next);
+
+	if (request && request.length > 0) {
+		res.json(request)
+	} else {
+		next({
+			message: 'Não foram encontrados pedidos de diagnóstico :(',
+			status: 404
+		})
+	}
+}
+
+const getOpenPedidos = async (req, res, next) => {
+	const request = await Pedido.find({ casoFechado: false, tecnicoResponsavel: { $exists: false }}).catch(next);
+	res.json(request);
+}
+
 const getPedidobyID = async (req, res, next) => {
 	const request = await Pedido.findById(req.params.id).catch(next);
 	
@@ -64,7 +82,7 @@ const getPedidobyID = async (req, res, next) => {
 	}
 }
 
-const getUserPedido = async (req, res, next) => {
+const getUserPedidos = async (req, res, next) => {
 	// ## Só será possível retornar a informação se o próprio utilizador estiver com a sessão ativa ou o utilizador é um admin
 	if (req.session.role !== 'ADMIN' && req.params.id !== req.session.CC) {
 		next({
@@ -75,6 +93,29 @@ const getUserPedido = async (req, res, next) => {
 		const request = await Pedido.find({ CCutente: req.params.id }).catch(next);
 
 		if (typeof request !== 'undefined' && request.length > 0) {
+			res.json(request)
+		} else {
+			next({
+				message: 'Não foram encontrados pedidos de diagnóstico :(',
+				status: 404
+			})
+		}
+	}
+}
+
+const getUserPedido = async (req, res, next) => {
+	// ## Só será possível retornar a informação se o próprio utilizador estiver com a sessão ativa ou o utilizador é um admin
+	if (req.session.role !== 'ADMIN' && req.params.id !== req.session.CC) {
+		next({
+			message: 'Permissões adicionais em falta.',
+			status: 403
+		})
+	} else {
+		const request = await Pedido
+			.find({ CCutente: req.params.id }).sort({ updated_at: -1}).limit(1)
+			.catch(next);
+
+		if (request) {
 			res.json(request)
 		} else {
 			next({
@@ -152,7 +193,10 @@ const downloadResultsFile = async (req, res, next) => {
 module.exports = {
 	fillPedido,
 	getAllPedidos,
+	getTecnicoPedidos,
+	getOpenPedidos,
 	getPedidobyID,
+	getUserPedidos,
 	getUserPedido,
 	deletePedido,
 	getSaude24Pedidos,

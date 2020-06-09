@@ -24,7 +24,6 @@
         }
     },
     
-
     "cc": {
         "in": "formData",
         "name": "CC",
@@ -37,33 +36,34 @@
         "name": "password",
         "description": "Password for login",
         "required": true,
-        "type": "string"
+        "type": "string",
+        "format": "password"
     },
     "firstName": {
         "in": "formData",
         "name": "firstName",
-        "description": "Password for login",
+        "description": "User First Name",
         "required": true,
         "type": "string"
     },
     "lastName": {
         "in": "formData",
         "name": "lastName",
-        "description": "Password for login",
+        "description": "User Last Name",
         "required": true,
         "type": "string"
     },
     "genero": {
         "in": "formData",
         "name": "genero",
-        "description": "Password for login",
+        "description": "User Gender",
         "required": true,
         "type": "string"
     },
     "birthdate": {
         "in": "formData",
         "name": "birthdate",
-        "description": "Password for login",
+        "description": "User Birthdate (yyyy-mm-dd)",
         "required": true,
         "type": "string",
         "format": "date"
@@ -71,14 +71,14 @@
     "email": {
         "in": "formData",
         "name": "email",
-        "description": "Password for login",
+        "description": "User Email (example1@example.com)",
         "required": true,
         "type": "string"
     },
     "phoneNumber": {
         "in": "formData",
         "name": "phoneNumber",
-        "description": "Password for login",
+        "description": "User Phone Number (9 digits starting with 91, 93, 96 or 22",
         "required": true,
         "type": "number"
     },

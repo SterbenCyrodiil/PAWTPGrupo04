@@ -26,6 +26,29 @@ const registerUser = async (req, res, next) => {
 	}
 }
 
+const registerUserTecnico = async (req, res, next) => {
+	// ## Guardar informação do body
+	const userData = {
+		CC: req.body.CC, password: req.body.password, 
+		firstName: req.body.firstName, lastName: req.body.lastName,
+		genero: req.body.genero, birthdate: req.body.birthdate, 
+		phoneNumber: req.body.phoneNumber, email: req.body.email, role: 'TECNICO'
+	}
+	const result = await new User(userData).save().catch(next);
+
+	if (result) {
+		result.password = result.deleted = undefined
+		res.json({
+			user: result
+		});
+	} else {
+		next({
+			message: 'User not found',
+			status: 404
+		})
+	}
+}
+
 const getAllUsers = async (req, res, next) => {
 	const request = await User.find({}).catch(next);
 	res.json(request);
@@ -167,7 +190,7 @@ const updateUserInformation = async (req, res, next) => {
 			if (req.body.email)
 				userData.email = req.body.email;
 
-			userData.updated_at = Date.now();
+			userData.updated_at = moment().format();
 			const updated = await User
 					.findByIdAndUpdate( req.params.id, userData, { runValidators: true, new: true })
 					.catch(next)
@@ -187,6 +210,7 @@ const updateUserInformation = async (req, res, next) => {
 
 module.exports = {
 	registerUser,
+	registerUserTecnico,
 	getAllUsers,
 	getUserByID,
 	getUserByCC,

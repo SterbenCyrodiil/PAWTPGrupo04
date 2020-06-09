@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
+const moment = require('moment')
 
 const userSchema = new mongoose.Schema({
 
@@ -61,7 +62,7 @@ const userSchema = new mongoose.Schema({
     deleted: { type: Boolean, default: false,
         select: false // Prevent from being populated
     },
-	updated_at: { type: Date, default: Date.now() },
+	updated_at: { type: Date, default: moment().format() },
 })
 
 /** 

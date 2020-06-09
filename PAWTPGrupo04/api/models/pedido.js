@@ -47,7 +47,7 @@ const requestSchema = new mongoose.Schema({
         type: Boolean, default: false,
         select: false // Prevent from being populated
     },
-	updated_at: { type: Date, default: Date.now() },
+	updated_at: { type: Date, default: moment().format() },
 })
 
 module.exports = mongoose.model('Pedido', requestSchema)

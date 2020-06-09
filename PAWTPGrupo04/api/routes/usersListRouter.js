@@ -82,7 +82,7 @@ userListRouter.get('/:id', userController.getUserByID);
 userListRouter.get('/CC/:id', userController.getUserByCC);
 /**
  * @swagger
- * /users/utentes/{id}:
+ * /users/utente/{id}:
  *   get:
  *     summary: Gets a certain User 'utente' using its CC-id
  *     tags: [Users]
@@ -96,10 +96,10 @@ userListRouter.get('/CC/:id', userController.getUserByCC);
  *       404:
  *         $ref: '#/responses/ErrorMessage'
  */
-userListRouter.get('/utentes/:id', userController.getUtenteUserByCC);
+userListRouter.get('/utente/:id', userController.getUtenteUserByCC);
 /**
  * @swagger
- * /users/tecnicos/{id}:
+ * /users/tecnico/{id}:
  *   get:
  *     summary: Gets a certain User 'tecnico' using its CC-id
  *     tags: [Users]
@@ -113,6 +113,6 @@ userListRouter.get('/utentes/:id', userController.getUtenteUserByCC);
  *       404:
  *         $ref: '#/responses/ErrorMessage'
  */
-userListRouter.get('/tecnicos/:id', userController.getTecnicoUserByCC);
+userListRouter.get('/tecnico/:id', userController.getTecnicoUserByCC);
 
 module.exports = userListRouter;

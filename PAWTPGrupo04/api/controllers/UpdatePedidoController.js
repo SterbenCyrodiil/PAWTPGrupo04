@@ -21,7 +21,7 @@ const updateDataPrimeiroTeste = async (req, res, next) => {
     else {
         // ## Marcar a data do primeiro teste # Será o primeiro update para o diagnostico
         const updatedPedido = await Pedido
-            .findByIdAndUpdate(req.params.id, { dataInicial: req.body.testDate }, {new: true})
+            .findByIdAndUpdate(req.params.id, { dataInicial: req.body.testDate, updated_at: moment().format() }, {new: true})
             .catch(next);
             
         res.json({
@@ -54,20 +54,20 @@ const updateResultadoPrimeiroTeste = async (req, res, next) => {
             if (((new Date (req.body.secondTestDate).getTime() - pedido.dataInicial.getTime()) / 3600000) <= 48) {
                 updatedPedido = await Pedido
                     .findByIdAndUpdate(req.params.id, 
-                        { resultadoInicial: req.body.testResult, dataFinal: req.body.secondTestDate }, {new: true})
+                        { resultadoInicial: req.body.testResult, dataFinal: req.body.secondTestDate, updated_at: moment().format()}, {new: true})
                     .catch(next);
                 resMsg = 'Resultado atualizado com sucesso. Data do próximo teste agendada';
                 
             } else {
                 updatedPedido = await Pedido
                     .findByIdAndUpdate(req.params.id, 
-                        { resultadoInicial: req.body.testResult }, {new: true})
+                        { resultadoInicial: req.body.testResult, updated_at: moment().format() }, {new: true})
                     .catch(next);
                 resMsg = 'Resultado atualizado com sucesso. Não foi possível agendar o segundo teste.' 
                         + 'A diferença de datas não deverá ser superior a 48 horas! Deverá reagendar uma nova data.'
             }
 
-            await User.findOneAndUpdate({CC: pedido.CCutente}, { estado: 'suspeito' }).catch(next);
+            await User.findOneAndUpdate({CC: pedido.CCutente}, { estado: 'suspeito', updated_at: moment().format()}).catch(next);
 
             res.json({
                 msg: resMsg,
@@ -79,10 +79,10 @@ const updateResultadoPrimeiroTeste = async (req, res, next) => {
         { // caso o primeiro teste seja positivo, dá-se o diagnóstico como fechado
             const updatedPedido = await Pedido
                 .findByIdAndUpdate(req.params.id, 
-                    { resultadoInicial: req.body.testResult, casoFechado: true, infetado: true}, {new: true})
+                    { resultadoInicial: req.body.testResult, casoFechado: true, infetado: true, updated_at: moment().format()}, {new: true})
                 .catch(next);
 
-            await User.findOneAndUpdate({CC: pedido.CCutente}, { estado: 'infetado' }).catch(next);
+            await User.findOneAndUpdate({CC: pedido.CCutente}, { estado: 'infetado', updated_at: moment().format()}).catch(next);
 
             res.json({
                 msg: 'Resultado atualizado com sucesso',
@@ -114,7 +114,7 @@ const updateDataSegundoTeste = async (req, res, next) => {
         if (((new Date (req.body.testDate).getTime() - pedido.dataInicial.getTime()) / 3600000) <= 48) {
 
             const updatedPedido = await Pedido
-                .findByIdAndUpdate(req.params.id, { dataFinal: req.body.testDate }, {new: true})
+                .findByIdAndUpdate(req.params.id, { dataFinal: req.body.testDate, updated_at: moment().format() }, {new: true})
                 .catch(next);
 
             res.json({
@@ -150,18 +150,18 @@ const updateResultadoSegundoTeste = async (req, res, next) => {
         { // Marcar o caso como infetado ou não consoante o resultado do teste
             updatedPedido = await Pedido
                 .findByIdAndUpdate(req.params.id, 
-                    { resultadoFinal: req.body.testResult, casoFechado: true, infetado: false}, {new: true})
+                    { resultadoFinal: req.body.testResult, casoFechado: true, infetado: false, updated_at: moment().format()}, {new: true})
                 .catch(next);
 
-            await User.findOneAndUpdate({CC: pedido.CCutente}, { estado: 'regularizado' }).catch(next);
+            await User.findOneAndUpdate({CC: pedido.CCutente}, { estado: 'regularizado', updated_at: moment().format() }).catch(next);
 
         } else {
             updatedPedido = await Pedido
                 .findByIdAndUpdate(req.params.id, 
-                    { resultadoFinal: req.body.testResult, casoFechado: true, infetado: true}, {new: true})
+                    { resultadoFinal: req.body.testResult, casoFechado: true, infetado: true, updated_at: moment().format()}, {new: true})
                 .catch(next);
             
-            await User.findOneAndUpdate({CC: pedido.CCutente}, { estado: 'infetado' }).catch(next);
+            await User.findOneAndUpdate({CC: pedido.CCutente}, { estado: 'infetado', updated_at: moment().format() }).catch(next);
         }
 
         res.json({
@@ -179,21 +179,30 @@ const updateTecnicoResponsavel = async (req, res, next) => {
             status: 400
         })
     } else {
-        const outdatRequest = await Pedido.findById(req.params.id).catch(next);
+        const tecnico = await User.findOne({ CC: req.body.tecnico }).catch(next);
 
-        if (outdatRequest) {
-            const updatedRequest = await Pedido
-                .findByIdAndUpdate(req.params.id, { tecnicoResponsavel: req.body.tecnico }, {new: true})
-                .catch(next);
+        if (tecnico) {
+            const outdatRequest = await Pedido.findById(req.params.id).catch(next);
 
-            res.status(200).send({
-                msg: 'Tecnico responsável atualizado com sucesso',
-                old: outdatRequest,
-                new: updatedRequest
-            })
+            if (outdatRequest) {
+                const updatedRequest = await Pedido
+                    .findByIdAndUpdate(req.params.id, { tecnicoResponsavel: req.body.tecnico, updated_at: moment().format() }, {new: true})
+                    .catch(next);
+
+                res.status(200).send({
+                    msg: 'Tecnico responsável atualizado com sucesso',
+                    old: outdatRequest,
+                    new: updatedRequest
+                })
+            } else {
+                next({
+                    message: 'Pedido de diagnóstico não existe',
+                    status: 404
+                })
+            }
         } else {
             next({
-                message: 'Pedido de diagnóstico não existe',
+                message: 'Tecnico não está registado na plataforma',
                 status: 404
             })
         }
@@ -222,7 +231,7 @@ const uploadDiagnoseResultsFile = async (req, res, next) => {
 		})
     }
     else {
-        const toFilePath = `./files/results/diagnose_results_${ pedido.idRequest }_${ Date.now() }.pdf`;
+        const toFilePath = `./files/results/diagnose_results_${ pedido.idRequest }_${ moment().format() }.pdf`;
 
         // ler os dados do PDF temporario
         const tempFileData = await fs.readFile(req.file.path).catch(next);
@@ -233,7 +242,7 @@ const uploadDiagnoseResultsFile = async (req, res, next) => {
 
         try {
             const updatedPedido = await Pedido
-                .findByIdAndUpdate(req.params.id, { filepath: toFilePath}, {new: true})
+                .findByIdAndUpdate(req.params.id, { filepath: toFilePath, updated_at: moment().format() }, {new: true})
 
             res.status(200).send({
                 msg: 'Ficheiro guardado com sucesso',

@@ -147,7 +147,7 @@ requestUpdateRouter.put('/secondTest/:id', updateRequestController.updateResulta
 
 /**
  * @swagger
- * /requests/update/worker/{id}:
+ * /requests/update/tecnico/{id}:
  *   put:
  *     summary: Updates the Worker ('tecnico') who's in charge of this Request
  *     tags: [Pedidos]
@@ -175,7 +175,7 @@ requestUpdateRouter.put('/secondTest/:id', updateRequestController.updateResulta
  *       404:
  *         $ref: '#/responses/ErrorMessage'
  */
-requestUpdateRouter.put('/worker/:id', updateRequestController.updateTecnicoResponsavel);
+requestUpdateRouter.put('/tecnico/:id', updateRequestController.updateTecnicoResponsavel);
 
 /**
  * @swagger

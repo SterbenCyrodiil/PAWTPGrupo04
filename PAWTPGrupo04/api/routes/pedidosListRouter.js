@@ -17,10 +17,41 @@ const requestListRouter = express.Router();
  */
 requestListRouter.get('/', requestController.getAllPedidos);
 
+/* Listagem para Técnicos */
+/**
+ * @swagger
+ * /requests/tecnico/{id}:
+ *   get:
+ *     summary: Get all the requests belonging to a 'Tecnico'
+ *     tags: [Pedidos]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - $ref: '#/parameters/idPathCC'
+ *     responses:
+ *       200: 
+ *         $ref: '#/responses/PedidoListing'
+ */
+requestListRouter.get('/tecnico/:id', requestController.getTecnicoPedidos);
+
+/**
+ * @swagger
+ * /requests/open:
+ *   get:
+ *     summary: Get all the unfinished Requests not belonging to any 'Tecnico'
+ *     tags: [Pedidos]
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200: 
+ *         $ref: '#/responses/PedidoListing'
+ */
+requestListRouter.get('/open', requestController.getOpenPedidos);
+
 /* Listagem por Pedido único */
 /**
  * @swagger
- * /request/{id}:
+ * /requests/{id}:
  *   get:
  *     summary: Get the specific request via ID
  *     description: Finds the Request related to the 'id' parameter and returns it's information
@@ -54,7 +85,7 @@ requestListRouter.get('/saude24', requestController.getSaude24Pedidos);
 
 /**
  * @swagger
- * /requests/gruposrisco:
+ * /requests/grupoRisco:
  *   get:
  *     summary: Get requests in DB in which users belong to a Risk Group
  *     tags: [Pedidos]
@@ -64,11 +95,11 @@ requestListRouter.get('/saude24', requestController.getSaude24Pedidos);
  *       200: 
  *         $ref: '#/responses/PedidoListing'
  */
-requestListRouter.get('/gruposrisco', requestController.getGrupoRiscoPedidos);
+requestListRouter.get('/grupoRisco', requestController.getGrupoRiscoPedidos);
 
 /**
  * @swagger
- * /requests/trabalhadores:
+ * /requests/trabalhadorRisco:
  *   get:
  *     summary: Get requests in DB in which users work in a Risk job
  *     tags: [Pedidos]
@@ -78,7 +109,7 @@ requestListRouter.get('/gruposrisco', requestController.getGrupoRiscoPedidos);
  *       200: 
  *         $ref: '#/responses/PedidoListing'
  */
-requestListRouter.get('/trabalhadores', requestController.getTrabalhadoresRisco);
+requestListRouter.get('/trabalhadorRisco', requestController.getTrabalhadoresRisco);
 
 /* Listagem por Resultados de Diagnóstico */
 /**
@@ -97,7 +128,7 @@ requestListRouter.get('/infetados', requestController.getInfetados);
 
 /**
  * @swagger
- * /requests/testespositivos:
+ * /requests/positivos:
  *   get:
  *     summary: Get requests in DB in which users were found positive
  *     tags: [Pedidos]
@@ -107,11 +138,11 @@ requestListRouter.get('/infetados', requestController.getInfetados);
  *       200: 
  *         $ref: '#/responses/PedidoListing'
  */
-requestListRouter.get('/testespositivos', requestController.getPositivos);
+requestListRouter.get('/positivos', requestController.getPositivos);
 
 /**
  * @swagger
- * /requests/testesnegativos:
+ * /requests/negativos:
  *   get:
  *     summary: Get requests in DB in which users were found negative
  *     tags: [Pedidos]
@@ -121,7 +152,7 @@ requestListRouter.get('/testespositivos', requestController.getPositivos);
  *       200: 
  *         $ref: '#/responses/PedidoListing'
  */
-requestListRouter.get('/testesnegativos', requestController.getNegativos);
+requestListRouter.get('/negativos', requestController.getNegativos);
 
 /**
  * @swagger

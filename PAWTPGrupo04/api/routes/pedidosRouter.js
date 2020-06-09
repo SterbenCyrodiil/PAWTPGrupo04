@@ -24,11 +24,11 @@ const requestRouter = express.Router();
  *       - $ref: '#/parameters/encaminhado_saude24'
  *     responses:
  *       200: 
- *         $ref: '#/responses/UserListing'
+ *         $ref: '#/responses/PedidoInfo'
  *       404:
  *         $ref: '#/responses/ErrorMessage'
  */
-requestRouter.post('/', authorization(['UTENTE']),requestController.fillPedido);
+requestRouter.post('/', authorization(['ADMIN', 'UTENTE']),requestController.fillPedido);
 
 /**
  * @swagger
@@ -48,7 +48,7 @@ requestRouter.post('/', authorization(['UTENTE']),requestController.fillPedido);
  *           type: object
  *           properties:
  *             old:
- *               $ref: '#/definitions/UserInfo'
+ *               $ref: '#/definitions/PedidoInfo'
  *       404:
  *         $ref: '#/responses/ErrorMessage'
  */
@@ -68,13 +68,34 @@ requestRouter.delete('/:id', authorization(['ADMIN']),requestController.deletePe
  *       - $ref: '#/parameters/idPathCC'
  *     responses:
  *       200: 
- *         $ref: '#/responses/UserInfo'
+ *         $ref: '#/responses/PedidoListing'
  *       403:
  *         $ref: '#/responses/ErrorMessage'
  *       404:
  *         $ref: '#/responses/ErrorMessage'
  */
-requestRouter.get('/user/:id', authorization(['ADMIN', 'TECNICO', 'UTENTE']), requestController.getUserPedido);
+requestRouter.get('/user/:id', authorization(['ADMIN', 'UTENTE']), requestController.getUserPedidos);
+
+/**
+ * @swagger
+ * /requests/user/{id}/last:
+ *   get:
+ *     summary: Get last request made by a certain User
+ *     description: Gets the request only if the user has it's session active, or the user is an 'admin'
+ *     tags: [Pedidos]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - $ref: '#/parameters/idPathCC'
+ *     responses:
+ *       200: 
+ *         $ref: '#/responses/PedidoInfo'
+ *       403:
+ *         $ref: '#/responses/ErrorMessage'
+ *       404:
+ *         $ref: '#/responses/ErrorMessage'
+ */
+requestRouter.get('/user/:id/last', authorization(['ADMIN', 'UTENTE']), requestController.getUserPedido);
 
 // ## Qualquer administrador ou técnico pode aceder ao ficheiro de resultados de um pedido
 /**

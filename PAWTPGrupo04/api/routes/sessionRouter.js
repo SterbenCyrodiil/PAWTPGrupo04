@@ -49,7 +49,7 @@ sessionRouter.get('/user-profile', sessionControler.getLoggedUser);
 
 /**
  * @swagger
- * /user-profile:
+ * /sign-out:
  *   get:
  *     summary: Allow a user to clear it's session
  *     description: Signals clearing of the JWT session cookie

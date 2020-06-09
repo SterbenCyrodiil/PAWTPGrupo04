@@ -5,7 +5,7 @@ const userRouter = require('./routes/usersRouter')
 const userListsRouter = require('./routes/usersListRouter')
 const requestRouter = require('./routes/pedidosRouter')
 const requestListsRouter = require('./routes/pedidosListRouter')
-const requestUpdatesRouter = require('./routes/pedidosUpdateRouter')
+const requestUpdatesRouter = require('./routes/updatePedidosRouter')
 
 const authorization = require('./middleware/authorization')
 const router = express.Router();
