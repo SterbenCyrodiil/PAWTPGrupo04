@@ -27,7 +27,7 @@
     "cc": {
         "in": "formData",
         "name": "CC",
-        "description": "User Citizen Card number pt-PT (works as username)",
+        "description": "User Citizen Card number pt-PT (DDDDDDDD D CCD | D - digit, C - char)",
         "required": true,
         "type": "string"
     },
@@ -78,7 +78,7 @@
     "phoneNumber": {
         "in": "formData",
         "name": "phoneNumber",
-        "description": "User Phone Number (9 digits starting with 91, 93, 96 or 22",
+        "description": "User Phone Number (9 digits starting with 91, 92, 93 or 96)",
         "required": true,
         "type": "number"
     },

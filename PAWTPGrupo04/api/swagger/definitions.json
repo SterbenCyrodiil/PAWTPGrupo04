@@ -11,7 +11,7 @@
         "type": "object",
         "properties": {
             "cc": {
-                "description": "User citizen card number",
+                "description": "User Citizen Card number",
                 "type": "string"
             },
             "role": {
@@ -24,7 +24,7 @@
         "type": "object",
         "properties": {
             "CC": {
-                "description": "Citizen Card number pt-PT",
+                "description": "Citizen Card number pt-PT (DDDDDDDD D CCD | D - digit, C - char)",
                 "type": "string"
             },
             "firstName": {
@@ -62,7 +62,7 @@
         "type": "object",
         "properties": {
             "CC": {
-                "description": "Citizen Card number pt-PT",
+                "description": "Citizen Card number pt-PT (DDDDDDDD D CCD | D - digit, C - char)",
                 "type": "string"
             },
             "password": {
