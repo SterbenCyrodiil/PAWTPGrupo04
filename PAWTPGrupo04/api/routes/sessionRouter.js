@@ -29,9 +29,9 @@ sessionRouter.post('/sign-in', sessionControler.signInUser);
 
 /**
  * @swagger
- * /user-profile:
+ * /session-user:
  *   get:
- *     summary: Returns profile data related to the session's User
+ *     summary: Returns data related to the session's User (id, CC, name and role)
  *     description: If there is a user in session, returns it's model details
  *     tags: [Session]
  *     produces:
@@ -45,7 +45,7 @@ sessionRouter.post('/sign-in', sessionControler.signInUser);
  *       401:
  *         $ref: '#/responses/ErrorMessage'
  */
-sessionRouter.get('/user-profile', sessionControler.getLoggedUser);
+sessionRouter.get('/session-user', sessionControler.getLoggedUser);
 
 /**
  * @swagger

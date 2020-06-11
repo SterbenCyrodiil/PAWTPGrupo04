@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const moment = require('moment')
 
 const User = require('../models/user')
 
@@ -17,16 +18,23 @@ const signInUser = async (req, res, next) => {
 
         if (isValid) 
         { // se o utilizador for encontrado e a password estiver correta, gera o token
-            var token = jwt.sign({_id: user._id, CC: user.CC, role: user.role}, process.env.JWT_SECRET);
+            const userResponse = {
+                _id: user._id, cc: user.CC, 
+                name: `${ user.firstName } ${ user.lastName }`, role: user.role
+            }
+            var token = jwt.sign( userResponse, process.env.JWT_SECRET,
+                {
+                    expiresIn: process.env.SESSION_EXP
+                });
             res.cookie('session', token,
                 {
-                    expires: new Date(Date.now() + process.env.SESSION_EXP),
+                    expires: new Date(moment().format() + process.env.SESSION_EXP),
                     httpOnly: true
                 }
             )
             // ## No futuro isto será alterado para utilização de headers possivelmente
             res.json({
-                user: { cc: user.CC, role: user.role },
+                user: userResponse,
                 token: 'JWT ' + token
             });
         } else {
