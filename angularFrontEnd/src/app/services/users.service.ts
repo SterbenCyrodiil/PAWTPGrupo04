@@ -26,4 +26,46 @@ export class UsersService {
       `${ API_ENDPOINT }/users/`, user, httpOptions
     )
   }
+
+  updateUser(userID: String, user: any): Observable<any> {
+    return this.http.put(
+      `${ API_ENDPOINT }/users/${ userID }`, user, httpOptions
+    )
+  }
+
+  updateUserRole(userID: String, roleValue: String): Observable<any> {
+    return this.http.put(
+      `${ API_ENDPOINT }/users/role/${ userID }`, { role: roleValue }, httpOptions
+    )
+  }
+
+  deleteUser(userID: String): Observable<any> {
+    return this.http.delete(
+      `${ API_ENDPOINT }/users/${ userID }`, httpOptions
+    )
+  }
+
+  getUserInfo(userCC: String): Observable<any> {
+    return this.http.get(
+      `${ API_ENDPOINT }/users/CC/${ userCC }`, httpOptions
+    )
+  }
+
+  getAllUtentes(): Observable<any> {
+    return this.http.get(
+      `${ API_ENDPOINT }/users/utentes`, httpOptions
+    )
+  }
+
+  getAllTecnicos(): Observable<any> {
+    return this.http.get(
+      `${ API_ENDPOINT }/users/tecnicos`, httpOptions
+    )
+  }
+
+  getAllUsers(): Observable<any> {
+    return this.http.get(
+      `${ API_ENDPOINT }/users/`, httpOptions
+    )
+  }
 }
