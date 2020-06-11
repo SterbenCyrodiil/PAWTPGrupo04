@@ -1,0 +1,40 @@
+<mat-toolbar color="primary">
+  <mat-toolbar-row class="header">
+    <div class="aside">
+      <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()" color="secondary">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+    </div>
+
+    <div>
+      <span *ngIf="user">Olá, <span style="font-size: medium;">{{user.name}}</span>!  </span>
+		  <button class="userButton" (click)="signOutHandler()">Sign Out</button>
+    </div>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<mat-sidenav-container class="example-container">
+  <mat-sidenav #drawer mode="side" opened role="navigation" [fixedInViewport]="true" fixedTopGap=64>
+    <!-- Elementos SideNav para Utente -->
+    <mat-nav-list *ngIf="user.role == 'UTENTE'">
+      <a mat-list-item routerLink='utente/last-request'>Pedido de Diagnostico em Curso</a>
+      <a mat-list-item routerLink='utente/made-requests'>Historico de Pedidos</a>
+      <a mat-list-item routerLink='create-request'>Registar Novo Pedido de Diagnostico</a>
+    </mat-nav-list>
+    <!-- Elementos SideNav para Tecnico -->
+    <mat-nav-list *ngIf="user.role == 'TECNICO'">
+      <a mat-list-item routerLink='tecnico/request-list'>Pedidos de Diagnostico em Curso</a>
+      <a mat-list-item routerLink='open-requests'>Pedidos de Diagnostico Pendentes</a>
+    </mat-nav-list>
+    <!-- Elementos SideNav para Admin -->
+    <mat-nav-list *ngIf="user.role == 'ADMIN'">
+      <a mat-list-item routerLink='user-listings'>Listagens Utilizadores</a>
+      <a mat-list-item routerLink='request-listings'>Listagens Pedidos Diagnostico</a>
+      <a mat-list-item routerLink='statistics'>Estatisticas Gerais</a>
+      <a mat-list-item routerLink='register-tecnico'>Registar Novo Tecnico</a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,50 @@
+<div>
+  <h2>Sign Up</h2>
+
+  <div *ngIf="errors">
+    {{ errors }}
+  </div>
+
+  <form (submit)="signUpEvent($event)">
+    <label for="cc">Citizen Card number pt-PT:</label>
+    <br/>
+    <input [(ngModel)]="user.CC" name="CC" type="text" placeholder="enter your Citizen Card number" />
+    <br/>
+
+    <label for="password">Password:</label> 
+    <br/>
+    <input [(ngModel)]="user.password" name="password" type="password" placeholder="enter your password" />
+    <br/>
+
+    <label for="firstName">Primeiro Nome:</label>
+    <br/>
+    <input [(ngModel)]="user.firstName" name="firstName" type="text" placeholder="first name" />
+    <br/>
+
+    <label for="lastName">Ultimo Nome:</label>
+    <br/>
+    <input [(ngModel)]="user.lastName" name="lastName" type="text" placeholder="last name" />
+    <br/>
+
+    <label for="genero">Genero:</label> <!-- radio button -->
+    <br/>
+    <input [(ngModel)]="user.genero" name="genero" type="text" placeholder="genero (radio button)" />
+    <br/>
+
+    <label for="birthdate">Data Nascimento:</label> 
+    <br/>
+    <input [(ngModel)]="user.birthdate" name="birthdate" type="text" placeholder="birthdate (data)" />
+    <br/>
+
+    <label for="email">Email:</label> 
+    <br/>
+    <input [(ngModel)]="user.email" name="email" type="text" placeholder="email" />
+    <br/>
+
+    <label for="phoneNumber">Phone Number:</label> 
+    <br/>
+    <input [(ngModel)]="user.phoneNumber" name="phoneNumber" type="text" placeholder="phone number" />
+    <br/>
+    <button type="submit">Sign Up</button>
+  </form>
+</div>

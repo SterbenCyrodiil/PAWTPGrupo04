@@ -1,0 +1,21 @@
+.header {
+    display: flex;
+	justify-content: space-between;
+	align-items: center;
+    box-sizing: border-box;
+}
+
+.userButton {
+    color: #999;
+    text-decoration: none;
+    padding: 10px;
+}
+
+.userButton.is-selected {
+    color: #111;
+    text-decoration: underline;
+}
+
+.aside {
+    display: flex;
+}
