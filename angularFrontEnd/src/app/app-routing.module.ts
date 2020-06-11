@@ -18,10 +18,12 @@ import { TecnicoRequestsComponent } from './components/requests/tecnico-requests
 // # Utente Dashboard
 import { UserRequestInfoComponent } from './components/requests/user-request-info/user-request-info.component';
 import { UserRequestsComponent } from './components/requests/user-requests/user-requests.component';
-import { CreateRequestComponent } from './components/requests/create-request/create-request.component';
+import { RequestAddComponent } from './components/requests/request-add/request-add.component';
 // # General
 import { UserInfoComponent } from './components/users/user-info/user-info.component';
+import { UserInfoEditComponent } from './components/users/user-info-edit/user-info-edit.component';
 import { UserTecnicoInfoComponent } from './components/users/user-tecnico-info/user-tecnico-info.component';
+import { UserTecnicoInfoEditComponent } from './components/users/user-tecnico-info-edit/user-tecnico-info-edit.component';
 import { RequestInfoComponent } from './components/requests/request-info/request-info.component';
 import { RequestInfoEditComponent } from './components/requests/request-info-edit/request-info-edit.component';
 // # Guard Services
@@ -40,75 +42,95 @@ const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardComponent,
-    canActivate: [ RoleGuardService ],
     children: [
       // # Dashboard UTENTE
       {
-        path: ':utente/last-request',
+        path: ':cc/last-request',
         component: UserRequestInfoComponent,
+        canActivate: [ RoleGuardService ],
         data: { roles: [ Role.Admin, Role.Utente ]}
       },
       {
-        path: ':utente/made-requests',
+        path: ':cc/made-requests',
         component: UserRequestsComponent,
+        canActivate: [ RoleGuardService ],
         data: { roles: [ Role.Admin, Role.Utente ]}
       },
       {
-        path: 'create-request',
-        component: CreateRequestComponent,
+        path: ':cc/create-request',
+        component: RequestAddComponent,
+        canActivate: [ RoleGuardService ],
         data: { roles: [ Role.Admin, Role.Utente ]}
       },
       // # Dashboard TECNICO
       {
-        path: ':tecnico/request-list',
+        path: ':cc/request-list',
         component: TecnicoRequestsComponent,
+        canActivate: [ RoleGuardService ],
         data: { roles: [ Role.Admin, Role.Tecnico ]}
       },
       {
         path: 'open-requests',
         component: OpenRequestsComponent,
+        canActivate: [ RoleGuardService ],
         data: { roles: [ Role.Admin, Role.Tecnico ]}
       },
       // # Dashboard ADMIN
       {
         path: 'user-listings',
         component: UserListsComponent,
+        canActivate: [ RoleGuardService ],
         data: { roles: [ Role.Admin ]}
       },
       {
         path: 'request-listings',
         component: RequestListsComponent,
+        canActivate: [ RoleGuardService ],
         data: { roles: [ Role.Admin ]}
       },
       {
         path: 'statistics',
         component: StatisticsComponent,
-        data: { roles: [ Role.Admin, Role.Tecnico, Role.Utente ]}
       },
       {
         path: 'register-tecnico',
         component: SignUpTecnicoComponent,
+        canActivate: [ RoleGuardService ],
         data: { roles: [ Role.Admin ]}
       },
       // # Componentes Gerais
       {
-        path: ':request/request-info',
+        path: ':reqId/request-info',
         component: RequestInfoComponent,
-        data: { roles: [ Role.Admin, Role.Tecnico, Role.Utente ]}
       },
       {
-        path: ':request/request-info-edit',
+        path: ':reqId/request-info-edit',
         component: RequestInfoEditComponent,
+        canActivate: [ RoleGuardService ],
         data: { roles: [ Role.Admin, Role.Tecnico ]}
       },
       {
-        path: ':user/user-info',
+        path: ':usrId/user-info',
         component: UserInfoComponent,
+        canActivate: [ RoleGuardService ],
         data: { roles: [ Role.Admin, Role.Utente ]}
       },
       {
-        path: ':request/tecnico-info',
+        path: ':usrId/user-update',
+        component: UserInfoEditComponent,
+        canActivate: [ RoleGuardService ],
+        data: { roles: [ Role.Admin, Role.Utente ]}
+      },
+      {
+        path: ':usrId/tecnico-info',
         component: UserTecnicoInfoComponent,
+        canActivate: [ RoleGuardService ],
+        data: { roles: [ Role.Admin ]}
+      },
+      {
+        path: ':usrId/tecnico-update',
+        canActivate: [ RoleGuardService ],
+        component: UserTecnicoInfoEditComponent,
         data: { roles: [ Role.Admin ]}
       },
     ]

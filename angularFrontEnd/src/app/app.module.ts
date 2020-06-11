@@ -26,10 +26,12 @@ import { TecnicoRequestsComponent } from './components/requests/tecnico-requests
 // # Utente Dashboard
 import { UserRequestInfoComponent } from './components/requests/user-request-info/user-request-info.component';
 import { UserRequestsComponent } from './components/requests/user-requests/user-requests.component';
-import { CreateRequestComponent } from './components/requests/create-request/create-request.component';
+import { RequestAddComponent } from './components/requests/request-add/request-add.component';
 // # General
 import { UserInfoComponent } from './components/users/user-info/user-info.component';
+import { UserInfoEditComponent } from './components/users/user-info-edit/user-info-edit.component';
 import { UserTecnicoInfoComponent } from './components/users/user-tecnico-info/user-tecnico-info.component';
+import { UserTecnicoInfoEditComponent } from './components/users/user-tecnico-info-edit/user-tecnico-info-edit.component';
 import { RequestInfoComponent } from './components/requests/request-info/request-info.component';
 import { RequestInfoEditComponent } from './components/requests/request-info-edit/request-info-edit.component';
 
@@ -53,12 +55,14 @@ import { RequestInfoEditComponent } from './components/requests/request-info-edi
     // # Utente Dashboard
     UserRequestInfoComponent,
     UserRequestsComponent,
-    CreateRequestComponent,
+    RequestAddComponent,
     // # General
     UserInfoComponent,
     UserTecnicoInfoComponent,
     RequestInfoComponent,
-    RequestInfoEditComponent
+    RequestInfoEditComponent,
+    UserInfoEditComponent,
+    UserTecnicoInfoEditComponent
   ],
   imports: [
     BrowserModule,

@@ -4,7 +4,7 @@ import { HttpHeaders, HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from 'src/environments/environment';
 
-import { Pedido } from '../models/pedido'
+import { Request } from '../models/request'
 
 const API_ENDPOINT = environment.apiUrl;
 const httpOptions = {
@@ -17,7 +17,9 @@ const httpOptions = {
 @Injectable({
   providedIn: 'root'
 })
-export class PedidosDiagnosticoService {
+export class UpdateRequestsService {
 
   constructor(private http: HttpClient) { }
+
+  
 }

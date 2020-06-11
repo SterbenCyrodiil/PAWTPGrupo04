@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { UpdatePedidosService } from './update-pedidos.service';
+import { RequestsService } from './requests.service';
 
-describe('UpdatePedidosService', () => {
+describe('RequestsService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: UpdatePedidosService = TestBed.get(UpdatePedidosService);
+    const service: RequestsService = TestBed.get(RequestsService);
     expect(service).toBeTruthy();
   });
 });

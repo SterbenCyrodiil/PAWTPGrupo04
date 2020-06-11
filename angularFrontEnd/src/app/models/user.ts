@@ -1,5 +1,4 @@
 export class User {
-
     _id: String;
     CC: String;
     password: String;
@@ -10,4 +9,7 @@ export class User {
     email: String;
     phoneNumber: String;
     
+    role: String;
+    estado: String;
+    updated_at: Date;
 }

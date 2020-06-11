@@ -36,7 +36,9 @@ export class SignInComponent implements OnInit {
         this.router.navigate(['/dashboard'])
       },
       (error) => {
-        this.errors = `${ error.status }: ${ error.error.message }`
+        this.errors = error.error.message
+          ? `${ error.status }: ${ error.error.message }`
+          : `${ error.status }: ${ error.error }`
       }
     )
   }

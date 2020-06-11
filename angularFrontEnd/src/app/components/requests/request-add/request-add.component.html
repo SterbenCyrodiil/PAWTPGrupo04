@@ -1,0 +1,25 @@
+<div>
+  <h2>Novo Pedido para Testes de Diagnóstico</h2>
+
+  <div *ngIf="errors">
+    {{ errors }}
+  </div>
+
+  <form (submit)="createRequestEvent($event)">
+    <label for="idRequest">Identificador para o Pedido</label>
+    <br/>
+    <input [(ngModel)]="request.id" name="id" type="text" placeholder="enter request identification" />
+    <br/>
+    <p>Prioridades:</p>
+    <input [(ngModel)]="request.trabalhadorDeRisco" type="checkbox" id="trabalhadorRisco" name="trabalhadorDeRisco" value="trabalhadorDeRisco">
+    <label for="trabalhadorRisco">trabalhador de Risco?</label>
+    <br>
+    <input [(ngModel)]="request.grupoDeRisco" type="checkbox" id="grupoRisco" name="grupoDeRisco" value="grupoDeRisco">
+    <label for="grupoRisco">Pertence a grupos de Risco?</label>
+    <br>
+    <input [(ngModel)]="request.encaminhado_saude24" type="checkbox" id="saude24" name="encaminhado_saude24" value="encaminhado_saude24">
+    <label for="saude24">Foi encaminhado pela Saude 24?</label>
+    <br/>
+    <button type="submit">Submeter Pedido</button>
+  </form>
+</div>

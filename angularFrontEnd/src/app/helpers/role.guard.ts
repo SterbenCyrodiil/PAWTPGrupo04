@@ -17,14 +17,17 @@ export class RoleGuardService implements CanActivate {
 
     if (currentUser) { 
       // check for the logged user
-      if (roles.includes(currentUser.role)) {
+      if (roles && roles.includes(currentUser.role)) {
         // check if user has role
         return true;
       }
+      console.log("ROLE_GUARD: Only " + roles + " users may enter this route");
+    } else {
+      console.log("ROLE_GUARD: user is not logged in");
     }
-    // redirect to login
-    const options = this.sessionService.expired ? { queryParams: { expired: 'true' } } : undefined
-    this.router.navigate(['/sign-in'], options);
+    // redirect
+    // const options = this.sessionService.expired ? { queryParams: { expired: 'true' } } : undefined
+    this.router.navigate(['/dashboard']);
     return false;
   }
   

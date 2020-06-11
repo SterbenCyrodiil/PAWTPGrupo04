@@ -19,7 +19,7 @@
     <mat-nav-list *ngIf="user.role == 'UTENTE'">
       <a mat-list-item routerLink='utente/last-request'>Pedido de Diagnostico em Curso</a>
       <a mat-list-item routerLink='utente/made-requests'>Historico de Pedidos</a>
-      <a mat-list-item routerLink='create-request'>Registar Novo Pedido de Diagnostico</a>
+      <a mat-list-item [routerLink]="[user.cc, 'create-request']">Registar Novo Pedido de Diagnostico</a>
     </mat-nav-list>
     <!-- Elementos SideNav para Tecnico -->
     <mat-nav-list *ngIf="user.role == 'TECNICO'">
