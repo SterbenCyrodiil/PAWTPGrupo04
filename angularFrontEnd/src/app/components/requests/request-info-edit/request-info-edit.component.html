@@ -1,0 +1,71 @@
+<h1>Atualização do Diagnostico</h1>
+
+<div class="errors" *ngIf="errors">
+  {{ errors }}
+</div>
+
+<div class="container" *ngIf="requestInfo">
+  <div class="tag">Ultima atualização do Pedido</div>
+  <div class="content">{{requestInfo.updated_at}}</div>
+  
+  <div class="tag first">Identificador</div>
+  <div class="content first">{{requestInfo.idRequest}}</div>
+
+  <div class="tag">Utente</div>
+  <div class="content">{{requestInfo.CCutente}}</div>
+
+  <div class="tag">Prioridades</div>
+  <div class="content">
+    <span *ngIf="!requestInfo.trabalhadorDeRisco && !requestInfo.grupoDeRisco && !requestInfo.encaminhado_saude24">Sem
+      prioridades especiais</span>
+    <span *ngIf="requestInfo.trabalhadorDeRisco">Trabalhador Risco </span>
+    <span *ngIf="requestInfo.grupoDeRisco">Grupo de Risco </span>
+    <span *ngIf="requestInfo.encaminhado_saude24">Encaminhado Saude 24</span>
+  </div>
+
+  <div *ngIf="requestInfo.tecnicoResponsavel">
+    <div class="tag">Responsável</div>
+    <div class="content">{{requestInfo.tecnicoResponsavel}}</div>
+  </div>
+
+  <div class="sub-container" *ngIf="!requestInfo.resultadoInicial">
+    <h2>Atualizar dados do Teste</h2>
+
+    <div *ngIf="!requestInfo.dataInicial">
+      <div class="tag">Agendar data do Teste</div>
+      <button class="content" (click)="openScheduleTestDateDialog()">Agendar</button>
+    </div>
+
+    <div *ngIf="requestInfo.dataInicial">
+      <div class="tag">Atualizar resultado do Teste</div>
+      <button class="content" (click)="openUpdateTestResultDialog(true)">Agendar</button>
+    </div>
+  </div>
+
+  <div class="sub-container" *ngIf="requestInfo.resultadoInicial && !requestInfo.resultadoFinal">
+    <h2>Atualizar dados do Teste</h2>
+
+    <div *ngIf="!requestInfo.dataFinal">
+      <div class="tag">Agendar data do Segundo Teste</div>
+      <button class="content" (click)="openScheduleTestDateDialog()">Agendar</button>
+    </div>
+
+    <div *ngIf="requestInfo.dataFinal">
+      <div class="tag">Atualizar resultado do Segundo Teste</div>
+      <button class="content" (click)="openUpdateTestResultDialog(false)">Agendar</button>
+    </div>
+  </div>
+
+  <div class="sub-container" *ngIf="requestInfo.casoFechado">
+    <h2>Resultados</h2>
+
+    <div class="tag">Descrição</div>
+    <div *ngIf="requestInfo.infetado" class="content">Caso positivo. Utente infetado!</div>
+    <div *ngIf="!requestInfo.infetado" class="content">Caso negativo.</div>
+
+    <div *ngIf="requestInfo.filePath">
+      <div class="tag">Atualizar ficheiro PDF com os resultados</div>
+      <button class="content" (click)="openUploadResultsFileDialog()">Agendar</button>
+    </div>
+  </div>
+</div>

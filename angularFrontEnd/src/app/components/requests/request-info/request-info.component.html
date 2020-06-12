@@ -1,4 +1,4 @@
-<h1>Detalhes de Diagnostico</h1>
+<h1>Detalhes do Diagnostico</h1>
 
 <div class="errors" *ngIf="errors">
   {{ errors }}
@@ -60,6 +60,6 @@
     <div *ngIf="!requestInfo.infetado" class="content">Caso negativo.</div>
 
     <div class="tag">PDF</div>
-    <button class="content">Download PDF resultados</button>
+    <button class="content" (click)="downloadResultsFile()">Download PDF resultados</button>
   </div>
 </div>

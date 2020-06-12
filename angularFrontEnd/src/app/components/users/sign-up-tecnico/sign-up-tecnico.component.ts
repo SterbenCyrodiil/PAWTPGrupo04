@@ -22,7 +22,6 @@ export class SignUpTecnicoComponent implements OnInit {
 
   signUpEvent(event): void {
     event.preventDefault()
-    this.user.genero.toUpperCase()
     this.errors = ''
     this.usersService.signUpTecnico(this.user)
     .subscribe(

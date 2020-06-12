@@ -3,7 +3,9 @@ import { Component, OnInit, Output, EventEmitter} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RequestsService } from '../../../services/requests.service';
 import { SessionService } from '../../../services/session.service';
+
 import { Request } from '../../../models/request'
+import * as fileSaver from 'file-saver/';
 
 @Component({
   selector: 'app-request-info',
@@ -20,7 +22,8 @@ export class RequestInfoComponent implements OnInit {
   errors: String;
 
   constructor(public requestsService: RequestsService, public sessionService: SessionService,
-    public router: Router, private route: ActivatedRoute) { }
+    public router: Router, private route: ActivatedRoute) { 
+  }
 
   ngOnInit() {
     this.routeRequest = this.route.snapshot.params['reqId'] || null;
@@ -34,6 +37,7 @@ export class RequestInfoComponent implements OnInit {
           (request) => {
             this.requestInfo = request;
             this.notify.emit(this.requestInfo);
+            // check test download
           },
           (error) => {
             this.errors = error.error.message
@@ -47,6 +51,7 @@ export class RequestInfoComponent implements OnInit {
         .subscribe( 
           (request) => {
             this.requestInfo = request;
+            // check test download
           },
           (error) => {
             this.errors = error.error.message
@@ -55,6 +60,19 @@ export class RequestInfoComponent implements OnInit {
           }
         )
     }
+  }
+
+  downloadResultsFile() {
+    this.requestsService.getResultsFileDownloadRequest(this.requestInfo._id).subscribe(
+      (request: any) => {
+        fileSaver.saveAs(request, 'TestResults.pdf');
+      },
+      (error) => {
+        this.errors = error.error.message
+          ? `${ error.status }: ${ error.error.message }`
+          : `${ error.status }: ${ error.error }`
+      }
+    );
   }
 
 }

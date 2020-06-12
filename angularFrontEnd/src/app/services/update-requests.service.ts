@@ -39,7 +39,7 @@ export class UpdateRequestsService {
     )
   }
 
-  updateFirstTestResult(requestID: String, testResultValue: Boolean, secondTestDateValue?: Date): Observable<any> {
+  updateFirstTestResult(requestID: String, testResultValue: boolean, secondTestDateValue?: Date): Observable<any> {
     return this.http.put(
       `${ API_ENDPOINT }/requests/update/firstTest/${ requestID }`, 
       { 
@@ -58,7 +58,7 @@ export class UpdateRequestsService {
     )
   }
 
-  updateSecondTestResult(requestID: String, testResultValue: Boolean): Observable<any> {
+  updateSecondTestResult(requestID: String, testResultValue: boolean): Observable<any> {
     return this.http.put(
       `${ API_ENDPOINT }/requests/update/secondTest/${ requestID }`, 
       { 

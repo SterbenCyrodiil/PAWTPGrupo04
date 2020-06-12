@@ -23,7 +23,13 @@ export class RequestsService {
 
   getResultsFileDownloadRequest(requestID: String): Observable<any> {
     return this.http.get(
-      `${ API_ENDPOINT }/requests/download/${ requestID }`, httpOptions
+      `${ API_ENDPOINT }/requests/download/${ requestID }`, {
+          responseType: "blob",
+          headers: {
+              "Content-Type": "application/json",
+              Accept: "application/pdf"
+          }
+      }
     )
   }
 

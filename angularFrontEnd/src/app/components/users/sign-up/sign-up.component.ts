@@ -49,7 +49,6 @@ export class SignUpComponent implements OnInit {
 
   signUpEvent(event): void {
     event.preventDefault()
-    this.user.genero.toUpperCase()
     this.errors = ''
     this.usersService.signUp(this.user)
     .subscribe(

@@ -1,8 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { FormsModule } from "@angular/forms";
-import { MatGridListModule, MatButtonModule, MatNativeDateModule, MatIconModule, MatSidenavModule, MatListModule, MatToolbarModule } from '@angular/material';
+import { ReactiveFormsModule, FormsModule } from "@angular/forms";
+import { MatRadioModule, MatFormFieldModule, MatDatepickerModule, MatDialogModule, MatGridListModule, MatButtonModule, MatNativeDateModule, MatIconModule, MatSidenavModule, MatListModule, MatToolbarModule } from '@angular/material';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -32,6 +32,10 @@ import { UserTecnicoInfoComponent } from './components/users/user-tecnico-info/u
 import { UserTecnicoInfoEditComponent } from './components/users/user-tecnico-info-edit/user-tecnico-info-edit.component';
 import { RequestInfoComponent } from './components/requests/request-info/request-info.component';
 import { RequestInfoEditComponent } from './components/requests/request-info-edit/request-info-edit.component';
+// # Dialogs
+import { ScheduleTestDateDialogComponent } from './components/dialogs/schedule-test-date-dialog/schedule-test-date-dialog.component';
+import { UpdateTestResultDialogComponent } from './components/dialogs/update-test-result-dialog/update-test-result-dialog.component';
+import { UploadResultsFileDialogComponent } from './components/dialogs/upload-results-file-dialog/upload-results-file-dialog.component';
 
 @NgModule({
   declarations: [
@@ -61,12 +65,16 @@ import { RequestInfoEditComponent } from './components/requests/request-info-edi
     UserTecnicoInfoEditComponent,
     TecnicoRequestListsComponent,
     AdminRequestListsComponent,
-    AdminUserListsComponent
+    AdminUserListsComponent,
+    ScheduleTestDateDialogComponent,
+    UpdateTestResultDialogComponent,
+    UploadResultsFileDialogComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule,
     NoopAnimationsModule,
     // # Angular Materials
@@ -76,7 +84,16 @@ import { RequestInfoEditComponent } from './components/requests/request-info-edi
     MatIconModule, 
     MatSidenavModule, 
     MatListModule,
-    MatGridListModule
+    MatGridListModule,
+    MatDialogModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatRadioModule,
+  ],
+  entryComponents: [
+    ScheduleTestDateDialogComponent,
+    UpdateTestResultDialogComponent,
+    UploadResultsFileDialogComponent
   ],
   providers: [
     {
