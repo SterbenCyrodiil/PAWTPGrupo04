@@ -1,3 +1,33 @@
-<p>
-  user-info works!
-</p>
+<h1>Perfil Utilizador</h1>
+
+<div class="errors" *ngIf="errors">
+  {{ errors }}
+</div>
+
+<div class="profile" *ngIf="userInfo">
+    <div class="tag first">Número Cartão de Cidadão</div>
+    <div class="content first">{{userInfo.CC}}</div>
+
+    <div class="tag">Nome Completo</div>
+    <div class="content">{{userInfo.firstName}} {{userInfo.lastName}}</div>
+
+    <div class="tag">Data Nascimento</div>
+    <div class="content">{{userInfo.birthdate}}</div>
+
+    <div class="tag">Genero</div>
+    <div class="content">{{userInfo.genero}}</div>
+
+    <div class="tag">Email</div>
+    <div class="content">{{userInfo.email}}</div>
+
+    <div class="tag">Phone Number</div>
+    <div class="content">{{userInfo.phoneNumber}}</div>
+
+    <div *ngIf="userInfo.role === 'UTENTE'">
+      <div class="tag">Estado de Saúde atual</div>
+      <div class="content">{{userInfo.estado}}</div>
+    </div>
+
+    <button [routerLink]="['../..', routeUser, 'user-update']">Atualizar Dados</button>    
+    <button (click)="deleteUser()">Remover Registo</button>
+</div>

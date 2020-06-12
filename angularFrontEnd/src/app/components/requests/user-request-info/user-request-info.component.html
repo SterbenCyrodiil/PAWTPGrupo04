@@ -1,3 +1,9 @@
-<p>
-  user-request-info works!
-</p>
+<h1>Estado do Diagnostico atual</h1>
+
+<div class="errors" *ngIf="errors">
+  {{ errors }}
+</div>
+
+<!-- UTILIZAR AQUI {{requestInfo}} para mostrar mensagens customizadas sobre o estado atual do Diagnostico -->
+
+<app-request-info (notify)="updateInfo($event)"></app-request-info>

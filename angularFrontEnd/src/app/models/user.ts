@@ -5,7 +5,7 @@ export class User {
     firstName: String;
     lastName: String;
     genero: String;
-    birthDate: Date;
+    birthdate: Date;
     email: String;
     phoneNumber: String;
     

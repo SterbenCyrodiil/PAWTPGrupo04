@@ -55,7 +55,7 @@ const routes: Routes = [
         data: { roles: [ Role.Admin, Role.Utente ]}
       },
       {
-        path: ':cc/create-request',
+        path: 'create-request',
         component: RequestAddComponent,
         canActivate: [ RoleGuardService ],
         data: { roles: [ Role.Admin, Role.Utente ]}

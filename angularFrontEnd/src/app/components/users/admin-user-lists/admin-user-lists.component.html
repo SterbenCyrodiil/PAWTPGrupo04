@@ -1,3 +1,101 @@
-<p>
-  admin-user-lists works!
-</p>
+<div class="errors" *ngIf="errors">
+  {{ errors }}
+</div>
+
+<h1>Lista de Utentes Registados</h1>
+
+<div *ngIf="!errors && !utentes || utentes.length === 0">
+  <p>Não existem utentes registados ...</p>
+</div>
+
+<div *ngIf="utentes">
+  <mat-grid-list cols="4" rowHeight="4:1">
+    <ng-container>
+      <mat-grid-tile>
+        <b>Nº Cartão Cidadão</b>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <b>Nome Completo</b>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <b>Email</b>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <b>Detalhes</b>
+      </mat-grid-tile>
+      <!-- <mat-grid-tile>
+        <b>Atualizar</b>
+      </mat-grid-tile> -->
+    </ng-container>
+  </mat-grid-list>
+  <hr>
+  <mat-grid-list cols="4" rowHeight="4:1">
+    <ng-container *ngFor="let utente of utentes">
+      <mat-grid-tile>
+        {{ utente.CC }}
+      </mat-grid-tile>
+      <mat-grid-tile>
+        {{ utente.firstName }} {{ utente.lastName }}
+      </mat-grid-tile>
+      <mat-grid-tile>
+        {{ utente.email }}
+      </mat-grid-tile>
+      <mat-grid-tile> 
+        <button mat-button [routerLink]="['..', utente.CC, 'user-info']">Detalhes</button>
+      </mat-grid-tile>
+      <!-- <mat-grid-tile> 
+        <button mat-button [routerLink]="['..', utente.CC, 'user-info-edit']">Atualizar</button>
+      </mat-grid-tile> -->
+    </ng-container>
+  </mat-grid-list>
+</div>
+<hr>
+<br/>
+<h1>Lista de Tecnicos Registados</h1>
+
+<div *ngIf="!errors && !tecnicos || tecnicos.length === 0">
+  <p>Não existem tecnicos registados ...</p>
+</div>
+
+<div *ngIf="tecnicos">
+  <mat-grid-list cols="5" rowHeight="5:1">
+    <ng-container>
+      <mat-grid-tile>
+        <b>Nº Cartão Cidadão</b>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <b>Nome Completo</b>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <b>Email</b>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <b>Detalhes</b>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <b>Atualizar</b>
+      </mat-grid-tile>
+    </ng-container>
+  </mat-grid-list>
+  <hr>
+  <mat-grid-list cols="5" rowHeight="5:1">
+    <ng-container *ngFor="let tecnico of tecnicos">
+      <mat-grid-tile>
+        {{ tecnico.CC }}
+      </mat-grid-tile>
+      <mat-grid-tile>
+        {{ tecnico.firstName }} {{ tecnico.lastName }}
+      </mat-grid-tile>
+      <mat-grid-tile>
+        {{ tecnico.email }}
+      </mat-grid-tile>
+      <mat-grid-tile> 
+        <button mat-button [routerLink]="['..', tecnico.CC, 'user-info']">Detalhes</button>
+      </mat-grid-tile>
+      <mat-grid-tile> 
+        <button mat-button [routerLink]="['..', tecnico.CC, 'user-info-edit']">Atualizar</button>
+      </mat-grid-tile>
+    </ng-container>
+  </mat-grid-list>
+</div>
+<hr>

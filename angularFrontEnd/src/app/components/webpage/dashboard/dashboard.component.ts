@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SessionService } from 'src/app/services/session.service';
 import { Router } from '@angular/router';
 
@@ -20,6 +20,21 @@ export class DashboardComponent implements OnInit {
         this.router.navigate(['/sign-in'], options);
       }
     })
+  }
+
+  navigate(where: String) {
+    switch(where) {
+      case 'PROFILE':
+        if (this.router.url === '/dashboard') this.router.navigate([this.user.cc, 'user-info']);
+        else this.router.navigate(['..', this.user.cc, 'user-info']);
+        break;
+      case 'STATS':
+        if (this.router.url === '/dashboard') this.router.navigate(['statistics']);
+        else this.router.navigate(['..', 'statistics']);
+        break;
+      default:
+        this.router.navigate(['/dashboard']);
+    }
   }
 
   signOutHandler() {

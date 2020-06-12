@@ -59,13 +59,13 @@ export class UsersService {
 
   getAllUtentes(): Observable<any> {
     return this.http.get(
-      `${ API_ENDPOINT }/users/utentes`, httpOptions
+      `${ API_ENDPOINT }/users/utentes/all`, httpOptions
     )
   }
 
   getAllTecnicos(): Observable<any> {
     return this.http.get(
-      `${ API_ENDPOINT }/users/tecnicos`, httpOptions
+      `${ API_ENDPOINT }/users/tecnicos/all`, httpOptions
     )
   }
 

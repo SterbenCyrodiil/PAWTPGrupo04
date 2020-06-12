@@ -4,17 +4,16 @@ div {
   padding: 20px;
 }
 
-/*
 h2 {
   text-align: center;
   border-radius: 5px;
   background-color: #f2f2f2;
   padding: 20px;
-  color: #00d975;
+  color: #4331e2cc;
+  font-weight: bold;
 }
 
 input[type='text'],
-input[type='number'],
 input[type='password'] {
   width: 100%;
   padding: 12px 20px;
@@ -27,7 +26,7 @@ input[type='password'] {
 
 button {
   width: 100%;
-  background-color: #00d975;
+  background-color: #1037b6e3;
   color: white;
   padding: 14px 20px;
   margin: 8px 0;
@@ -37,6 +36,11 @@ button {
 }
 
 button:hover {
-  background-color: #00d975;
+  background-color: #1a72d6;
 }
-*/
+
+.container {
+  height: 100%;
+  width: 50%;
+  margin: 0 auto;
+}

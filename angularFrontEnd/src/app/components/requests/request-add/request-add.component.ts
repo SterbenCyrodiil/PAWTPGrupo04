@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 import { RequestsService } from '../../../services/requests.service';
+import { SessionService } from '../../../services/session.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -9,7 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./request-add.component.css']
 })
 export class RequestAddComponent implements OnInit {
-  userCC: String;
+  sessionUser: any;
   request: any = {
     id: '',
     CCutente: '',
@@ -20,15 +21,22 @@ export class RequestAddComponent implements OnInit {
 
   errors: String;
 
-  constructor(public requestsService: RequestsService, public router: Router, private route: ActivatedRoute) { }
+  constructor(public requestsService: RequestsService, public sessionService: SessionService,
+    public router: Router, private route: ActivatedRoute) { }
 
-  ngOnInit() { 
-    this.userCC = this.route.snapshot.params['cc'];
+  ngOnInit() {
+    this.sessionService.sessionUser().subscribe((user) => {
+      this.sessionUser = user;
+      if (!this.sessionUser) { // # redirecionamento para login se não existe um utilizador em sessão
+        const options = this.sessionService.expired ? { queryParams: { expired: 'true' } } : undefined
+        this.router.navigate(['/sign-in'], options);
+      }
+    })
   }
 
   createRequestEvent(event): void {
     event.preventDefault();
-    this.request.CCutente = this.userCC; 
+    this.request.CCutente = this.sessionUser.cc; 
     this.errors = ''
     this.requestsService.createRequest(this.request)
     .subscribe(

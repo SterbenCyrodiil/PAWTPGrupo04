@@ -1,3 +1,65 @@
-<p>
-  request-info works!
-</p>
+<h1>Detalhes de Diagnostico</h1>
+
+<div class="errors" *ngIf="errors">
+  {{ errors }}
+</div>
+
+<div class="container" *ngIf="requestInfo">
+  <div class="tag">Ultima atualização do Pedido</div>
+  <div class="content">{{requestInfo.updated_at}}</div>
+  
+  <div class="tag first">Identificador</div>
+  <div class="content first">{{requestInfo.idRequest}}</div>
+
+  <div class="tag">Utente</div>
+  <div class="content">{{requestInfo.CCutente}}</div>
+
+  <div class="tag">Prioridades</div>
+  <div class="content">
+    <span *ngIf="!requestInfo.trabalhadorDeRisco && !requestInfo.grupoDeRisco && !requestInfo.encaminhado_saude24">Sem
+      prioridades especiais</span>
+    <span *ngIf="requestInfo.trabalhadorDeRisco">Trabalhador Risco </span>
+    <span *ngIf="requestInfo.grupoDeRisco">Grupo de Risco </span>
+    <span *ngIf="requestInfo.encaminhado_saude24">Encaminhado Saude 24</span>
+  </div>
+
+  <div *ngIf="requestInfo.tecnicoResponsavel">
+    <div class="tag">Responsável</div>
+    <div class="content">{{requestInfo.tecnicoResponsavel}}</div>
+  </div>
+
+  <div class="sub-container" *ngIf="requestInfo.dataInicial">
+    <h2>Teste</h2>
+
+    <div class="tag">Data do Teste</div>
+    <div class="content">{{requestInfo.dataInicial}}</div>
+
+    <div *ngIf="requestInfo.resultadoInicial">
+      <div class="tag">Resultado</div>
+      <div class="content">{{requestInfo.resultadoInicial}}</div>
+    </div>
+  </div>
+
+  <div class="sub-container" *ngIf="requestInfo.dataFinal">
+    <h2>Teste</h2>
+
+    <div class="tag">Data do Teste</div>
+    <div class="content">{{requestInfo.dataFinal}}</div>
+
+    <div *ngIf="requestInfo.resultadoFinal">
+      <div class="tag">Resultado</div>
+      <div class="content">{{requestInfo.resultadoFinal}}</div>
+    </div>
+  </div>
+
+  <div class="sub-container" *ngIf="requestInfo.casoFechado">
+    <h2>Resultados</h2>
+
+    <div class="tag">Descrição</div>
+    <div *ngIf="requestInfo.infetado" class="content">Caso positivo. Utente infetado!</div>
+    <div *ngIf="!requestInfo.infetado" class="content">Caso negativo.</div>
+
+    <div class="tag">PDF</div>
+    <button class="content">Download PDF resultados</button>
+  </div>
+</div>

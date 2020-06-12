@@ -1,0 +1,55 @@
+.resultInput{
+    display: inline;
+    padding-left: 15px;
+}
+
+.requestInformacao{
+    width: 100%;
+    margin-bottom: 50px;
+}
+
+.tag{
+    margin-left: 40px;
+    float: left;
+    font-weight: bold;
+    width: 30%;
+}
+
+.content{
+    float: left;
+    width: 50%;
+    margin-bottom: 20px;
+}
+
+.test{
+    margin-top: 50px;
+}
+
+.first{
+    margin-top: 50px;
+}
+
+.test{
+    margin-left: 30px;
+}
+
+h1{
+    margin-left: 20px;
+    margin-top: 30px;
+}
+
+h2{
+    padding-right: 200px;
+    width: 100%;
+}
+
+.container{
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+button{
+    margin-top: 30px;
+    margin-left: 15%;
+    width: 20%;
+}

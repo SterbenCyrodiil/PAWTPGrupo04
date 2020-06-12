@@ -1,0 +1,44 @@
+.resultInput {
+    display: inline;
+    padding-left: 15px;
+}
+
+.requestInformacao {
+    width: 100%;
+    margin-bottom: 50px;
+}
+
+.container {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.sub-container {
+    margin-left: 30px;
+}
+
+.tag {
+    margin-left: 40px;
+    float: left;
+    font-weight: bold;
+    width: 30%;
+}
+
+.content {
+    float: left;
+    width: 50%;
+    margin-bottom: 20px;
+}
+
+.first {
+    margin-top: 25px;
+}
+
+h1 {
+    margin-left: 20px;
+    margin-top: 30px;
+}
+
+h2 {
+    padding-right: 200px;
+}
