@@ -21,9 +21,15 @@ export class UsersService {
 
   constructor(private http: HttpClient) { }
 
-  signUp(user: User): Observable<any> {
+  signUp(userData: any): Observable<any> {
     return this.http.post(
-      `${ API_ENDPOINT }/users/`, user, httpOptions
+      `${ API_ENDPOINT }/users/`, userData, httpOptions
+    )
+  }
+
+  signUpTecnico(userData: any): Observable<any> {
+    return this.http.post(
+      `${ API_ENDPOINT }/users/tecnico`, userData, httpOptions
     )
   }
 

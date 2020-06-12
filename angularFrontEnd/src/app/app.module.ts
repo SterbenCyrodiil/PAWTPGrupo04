@@ -14,15 +14,13 @@ import { SignInComponent } from './components/users/sign-in/sign-in.component';
 import { SignUpComponent } from './components/users/sign-up/sign-up.component';
 // # Dashboard
 import { DashboardComponent } from './components/webpage/dashboard/dashboard.component';
-import { DummyComponent } from './components/webpage/dummy/dummy.component';
 import { StatisticsComponent } from './components/webpage/statistics/statistics.component';
 // # Admin Dashboard
-import { RequestListsComponent } from './components/requests/request-lists/request-lists.component';
-import { UserListsComponent } from './components/users/user-lists/user-lists.component';
+import { AdminRequestListsComponent } from './components/requests/admin-request-lists/admin-request-lists.component';
+import { AdminUserListsComponent } from './components/users/admin-user-lists/admin-user-lists.component';
 import { SignUpTecnicoComponent } from './components/users/sign-up-tecnico/sign-up-tecnico.component';
 // # Tecnico Dashboard
-import { OpenRequestsComponent } from './components/requests/open-requests/open-requests.component';
-import { TecnicoRequestsComponent } from './components/requests/tecnico-requests/tecnico-requests.component';
+import { TecnicoRequestListsComponent } from './components/requests/tecnico-request-lists/tecnico-request-lists.component';
 // # Utente Dashboard
 import { UserRequestInfoComponent } from './components/requests/user-request-info/user-request-info.component';
 import { UserRequestsComponent } from './components/requests/user-requests/user-requests.component';
@@ -43,15 +41,13 @@ import { RequestInfoEditComponent } from './components/requests/request-info-edi
     SignUpComponent,
     // # Dashboard
     DashboardComponent,
-    DummyComponent,
     StatisticsComponent,
     // # Admin Dashboard
-    RequestListsComponent,
-    UserListsComponent,
+    AdminRequestListsComponent,
+    AdminUserListsComponent,
     SignUpTecnicoComponent,
     // # Tecnico Dashboard
-    OpenRequestsComponent,
-    TecnicoRequestsComponent,
+    TecnicoRequestListsComponent,
     // # Utente Dashboard
     UserRequestInfoComponent,
     UserRequestsComponent,
@@ -62,7 +58,10 @@ import { RequestInfoEditComponent } from './components/requests/request-info-edi
     RequestInfoComponent,
     RequestInfoEditComponent,
     UserInfoEditComponent,
-    UserTecnicoInfoEditComponent
+    UserTecnicoInfoEditComponent,
+    TecnicoRequestListsComponent,
+    AdminRequestListsComponent,
+    AdminUserListsComponent
   ],
   imports: [
     BrowserModule,

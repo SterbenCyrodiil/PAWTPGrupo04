@@ -2,9 +2,6 @@ import { Component, OnInit, Input } from '@angular/core';
 
 import { RequestsService } from '../../../services/requests.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import {map} from 'rxjs/operators';
-
-import { Request } from '../../../models/request'
 
 @Component({
   selector: 'app-request-add',
@@ -14,7 +11,7 @@ import { Request } from '../../../models/request'
 export class RequestAddComponent implements OnInit {
   userCC: String;
   request: any = {
-    id: 'asdsad',
+    id: '',
     CCutente: '',
     trabalhadorDeRisco: false,
     grupoDeRisco: false,

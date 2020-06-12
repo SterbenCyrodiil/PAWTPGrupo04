@@ -1,0 +1,31 @@
+<div *ngIf="!requests || requests.length === 0">
+  <div *ngIf="currentUrlPath == 'open-requests'">
+    <p>Não existem pedidos de diagnostico em aberto ...</p>
+  </div>
+  <div *ngIf="currentUrlPath == 'request-list'">
+    <p>Não é responsável por nenhum diagnóstico atualmente ...</p>
+  </div>
+</div>
+
+<div *ngFor="let request of requests">
+  <div>
+      <p>ID: {{ request.idRequest }}</p>
+      <p>Utente: {{ request.CCutente }}</p>
+      <p>
+        <span>Trabalhador Risco: {{ request.trabalhadorDeRisco }}</span> | 
+        <span>Grupo Risco: {{ request.grupoDeRisco }}</span> | 
+        <span>Encaminhado Saude 24: {{ request.encaminhado_saude24 }}</span>
+      </p>
+      <div *ngIf="currentUrlPath == 'request-list'">
+        <a [routerLink]="['..', request._id, 'request-info-edit']">Atualizar</a>
+      </div>
+      <div *ngIf="currentUrlPath == 'open-requests'">
+        <button (click)="updateResponsavel(request._id)">Tornar Responsavel</button>
+      </div>
+  </div>
+  <hr>
+</div>
+
+<div *ngIf="errors">
+  {{ errors }}
+</div>

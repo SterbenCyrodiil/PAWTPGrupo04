@@ -1,3 +1,55 @@
-<p>
-  sign-up-tecnico works!
-</p>
+<div>
+  <h2>Registar Tecnico de Laboratorio</h2>
+
+  <div *ngIf="errors">
+    {{ errors }}
+  </div>
+
+  <form (submit)="signUpEvent($event)">
+    <label for="cc">Citizen Card number pt-PT:</label>
+    <br/>
+    <input [(ngModel)]="user.CC" name="CC" type="text" pattern="^[0-9]{8} [0-9] [A-Z]{2}[0-9]$" placeholder="enter your Citizen Card number" required/>
+    <br/>
+
+    <label for="password">Password:</label> 
+    <br/>
+    <input [(ngModel)]="user.password" name="password" type="password" placeholder="enter your password" required/>
+    <br/>
+
+    <label for="firstName">Primeiro Nome:</label>
+    <br/>
+    <input [(ngModel)]="user.firstName" name="firstName" type="text" placeholder="first name" required/>
+    <br/>
+
+    <label for="lastName">Ultimo Nome:</label>
+    <br/>
+    <input [(ngModel)]="user.lastName" name="lastName" type="text" placeholder="last name" required/>
+    <br/>
+
+    <label for="genero">Genero:</label>
+    <br/>
+    <input [(ngModel)]="user.genero" name="genero" type="radio" id="male" value="male" />
+      <span>Masculino</span>
+    <input [(ngModel)]="user.genero" name="genero" type="radio" id="female" value="female" />
+      <span>Feminino</span>
+    <input [(ngModel)]="user.genero" name="genero" type="radio" id="other" value="other" selected/>
+      <span>Outro</span>
+    <br/>
+
+    <label for="birthdate">Data Nascimento:</label> 
+    <br/>
+    <input [(ngModel)]="user.birthdate" name="birthdate" type="date" required/>
+    <br/>
+
+    <label for="email">Email:</label> 
+    <br/>
+    <input [(ngModel)]="user.email" name="email" type="email" required/>
+    <br/>
+
+    <label for="phoneNumber">Phone Number:</label> 
+    <br/>
+    <input [(ngModel)]="user.phoneNumber" name="phoneNumber" type="text" pattern="^(9[1236][0-9]) ?([0-9]{3}) ?([0-9]{3})$" title="9 digits starting with 91, 92, 93 or 96" required/>
+    <br/>
+    <button type="submit">Registar</button>
+  </form>
+</div>

@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TecnicoRequestsComponent } from './tecnico-requests.component';
+import { AdminUserListsComponent } from './admin-user-lists.component';
 
-describe('TecnicoRequestsComponent', () => {
-  let component: TecnicoRequestsComponent;
-  let fixture: ComponentFixture<TecnicoRequestsComponent>;
+describe('AdminUserListsComponent', () => {
+  let component: AdminUserListsComponent;
+  let fixture: ComponentFixture<AdminUserListsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TecnicoRequestsComponent ]
+      declarations: [ AdminUserListsComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TecnicoRequestsComponent);
+    fixture = TestBed.createComponent(AdminUserListsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

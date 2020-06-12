@@ -6,15 +6,13 @@ import { SignInComponent } from './components/users/sign-in/sign-in.component';
 import { SignUpComponent } from './components/users/sign-up/sign-up.component';
 // # Dashboard
 import { DashboardComponent } from './components/webpage/dashboard/dashboard.component';
-import { DummyComponent } from './components/webpage/dummy/dummy.component';
 import { StatisticsComponent } from './components/webpage/statistics/statistics.component';
 // # Admin Dashboard
-import { RequestListsComponent } from './components/requests/request-lists/request-lists.component';
-import { UserListsComponent } from './components/users/user-lists/user-lists.component';
+import { AdminRequestListsComponent } from './components/requests/admin-request-lists/admin-request-lists.component';
+import { AdminUserListsComponent } from './components/users/admin-user-lists/admin-user-lists.component';
 import { SignUpTecnicoComponent } from './components/users/sign-up-tecnico/sign-up-tecnico.component';
 // # Tecnico Dashboard
-import { OpenRequestsComponent } from './components/requests/open-requests/open-requests.component';
-import { TecnicoRequestsComponent } from './components/requests/tecnico-requests/tecnico-requests.component';
+import { TecnicoRequestListsComponent } from './components/requests/tecnico-request-lists/tecnico-request-lists.component';
 // # Utente Dashboard
 import { UserRequestInfoComponent } from './components/requests/user-request-info/user-request-info.component';
 import { UserRequestsComponent } from './components/requests/user-requests/user-requests.component';
@@ -64,27 +62,27 @@ const routes: Routes = [
       },
       // # Dashboard TECNICO
       {
-        path: ':cc/request-list',
-        component: TecnicoRequestsComponent,
+        path: 'request-list',
+        component: TecnicoRequestListsComponent,
         canActivate: [ RoleGuardService ],
         data: { roles: [ Role.Admin, Role.Tecnico ]}
       },
       {
         path: 'open-requests',
-        component: OpenRequestsComponent,
+        component: TecnicoRequestListsComponent,
         canActivate: [ RoleGuardService ],
         data: { roles: [ Role.Admin, Role.Tecnico ]}
       },
       // # Dashboard ADMIN
       {
         path: 'user-listings',
-        component: UserListsComponent,
+        component: AdminUserListsComponent,
         canActivate: [ RoleGuardService ],
         data: { roles: [ Role.Admin ]}
       },
       {
         path: 'request-listings',
-        component: RequestListsComponent,
+        component: AdminRequestListsComponent,
         canActivate: [ RoleGuardService ],
         data: { roles: [ Role.Admin ]}
       },
