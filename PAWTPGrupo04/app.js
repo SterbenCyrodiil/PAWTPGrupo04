@@ -41,7 +41,7 @@ mongoose
             }).save().catch(console.error)
 
             if (adminUser) {
-                console.log('Admin created')
+				console.log('Admin created')
                 console.table([adminUser.toJSON()])
             }
         } else {

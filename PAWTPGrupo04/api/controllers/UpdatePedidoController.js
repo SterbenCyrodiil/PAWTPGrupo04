@@ -11,7 +11,10 @@ const updateDataPrimeiroTeste = async (req, res, next) => {
 		next({ message: 'Pedido de diagnóstico não existe', status: 404 })
 	}
 	else if (pedido.casoFechado === true) {
-		next({ message: 'Pedido de diagnóstico já foi concluido', status: 404 })
+		next({ message: 'Diagnóstico já foi concluido', status: 404 })
+    }
+    else if (req.session.role !== 'ADMIN' && pedido.tecnicoResponsavel && req.session.cc === pedido.tecnicoResponsavel) {
+        next({ message: 'Somente o responsável ou um ADMIN poderão atualizar o Diagnóstico', status: 404 })
     }
     else if (pedido.resultadoInicial != null) { // Data do teste é atualizada só se ainda não existem resultados do primeiro teste
         next({ message: 'Não foi possível atualizar a data. O teste já foi realizado.', status: 404 })
@@ -40,7 +43,10 @@ const updateResultadoPrimeiroTeste = async (req, res, next) => {
 		next({ message: 'Pedido de diagnóstico não existe', status: 404 })
 	}
 	else if (pedido.casoFechado === true) {
-		next({ message: 'Pedido de diagnóstico já foi concluido', status: 404 })
+		next({ message: 'Diagnóstico já foi concluido', status: 404 })
+    }
+    else if (req.session.role !== 'ADMIN' && pedido.tecnicoResponsavel && req.session.cc === pedido.tecnicoResponsavel) {
+        next({ message: 'Somente o responsável ou um ADMIN poderão atualizar o Diagnóstico', status: 404 })
     }
     else if (pedido.dataInicial == null) { // Resultado do teste só é atualizado se existir uma data marcada
         next({ message: 'Deverá ser agendada uma data para o teste antes de serem inseridos os resultados!', status: 404 })
@@ -104,7 +110,10 @@ const updateDataSegundoTeste = async (req, res, next) => {
 		next({ message: 'Pedido de diagnóstico não existe', status: 404 })
 	}
 	else if (pedido.casoFechado === true) { 
-		next({ message: 'Pedido de diagnóstico já foi concluido', status: 404 })
+		next({ message: 'Diagnóstico já foi concluido', status: 404 })
+    }
+    else if (req.session.role !== 'ADMIN' && pedido.tecnicoResponsavel && req.session.cc === pedido.tecnicoResponsavel) {
+        next({ message: 'Somente o responsável ou um ADMIN poderão atualizar o Diagnóstico', status: 404 })
     }
     else if (pedido.resultadoInicial == null) {
         next({ message: 'Ainda não foi concluído um primeiro teste!', status: 404 })
@@ -136,7 +145,10 @@ const updateResultadoSegundoTeste = async (req, res, next) => {
 		next({ message: 'Pedido de diagnóstico não existe', status: 404 })
 	}
 	else if (pedido.casoFechado === true) {
-        next({ message: 'Pedido de diagnóstico já foi concluido', status: 404 })
+        next({ message: 'Diagnóstico já foi concluido', status: 404 })
+    }
+    else if (req.session.role !== 'ADMIN' && pedido.tecnicoResponsavel && req.session.cc === pedido.tecnicoResponsavel) {
+        next({ message: 'Somente o responsável ou um ADMIN poderão atualizar o Diagnóstico', status: 404 })
     }
     else if (pedido.dataFinal == null) { // Resultado do teste só é atualizado se existir uma data marcada
         next({ message: 'Deverá ser agendada uma data para o teste antes de serem inseridos os resultados!', status: 404 })

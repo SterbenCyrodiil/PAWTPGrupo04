@@ -7,11 +7,11 @@ const registerUser = async (req, res, next) => {
 	const userData = {
 		CC: req.body.CC, password: req.body.password, 
 		firstName: req.body.firstName, lastName: req.body.lastName,
-		genero: req.body.genero, birthdate: req.body.birthdate, 
-		phoneNumber: req.body.phoneNumber, email: req.body.email
+		genero: req.body.genero ? req.body.genero.toUpperCase() : undefined, 
+		birthdate: req.body.birthdate, phoneNumber: req.body.phoneNumber, email: req.body.email
 	}
 	const result = await new User(userData).save().catch(next);
-
+	
 	if (result) {
 		console.log("SAVED DATA", result);
 		result.password = result.deleted = undefined
@@ -31,8 +31,9 @@ const registerUserTecnico = async (req, res, next) => {
 	const userData = {
 		CC: req.body.CC, password: req.body.password, 
 		firstName: req.body.firstName, lastName: req.body.lastName,
-		genero: req.body.genero, birthdate: req.body.birthdate, 
-		phoneNumber: req.body.phoneNumber, email: req.body.email, role: 'TECNICO'
+		genero: req.body.genero ? req.body.genero.toUpperCase() : undefined, 
+		birthdate: req.body.birthdate, phoneNumber: req.body.phoneNumber, 
+		email: req.body.email, role: 'TECNICO'
 	}
 	const result = await new User(userData).save().catch(next);
 
