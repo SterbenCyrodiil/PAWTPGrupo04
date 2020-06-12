@@ -68,7 +68,79 @@ userRouter.post('/', userController.registerUser);
  *       404:
  *         $ref: '#/responses/ErrorMessage'
  */
-userRouter.post('/', authorization(['ADMIN']), userController.registerUserTecnico);
+userRouter.post('/tecnico', authorization(['ADMIN']), userController.registerUserTecnico);
+
+/**
+ * @swagger
+ * /users/{id}:
+ *   get:
+ *     summary: Gets a certain User using its MongoDB ObjectId
+ *     tags: [Users]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - $ref: '#/parameters/idPath'
+ *     responses:
+ *       200: 
+ *         $ref: '#/responses/UserInfo'
+ *       404:
+ *         $ref: '#/responses/ErrorMessage'
+ */
+userRouter.get('/:id', userController.getUserByID);
+
+/**
+ * @swagger
+ * /users/CC/{id}:
+ *   get:
+ *     summary: Gets a certain User using its Citizen Card Number
+ *     tags: [Users]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - $ref: '#/parameters/idPathCC'
+ *     responses:
+ *       200: 
+ *         $ref: '#/responses/UserInfo'
+ *       404:
+ *         $ref: '#/responses/ErrorMessage'
+ */
+userRouter.get('/CC/:id', userController.getUserByCC);
+
+/**
+ * @swagger
+ * /users/utente/{id}:
+ *   get:
+ *     summary: Gets a certain User 'utente' using its CC-id
+ *     tags: [Users]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - $ref: '#/parameters/idPathCC'
+ *     responses:
+ *       200: 
+ *         $ref: '#/responses/UserInfo'
+ *       404:
+ *         $ref: '#/responses/ErrorMessage'
+ */
+userRouter.get('/:id/utente', userController.getUtenteUserByCC);
+
+/**
+ * @swagger
+ * /users/tecnico/{id}:
+ *   get:
+ *     summary: Gets a certain User 'tecnico' using its CC-id
+ *     tags: [Users]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - $ref: '#/parameters/idPathCC'
+ *     responses:
+ *       200: 
+ *         $ref: '#/responses/UserInfo'
+ *       404:
+ *         $ref: '#/responses/ErrorMessage'
+ */
+userRouter.get('/tecnico/:id', userController.getTecnicoUserByCC);
 
 /**
  * @swagger

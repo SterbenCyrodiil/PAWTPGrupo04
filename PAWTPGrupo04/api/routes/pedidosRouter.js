@@ -57,7 +57,7 @@ requestRouter.delete('/:id', authorization(['ADMIN']),requestController.deletePe
 // ## Só será possível retornar a informação desta rota se o próprio utilizador estiver com a sessão ativa ou o utilizador é um admin
 /**
  * @swagger
- * /requests/user/{id}:
+ * /requests/utente/{id}:
  *   get:
  *     summary: Get requests in DB belonging to a certain user
  *     description: Gets the requests only if the user has it's session active, or the user is an 'admin'
@@ -74,11 +74,11 @@ requestRouter.delete('/:id', authorization(['ADMIN']),requestController.deletePe
  *       404:
  *         $ref: '#/responses/ErrorMessage'
  */
-requestRouter.get('/user/:id', authorization(['ADMIN', 'UTENTE']), requestController.getUserPedidos);
+requestRouter.get('/utente/:id', authorization(['ADMIN', 'UTENTE']), requestController.getUserPedidos);
 
 /**
  * @swagger
- * /requests/user/{id}/last:
+ * /requests/utente/{id}/last:
  *   get:
  *     summary: Get last request made by a certain User
  *     description: Gets the request only if the user has it's session active, or the user is an 'admin'
@@ -95,7 +95,7 @@ requestRouter.get('/user/:id', authorization(['ADMIN', 'UTENTE']), requestContro
  *       404:
  *         $ref: '#/responses/ErrorMessage'
  */
-requestRouter.get('/user/:id/last', authorization(['ADMIN', 'UTENTE']), requestController.getUserPedido);
+requestRouter.get('/utente/:id/last', authorization(['ADMIN', 'UTENTE']), requestController.getUserPedido);
 
 // ## Qualquer administrador ou técnico pode aceder ao ficheiro de resultados de um pedido
 /**

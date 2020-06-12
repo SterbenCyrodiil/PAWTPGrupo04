@@ -20,7 +20,7 @@ userListRouter.get('/', userController.getAllUsers);
 // # Listagem por Role
 /**
  * @swagger
- * /users/utentes:
+ * /users/utentes/all:
  *   get:
  *     summary: Gets all Users with role 'utente'
  *     tags: [Users]
@@ -30,10 +30,10 @@ userListRouter.get('/', userController.getAllUsers);
  *       200: 
  *         $ref: '#/responses/UserListing'
  */
-userListRouter.get('/utentes', userController.getAllUtentes);
+userListRouter.get('/utentes/all', userController.getAllUtentes);
 /**
  * @swagger
- * /users/tecnicos:
+ * /users/tecnicos/all:
  *   get:
  *     summary: Gets all Users with role 'tecnico'
  *     tags: [Users]
@@ -43,76 +43,6 @@ userListRouter.get('/utentes', userController.getAllUtentes);
  *       200: 
  *         $ref: '#/responses/UserListing'
  */
-userListRouter.get('/tecnicos', userController.getAllTecnicos);
-
-// # Listagem por Utilizador unico (por Mongo _id ou por CC)
-/**
- * @swagger
- * /users/{id}:
- *   get:
- *     summary: Gets a certain User using its MongoDB ObjectId
- *     tags: [Users]
- *     produces:
- *       - application/json
- *     parameters:
- *       - $ref: '#/parameters/idPath'
- *     responses:
- *       200: 
- *         $ref: '#/responses/UserInfo'
- *       404:
- *         $ref: '#/responses/ErrorMessage'
- */
-userListRouter.get('/:id', userController.getUserByID);
-/**
- * @swagger
- * /users/CC/{id}:
- *   get:
- *     summary: Gets a certain User using its Citizen Card Number
- *     tags: [Users]
- *     produces:
- *       - application/json
- *     parameters:
- *       - $ref: '#/parameters/idPathCC'
- *     responses:
- *       200: 
- *         $ref: '#/responses/UserInfo'
- *       404:
- *         $ref: '#/responses/ErrorMessage'
- */
-userListRouter.get('/CC/:id', userController.getUserByCC);
-/**
- * @swagger
- * /users/utente/{id}:
- *   get:
- *     summary: Gets a certain User 'utente' using its CC-id
- *     tags: [Users]
- *     produces:
- *       - application/json
- *     parameters:
- *       - $ref: '#/parameters/idPathCC'
- *     responses:
- *       200: 
- *         $ref: '#/responses/UserInfo'
- *       404:
- *         $ref: '#/responses/ErrorMessage'
- */
-userListRouter.get('/utente/:id', userController.getUtenteUserByCC);
-/**
- * @swagger
- * /users/tecnico/{id}:
- *   get:
- *     summary: Gets a certain User 'tecnico' using its CC-id
- *     tags: [Users]
- *     produces:
- *       - application/json
- *     parameters:
- *       - $ref: '#/parameters/idPathCC'
- *     responses:
- *       200: 
- *         $ref: '#/responses/UserInfo'
- *       404:
- *         $ref: '#/responses/ErrorMessage'
- */
-userListRouter.get('/tecnico/:id', userController.getTecnicoUserByCC);
+userListRouter.get('/tecnicos/all', userController.getAllTecnicos);
 
 module.exports = userListRouter;

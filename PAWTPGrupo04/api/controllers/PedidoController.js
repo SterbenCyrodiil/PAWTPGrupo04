@@ -52,7 +52,7 @@ const getAllPedidos = async (req, res, next) => {
 }
 
 const getTecnicoPedidos = async (req, res, next) => {
-	const request = await Pedido.find({ tecnicoResponsavel: req.params.id }).catch(next);
+	const request = await Pedido.find({ tecnicoResponsavel: req.params.id, casoFechado: false}).catch(next);
 
 	if (request && request.length > 0) {
 		res.json(request)
@@ -84,7 +84,7 @@ const getPedidobyID = async (req, res, next) => {
 
 const getUserPedidos = async (req, res, next) => {
 	// ## Só será possível retornar a informação se o próprio utilizador estiver com a sessão ativa ou o utilizador é um admin
-	if (req.session.role !== 'ADMIN' && req.params.id !== req.session.CC) {
+	if (req.session.role !== 'ADMIN' && req.params.id !== req.session.cc) {
 		next({
 			message: 'Permissões adicionais em falta.',
 			status: 403
@@ -105,7 +105,7 @@ const getUserPedidos = async (req, res, next) => {
 
 const getUserPedido = async (req, res, next) => {
 	// ## Só será possível retornar a informação se o próprio utilizador estiver com a sessão ativa ou o utilizador é um admin
-	if (req.session.role !== 'ADMIN' && req.params.id !== req.session.CC) {
+	if (req.session.role !== 'ADMIN' && req.params.id !== req.session.cc) {
 		next({
 			message: 'Permissões adicionais em falta.',
 			status: 403
@@ -116,7 +116,7 @@ const getUserPedido = async (req, res, next) => {
 			.catch(next);
 
 		if (request) {
-			res.json(request)
+			res.json(request[0])
 		} else {
 			next({
 				message: 'Não foram encontrados pedidos de diagnóstico :(',
@@ -141,10 +141,10 @@ const getTrabalhadoresRisco = async (req, res, next) => {
 	res.json(request);
 }
 
-const getInfetados = async (req, res, next) => {
-	const request = await Pedido.find({ infetado: true }).catch(next);
-	res.json(request);
-}
+// const getInfetados = async (req, res, next) => {
+// 	const request = await Pedido.find({ infetado: true }).catch(next);
+// 	res.json(request);
+// }
 
 const getCasosAbertos = async (req, res, next) => {
 	const request = await Pedido.find({ casofechado: false }).catch(next);
@@ -202,7 +202,7 @@ module.exports = {
 	getSaude24Pedidos,
 	getGrupoRiscoPedidos,
 	getTrabalhadoresRisco,
-	getInfetados,
+	// getInfetados,
 	getCasosAbertos,
 	getPositivos,
 	getNegativos,

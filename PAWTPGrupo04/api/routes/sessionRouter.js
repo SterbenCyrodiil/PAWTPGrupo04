@@ -20,8 +20,6 @@ const sessionRouter = express.Router()
  *     responses:
  *       200: 
  *         $ref: '#/responses/SignInSuccess'
- *       401:
- *         $ref: '#/responses/ErrorMessage'
  *       404:
  *         $ref: '#/responses/ErrorMessage'
  */

@@ -19,8 +19,7 @@ mongoose
 		{
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
-			useFindAndModify: true,
-			useCreateIndex: true
+			useFindAndModify: true
 		}
 	)
 	.then(async (mongoose) => {

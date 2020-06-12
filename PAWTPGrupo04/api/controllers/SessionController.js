@@ -24,11 +24,11 @@ const signInUser = async (req, res, next) => {
             }
             var token = jwt.sign( userResponse, process.env.JWT_SECRET,
                 {
-                    expiresIn: process.env.SESSION_EXP
+                    expiresIn: process.env.SESSION_EXP * 1000
                 });
             res.cookie('session', token,
                 {
-                    expires: new Date(moment().format() + process.env.SESSION_EXP),
+                    expires: new Date(moment().valueOf() + process.env.SESSION_EXP * 1000),
                     httpOnly: true
                 }
             )
@@ -40,7 +40,7 @@ const signInUser = async (req, res, next) => {
         } else {
             next({
                 message: 'Authentication failed. Wrong password.',
-                status: 401
+                status: 404
             })
         }
     }

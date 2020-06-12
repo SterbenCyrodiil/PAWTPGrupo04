@@ -50,17 +50,17 @@ const registerUserTecnico = async (req, res, next) => {
 }
 
 const getAllUsers = async (req, res, next) => {
-	const request = await User.find({}).catch(next);
+	const request = await User.find({ }).catch(next);
 	res.json(request);
 }
 
 const getAllUtentes = async (req, res, next) => {
-	const request = await User.find({role: "UTENTE"}, '+estado').catch(next);
+	const request = await User.find({ role: "UTENTE" }, '+estado').catch(next);
 	res.json(request);
 }
 
 const getAllTecnicos = async (req, res, next) => {
-	const request = await User.find({role: "TECNICO"}).catch(next);
+	const request = await User.find({ role: "TECNICO" }).catch(next);
 	res.json(request);
 }
 
@@ -78,10 +78,10 @@ const getUserByID = async (req, res, next) =>{
 }
 
 const getUserByCC = async (req, res, next) =>{
-	const request = await User.findOne({CC: req.params.id}).catch(next);
-	
+	const request = await User.findOne({CC: req.params.id}, '+estado').catch(next);
+	console.log(request)
 	if (request) {
-		res.status(200).send(request)
+		res.json(request)
 	} else {
 		next({
 			message: 'User could not be found',
@@ -104,10 +104,10 @@ const getUtenteUserByCC = async (req, res, next) =>{
 }
 
 const getTecnicoUserByCC = async (req, res, next) =>{
-	const request = await User.findOne({CC: req.params.id, role: "tecnico"}).catch(next);
+	const request = await User.findOne({CC: req.params.id, role: "TECNICO"}).catch(next);
 	
 	if (request) {
-		res.status(200).send(request)
+		res.json(request)
 	} else {
 		next({
 			message: 'User could not be found',
@@ -117,25 +117,33 @@ const getTecnicoUserByCC = async (req, res, next) =>{
 }
 
 const deleteUser = async (req, res, next) => {
-	let userInfo = await User.findById(req.params.id, '+deleted').catch(next);
-
-	if (!userInfo) {
+	// ## Só será possível atualizar a informação se o próprio utilizador estiver com a sessão ativa ou o utilizador é um admin
+	if (req.session.role !== 'ADMIN' && req.params.id !== req.session._id) {
 		next({
-			message: 'User could not be found',
-			status: 404
-		})
-	}
-	else if (userInfo.deleted === true) {
-		next({
-			message: 'Utilizador já foi eliminado. ' 
-				+ 'No entanto, o mesmo CC só poderá ser registado após a entrada na BD ser removida!',
-			status: 404
+			message: 'Permissões adicionais em falta.', 
+			status: 403
 		})
 	} else {
-		userInfo = await User.findByIdAndUpdate(req.params.id, { deleted: true }).catch(next);
-		res.json({
-			old: userInfo
-		})
+		let userInfo = await User.findById(req.params.id, '+deleted').catch(next);
+
+		if (!userInfo) {
+			next({
+				message: 'User could not be found',
+				status: 404
+			})
+		}
+		else if (userInfo.deleted === true) {
+			next({
+				message: 'Utilizador já foi eliminado. ' 
+					+ 'No entanto, o mesmo CC só poderá ser registado após a entrada na BD ser removida!',
+				status: 404
+			})
+		} else {
+			userInfo = await User.findByIdAndUpdate(req.params.id, { deleted: true }).catch(next);
+			res.json({
+				old: userInfo
+			})
+		}
 	}
 }
 

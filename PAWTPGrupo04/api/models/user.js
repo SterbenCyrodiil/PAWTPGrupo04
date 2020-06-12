@@ -51,7 +51,7 @@ const userSchema = new mongoose.Schema({
 
     role: { 
         type: String, required: true, default: 'UTENTE', 
-        enum: ['ADMIN', 'TECNICO', 'UTENTE'], index: true
+        enum: ['ADMIN', 'TECNICO', 'UTENTE']
     },
 	estado: {
         type: String, required: true, default: 'SUSPEITO', 

@@ -22,7 +22,7 @@ requestListRouter.get('/', requestController.getAllPedidos);
  * @swagger
  * /requests/tecnico/{id}:
  *   get:
- *     summary: Get all the requests belonging to a 'Tecnico'
+ *     summary: Get all unfinished requests belonging to a 'Tecnico'
  *     tags: [Pedidos]
  *     produces:
  *       - application/json
@@ -112,8 +112,8 @@ requestListRouter.get('/grupoRisco', requestController.getGrupoRiscoPedidos);
 requestListRouter.get('/trabalhadorRisco', requestController.getTrabalhadoresRisco);
 
 /* Listagem por Resultados de Diagnóstico */
-/**
- * @swagger
+/** ## DEPRECATED
+ * swagger
  * /requests/infetados:
  *   get:
  *     summary: Get requests in DB in which users were infected at the time of the request
@@ -124,7 +124,7 @@ requestListRouter.get('/trabalhadorRisco', requestController.getTrabalhadoresRis
  *       200: 
  *         $ref: '#/responses/PedidoListing'
  */
-requestListRouter.get('/infetados', requestController.getInfetados);
+// requestListRouter.get('/infetados', requestController.getInfetados);
 
 /**
  * @swagger
