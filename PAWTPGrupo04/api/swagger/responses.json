@@ -1,0 +1,77 @@
+{
+    "ErrorMessage": {
+        "description": "Something went wrong with the request, see message",
+        "schema": {
+			"$ref": "#/definitions/ErrorMessage"
+		}
+    },
+    "SignInSuccess": {
+		"description": "Returns success with the JWT token",
+		"schema": {
+			"type": "object",
+			"properties": {
+				"user": {
+					"$ref": "#/definitions/SessionUser"
+				},
+				"token": {
+					"type": "string"
+				}
+			}
+		}
+    },
+
+    "UserListing": {
+        "description": "Task Successful",
+        "schema": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/UserInfo"
+            }
+        }
+    },
+    "PedidoListing": {
+        "description": "Task Successful",
+        "schema": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/PedidoInfo"
+            }
+        }
+    },
+
+    "UserInfo": {
+        "description": "Task Successful",
+        "schema": {
+            "$ref": "#/definitions/UserInfo"
+        }
+    },
+    "PedidoInfo": {
+        "description": "Task Successful",
+        "schema": {
+            "$ref": "#/definitions/PedidoInfo"
+        }
+    },
+
+    "UserUpdate": {
+        "description": "Task Successful",
+        "properties": {
+            "old": {
+                "$ref": "#/definitions/UserInfo"
+            },
+            "new": {
+                "$ref": "#/definitions/UserInfo"
+            }
+        }
+    },
+    "PedidoUpdate": {
+        "description": "Task Successful",
+        "properties": {
+            "old": {
+                "$ref": "#/definitions/PedidoInfo"
+            },
+            "new": {
+                "$ref": "#/definitions/PedidoInfo"
+            }
+        }
+    }
+}

@@ -1,17 +1,21 @@
 const authorize = (opts) => {
-
 	opts = opts || [];
-
 	return (req, res, next) => {
-		if (!req.user_data) {
-			res.status(401).json({success: false, msg: 'Not authenticated. Access Denied'});
+		if (!req.session) {
+			next({
+				message: 'Not authenticated. Access Denied',
+				status: 401
+			})
 		} else {
-			const hasAuthorization = opts.includes(req.user_data.role);
+			const hasAuthorization = opts.includes(req.session.role);
 		
 			if (hasAuthorization) {
 				next();
 			} else {
-				res.status(403).json({success: false, msg: 'Not authorized. Access Denied'});
+				next({
+					message: 'Not authorized. Access Denied',
+					status: 403
+				})
 			}
 		}
 	}

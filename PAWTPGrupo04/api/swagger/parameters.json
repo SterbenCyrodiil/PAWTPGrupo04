@@ -1,0 +1,121 @@
+{
+    "idPath": {
+        "in": "path",
+        "name": "id",
+        "description": "MongoDB ObjectId identification",
+        "required": true,
+        "type": "string"
+    },
+    "idPathCC": {
+        "in": "path",
+        "name": "id",
+        "description": "User CC-id identification",
+        "required": true,
+        "type": "string"
+    },
+
+    "updateUserInfo": {
+        "in": "body",
+        "name": "userInfo",
+        "description": "Information to update a User. Any property may be removed.",
+        "required": true,
+        "schema": {
+            "$ref": "#definitions/UserInfoUpdate"
+        }
+    },
+    
+    "cc": {
+        "in": "formData",
+        "name": "CC",
+        "description": "User Citizen Card number pt-PT (DDDDDDDD D CCD | D - digit, C - char)",
+        "required": true,
+        "type": "string"
+    },
+    "password": {
+        "in": "formData",
+        "name": "password",
+        "description": "Password for login",
+        "required": true,
+        "type": "string",
+        "format": "password"
+    },
+    "firstName": {
+        "in": "formData",
+        "name": "firstName",
+        "description": "User First Name",
+        "required": true,
+        "type": "string"
+    },
+    "lastName": {
+        "in": "formData",
+        "name": "lastName",
+        "description": "User Last Name",
+        "required": true,
+        "type": "string"
+    },
+    "genero": {
+        "in": "formData",
+        "name": "genero",
+        "description": "User Gender",
+        "required": true,
+        "type": "string"
+    },
+    "birthdate": {
+        "in": "formData",
+        "name": "birthdate",
+        "description": "User Birthdate (yyyy-mm-dd)",
+        "required": true,
+        "type": "string",
+        "format": "date"
+    },
+    "email": {
+        "in": "formData",
+        "name": "email",
+        "description": "User Email (example1@example.com)",
+        "required": true,
+        "type": "string"
+    },
+    "phoneNumber": {
+        "in": "formData",
+        "name": "phoneNumber",
+        "description": "User Phone Number (9 digits starting with 91, 92, 93 or 96)",
+        "required": true,
+        "type": "number"
+    },
+
+    "id": {
+        "in": "formData",
+        "name": "id",
+        "description": "Request ID",
+        "required": true,
+        "type": "string"
+    },
+    "CCutente": {
+        "in": "formData",
+        "name": "CCutente",
+        "description": "User identification",
+        "required": true,
+        "type": "string"
+    },
+    "trabalhadorDeRisco": {
+        "in": "formData",
+        "name": "trabalhadorDeRisco",
+        "description": "User priority attribute",
+        "required": true,
+        "type": "boolean"
+    },
+    "grupoDeRisco": {
+        "in": "formData",
+        "name": "grupoDeRisco",
+        "description": "User priority attribute",
+        "required": true,
+        "type": "boolean"
+    },
+    "encaminhado_saude24": {
+        "in": "formData",
+        "name": "encaminhado_saude24",
+        "description": "User priority attribute",
+        "required": true,
+        "type": "boolean"
+    }
+}

@@ -1,56 +1,74 @@
 const jwt = require('jsonwebtoken')
+const moment = require('moment')
 
 const User = require('../models/user')
 
-const signInUser = async (req, res) => {
-    
-    try {
-        const user = await User.findOne({ // procurar pelo utilizador
-            CC: req.body.CC
+const signInUser = async (req, res, next) => {
+    const user = await User.findOne({ CC: req.body.CC }, '+password').catch(next);
+
+    if (!user) 
+    { // utilizador não encontrado
+        next({
+            message: 'Authentication failed! User is not registered.',
+            status: 404
         })
+    } else 
+    { // verificar se a password está correta
+        const isValid = await user.comparePassword(req.body.password).catch(next);
 
-        if (!user) 
-        { // utilizador não encontrado
-            res.status(401).json({success: false, msg: 'Authentication failed! User is not registered.'});
-        } else 
-        { // verificar se a password está correta
-            const isValid = await user.comparePassword(req.body.password);
-
-            if (isValid) 
-            { // se o utilizador for encontrado e a password estiver correta, gera o token
-                var token = jwt.sign({_id: user._id, CC: user.CC, role: user.role}, process.env.JWT_SECRET);
-                res.cookie( // criar cookie para retorno do token para o cliente
-                    'user_session',
-                    token,
-                    {
-                        expires: new Date(Date.now() + process.env.SESSION_EXP),
-                        httpOnly: true
-                    }
-                )
-                // ## No futuro isto será alterado para utilização de headers possivelmente
-                res.status(200).json({success: true, token: 'JWT ' + token});
-            } else {
-                res.status(401).json({success: false, msg: 'Authentication failed. Wrong password.'});
+        if (isValid) 
+        { // se o utilizador for encontrado e a password estiver correta, gera o token
+            const userResponse = {
+                _id: user._id, cc: user.CC, 
+                name: `${ user.firstName } ${ user.lastName }`, role: user.role
             }
+            var token = jwt.sign( userResponse, process.env.JWT_SECRET,
+                {
+                    expiresIn: process.env.SESSION_EXP * 1000
+                });
+            res.cookie('session', token,
+                {
+                    expires: new Date(moment().valueOf() + process.env.SESSION_EXP * 1000),
+                    httpOnly: true
+                }
+            )
+            // ## No futuro isto será alterado para utilização de headers possivelmente
+            res.json({
+                user: userResponse,
+                token: 'JWT ' + token
+            });
+        } else {
+            next({
+                message: 'Authentication failed. Wrong password.',
+                status: 404
+            })
         }
-    } catch (err) {
-        console.log(err);
-        res.json({success: false, msg: 'Authentication failed. Something went wrong with your request.'});
     }
 }
 
 const getLoggedUser = async (req, res) => {
-    // ## Não há verificações uma vez que o middleware já se encarregou de erro de autenticação
-    const user = await User.findById(
-        req.user_data._id, "CC name genero birthdate phoneNumber role");
-    res.status(200).json(user);
+    if (req.session) {
+        const user = await User.findById(req.session._id)
+            .catch((e) => {
+                return null
+            });
+        res.json(user);
+    } else {
+        next({
+            message: 'You should be logged in to retrieve the info',
+            status: 401
+        })
+    }
 }
 
 const signOutUser = (req, res) => {
-    // Remover a cookie armazenada com a informação do Token de login
-    // ## No futuro isto será alterado para utilização de headers possivelmente
-    res.clearCookie('user_session')
-    res.status(200).send("User signed out successfully.");
+    if (req.session) {
+        // Remover a cookie armazenada com a informação do Token de login
+        res.clearCookie('session')
+        res.send("Session cleared. User signed out successfully");
+    } else {
+        res.send("No session is active at the moment")
+    }
 }
 
 module.exports = {

@@ -1,63 +1,121 @@
 const express = require('express');
 
 const authorization = require('../middleware/authorization')
-const multerUpload = require('../../config/multer.config')
 
-const updateRequestController = require('../controllers/UpdatePedidoController')
 const requestController = require('../controllers/PedidoController')
 const requestRouter = express.Router();
 
-// Listagens de Pedidos
-requestRouter.get('/', authorization(['admin', 'tecnico']), requestController.getAllPedidos);
-/* Listagem por Informação Prioritária */
-requestRouter.get('/saude24', authorization(['admin', 'tecnico']), requestController.getSaude24Pedidos);
-requestRouter.get('/gruposrisco', authorization(['admin', 'tecnico']), requestController.getGrupoRiscoPedidos);
-requestRouter.get('/trabalhadores', authorization(['admin', 'tecnico']), requestController.getTrabalhadoresRisco);
-/* Listagem por Resultados de Diagnóstico */
-requestRouter.get('/infetados', authorization(['admin', 'tecnico']), requestController.getInfetados);
-requestRouter.get('/testespositivos', authorization(['admin', 'tecnico']), requestController.getPositivos);
-requestRouter.get('/testesnegativos', authorization(['admin', 'tecnico']), requestController.getNegativos);
-requestRouter.get('/countDay/:id', authorization(['admin', 'tecnico']), requestController.countPerDay);
-/* Listagem por Pedido único */
-requestRouter.get('/:id', authorization(['admin', 'tecnico']), requestController.getPedidobyID);
+/**
+ * @swagger
+ * /requests/:
+ *   post:
+ *     summary: Create and save a new Request
+ *     description: Checks if the User is an 'utente' and if the request already exists, then saves the correct data do the DB
+ *     tags: [Pedidos]
+ *     consumes:
+ *       - application/x-www-form-urlencoded
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - $ref: '#/parameters/id'
+ *       - $ref: '#/parameters/CCutente'
+ *       - $ref: '#/parameters/trabalhadorDeRisco'
+ *       - $ref: '#/parameters/grupoDeRisco'
+ *       - $ref: '#/parameters/encaminhado_saude24'
+ *     responses:
+ *       200: 
+ *         $ref: '#/responses/PedidoInfo'
+ *       404:
+ *         $ref: '#/responses/ErrorMessage'
+ */
+requestRouter.post('/', authorization(['ADMIN', 'UTENTE']),requestController.fillPedido);
+
+/**
+ * @swagger
+ * /requests/:
+ *   delete:
+ *     summary: Marks a specific entry in the DB for deletion, signaling for the DB manager
+ *     description: Finds the Request related to the 'id' parameter and performs the delete task
+ *     tags: [Pedidos]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - $ref: '#/parameters/idPath'
+ *     responses:
+ *       200: 
+ *         description: Task successful
+ *         schema:
+ *           type: object
+ *           properties:
+ *             old:
+ *               $ref: '#/definitions/PedidoInfo'
+ *       404:
+ *         $ref: '#/responses/ErrorMessage'
+ */
+requestRouter.delete('/:id', authorization(['ADMIN']),requestController.deletePedido);
+
 // ## Só será possível retornar a informação desta rota se o próprio utilizador estiver com a sessão ativa ou o utilizador é um admin
-requestRouter.get('/user/:id', authorization(['admin', 'tecnico', 'utente']), requestController.getUserPedido);
+/**
+ * @swagger
+ * /requests/utente/{id}:
+ *   get:
+ *     summary: Get requests in DB belonging to a certain user
+ *     description: Gets the requests only if the user has it's session active, or the user is an 'admin'
+ *     tags: [Pedidos]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - $ref: '#/parameters/idPathCC'
+ *     responses:
+ *       200: 
+ *         $ref: '#/responses/PedidoListing'
+ *       403:
+ *         $ref: '#/responses/ErrorMessage'
+ *       404:
+ *         $ref: '#/responses/ErrorMessage'
+ */
+requestRouter.get('/utente/:id', authorization(['ADMIN', 'UTENTE']), requestController.getUserPedidos);
 
+/**
+ * @swagger
+ * /requests/utente/{id}/last:
+ *   get:
+ *     summary: Get last request made by a certain User
+ *     description: Gets the request only if the user has it's session active, or the user is an 'admin'
+ *     tags: [Pedidos]
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - $ref: '#/parameters/idPathCC'
+ *     responses:
+ *       200: 
+ *         $ref: '#/responses/PedidoInfo'
+ *       403:
+ *         $ref: '#/responses/ErrorMessage'
+ *       404:
+ *         $ref: '#/responses/ErrorMessage'
+ */
+requestRouter.get('/utente/:id/last', authorization(['ADMIN', 'UTENTE']), requestController.getUserPedido);
 
-// TODO
-// Adicionar Swagger, params request :id para o download
-// Qualquer administrador ou técnico pode aceder ao ficheiro de resultados de um pedido
-// Download do ficheiro de resultados do diagnóstico
-requestRouter.get('/download/:id', authorization(['admin', 'tecnico']), requestController.downloadResultsFile);
-
-
-// Registo de novos pedidos de diagnóstico
-requestRouter.post('/', authorization(['utente']),requestController.fillPedido);
-// Remoção de um pedido de diagnóstico existente
-requestRouter.delete('/:id', authorization(['admin']),requestController.deletePedido);
-
-// ## Este método permitiria atualizar os dados de um pedido, no entanto foi substituido pela abordagem à frente ## Deprecated
-// ## requestRouter.put('/:id',  authorization(['admin']), requestController.updatePedido);
-
-// Atualização do estado de um pedido de diagnóstico
-requestRouter.put('/update/firstDate/:id', authorization(['admin', 'tecnico']),
-        updateRequestController.updateDataPrimeiroTeste);
-
-requestRouter.put('/update/firstTest/:id', authorization(['admin', 'tecnico']),
-        updateRequestController.updateResultadoPrimeiroTeste);
-
-requestRouter.put('/update/secondDate/:id', authorization(['admin', 'tecnico']),
-        updateRequestController.updateDataSegundoTeste);
-
-requestRouter.put('/update/secondTest/:id', authorization(['admin', 'tecnico']),
-        updateRequestController.updateResultadoSegundoTeste);
-
-// Atualização do técnico responsável pelo pedido de diagnóstico
-requestRouter.put('/update/worker/:id',  authorization(['admin', 'tecnico']),
-        updateRequestController.updateTecnicoResponsavel);
-
-// Upload do ficheiro de resultados e atualização do filepath no Model respetivo
-requestRouter.post('/update/upload/:id', authorization(['admin', 'tecnico']), multerUpload.single('file'),
-        updateRequestController.uploadDiagnoseResultsFile);
+// ## Qualquer administrador ou técnico pode aceder ao ficheiro de resultados de um pedido
+/**
+ * @swagger
+ * /requests/download/{id}:
+ *   get:
+ *     summary: Get File related to the Request for download
+ *     description: Gets the File only if the User is an 'admin' or 'tecnico'
+ *     tags: [Pedidos]
+ *     produces:
+ *       - application/pdf
+ *     parameters:
+ *       - $ref: '#/parameters/idPath'
+ *     responses:
+ *       200: 
+ *         description: Task successful
+ *         type: file
+ *       404:
+ *         $ref: '#/responses/ErrorMessage'
+ */
+requestRouter.get('/download/:id', authorization(['ADMIN', 'TECNICO']), requestController.downloadResultsFile);
 
 module.exports = requestRouter;

@@ -1,177 +1,208 @@
 const Pedido = require('../models/pedido')
 
-const fillPedido = async (req, res) => {
-	try {
-		console.log("BODY DATA", req.body);
-		// ## Guardar só informação correta, uma vez que pode chegar qualquer coisa pelo body
-		const requestData = {
-			idRequest: req.body.id, CCutente: req.body.CCutente,
-			trabalhadorDeRisco: req.body.trabalhadorDeRisco,
-			grupoDeRisco: req.body.grupoDeRisco,
-			encaminhado_saude24: req.body.encaminhado_saude24
-		}
-		const result = await new Pedido(requestData).save();
+const fillPedido = async (req, res, next) => {
+	console.log("BODY DATA", req.body);
+	// ## Guardar informação do body
+	const requestData = {
+		idRequest: req.body.id, CCutente: req.body.CCutente,
+		trabalhadorDeRisco: req.body.trabalhadorDeRisco,
+		grupoDeRisco: req.body.grupoDeRisco,
+		encaminhado_saude24: req.body.encaminhado_saude24
+	}
+	const result = await new Pedido(requestData).save().catch(next);
+
+	if (result) {
 		console.log("SAVED DATA", result);
-		// ## Enviar de volta só informação relevante, evitando reenviar informação sensível ou irrelevante
-		const request = {
-			idRequest: result.idRequest, CCutente: result.CCutente,
-			trabalhadorDeRisco: result.trabalhadorDeRisco,
-			grupoDeRisco: result.grupoDeRisco,
-			encaminhado_saude24: result.encaminhado_saude24
-		}
-		res.status(200).json({success: true, data: request}); 
-	} catch (err) {
-		console.log(err);
-		if (err.code === 11000) {
-			res.json({success: false, msg: 'O pedido já se encontra registado!'});
-		} else {
-			res.json({success: false, msg: 'Dados em falta, incorretos!'});
-		}
+		res.json({
+			data: result
+		});
+	} else {
+		next({
+			message: 'Pedido de diagnóstico não existe',
+			status: 404
+		})
+	} 
+}
+
+const deletePedido = async (req, res, next) => {
+	let requestInfo = await Pedido.findById(req.params.id, '+deleted').catch(next);
+
+	if (!requestInfo) {
+		next({
+			message: 'Pedido de diagnóstico não existe',
+			status: 404
+		})
+	}
+	else if (requestInfo.deleted === true) {
+		next({
+			message: 'Pedido já foi eliminado!',
+			status: 404
+		})
+	} else {
+		requestInfo = await Pedido.findByIdAndUpdate(req.params.id, { deleted: true }).catch(next);
+		res.json({
+			old: requestInfo
+		})
 	}
 }
 
-const deletePedido = async (req, res) => {
-	try {
-		let oldRequestInfo = await Pedido.findById(req.params.id);
+const getAllPedidos = async (req, res, next) => {
+	const request = await Pedido.find({}).catch(next);
+	res.json(request);
+}
 
-		if (!oldRequestInfo) {
-			res.status(404).send("Request could not be found")
-		}
-		else if (oldRequestInfo.deleted === true) {
-			res.status(404).send('Pedido já foi eliminado!');
+const getTecnicoPedidos = async (req, res, next) => {
+	const request = await Pedido.find({ tecnicoResponsavel: req.params.id, casoFechado: false}).catch(next);
+
+	if (request && request.length > 0) {
+		res.json(request)
+	} else {
+		next({
+			message: 'Não foram encontrados pedidos de diagnóstico :(',
+			status: 404
+		})
+	}
+}
+
+const getOpenPedidos = async (req, res, next) => {
+	const request = await Pedido.find({ casoFechado: false, tecnicoResponsavel: { $exists: false }}).catch(next);
+	res.json(request);
+}
+
+const getPedidobyID = async (req, res, next) => {
+	const request = await Pedido.findById(req.params.id).catch(next);
+	
+	if (request) {
+		res.json(request)
+	} else {
+		next({
+			message: 'Pedido de diagnóstico não existe',
+			status: 404
+		})
+	}
+}
+
+const getUserPedidos = async (req, res, next) => {
+	// ## Só será possível retornar a informação se o próprio utilizador estiver com a sessão ativa ou o utilizador é um admin
+	if (req.session.role !== 'ADMIN' && req.params.id !== req.session.cc) {
+		next({
+			message: 'Permissões adicionais em falta.',
+			status: 403
+		})
+	} else {
+		const request = await Pedido.find({ CCutente: req.params.id }).catch(next);
+
+		if (typeof request !== 'undefined' && request.length > 0) {
+			res.json(request)
 		} else {
-			oldRequestInfo = await Pedido.findByIdAndUpdate(
-				req.params.id, { deleted: true })
-			res.status(200).send({
-				old: oldRequestInfo
+			next({
+				message: 'Não foram encontrados pedidos de diagnóstico :(',
+				status: 404
 			})
 		}
-	} catch (e) {
-		if (e.name === 'CastError') {
-			res.status(404).send("Request could not be found")
-		} else {
-			console.error(e)
-			res.status(500).send(null)
-		}
 	}
 }
 
-const getAllPedidos = async (req, res) => {
-	const request = await Pedido.find();
-	res.status(200).send(request);
-}
-
-const getPedidobyID = async (req, res) => {
-	try {
-		const request = await Pedido.findById(req.params.id)
-		
-		if (request) 
-			res.status(200).send(request)
-		else
-			res.status(404).send("Request could not be found")
-	} catch (e) {
-		if (e.name === 'CastError') {
-			res.status(404).send("Request could not be found")
-		} else {
-			console.error(e)
-			res.status(500).send(null)
-		}
-	}
-}
-
-const getUserPedido = async (req, res) => {
+const getUserPedido = async (req, res, next) => {
 	// ## Só será possível retornar a informação se o próprio utilizador estiver com a sessão ativa ou o utilizador é um admin
-	if (req.user_data.role !== 'admin' && req.params.id !== req.user_data.CC) {
-		res.status(403).send('Necessário ter a sessão iniciada deste utilizador para retornar os dados');
+	if (req.session.role !== 'ADMIN' && req.params.id !== req.session.cc) {
+		next({
+			message: 'Permissões adicionais em falta.',
+			status: 403
+		})
 	} else {
-		try {
-			const request = await Pedido.findOne({ CCutente: req.params.id })
+		const request = await Pedido
+			.find({ CCutente: req.params.id }).sort({ updated_at: -1}).limit(1)
+			.catch(next);
 
-			if (request) 
-				res.status(200).send(request)
-			else
-				res.status(404).send("Request could not be found")
-		} catch (e) {
-			console.error(e)
-			res.status(500).send(null)
+		if (request) {
+			res.json(request[0])
+		} else {
+			next({
+				message: 'Não foram encontrados pedidos de diagnóstico :(',
+				status: 404
+			})
 		}
 	}
 }
 
-const getSaude24Pedidos = async (req, res) => {
-	const request = await Pedido.find({ encaminhado_saude24: true })
-	res.status(200).send(request)
+const getSaude24Pedidos = async (req, res, next) => {
+	const request = await Pedido.find({ encaminhado_saude24: true }).catch(next);
+	res.json(request);
 }
 
-const getGrupoRiscoPedidos = async (req, res) => {
-	const request = await Pedido.find({ grupoDeRisco: true })
-	res.status(200).send(request)
+const getGrupoRiscoPedidos = async (req, res, next) => {
+	const request = await Pedido.find({ grupoDeRisco: true }).catch(next);
+	res.json(request);
 }
 
-const getTrabalhadoresRisco = async (req, res) => {
-	const request = await Pedido.find({ trabalhadorDeRisco: true })
-	res.status(200).send(request)
+const getTrabalhadoresRisco = async (req, res, next) => {
+	const request = await Pedido.find({ trabalhadorDeRisco: true }).catch(next);
+	res.json(request);
 }
 
-const getInfetados = async (req, res) => {
-	const request = await Pedido.find({ infetado: true })
-	res.status(200).send(request)
+// const getInfetados = async (req, res, next) => {
+// 	const request = await Pedido.find({ infetado: true }).catch(next);
+// 	res.json(request);
+// }
+
+const getCasosAbertos = async (req, res, next) => {
+	const request = await Pedido.find({ casofechado: false }).catch(next);
+	res.json(request);
 }
 
-const getCasosAbertos = async (req, res) => {
-	const request = await Pedido.find({ casofechado: false })
-	res.status(200).send(request)
+const getPositivos = async (req, res, next) => {
+	const request = await Pedido.find({ casoFechado: true, infetado: true }).catch(next);
+	res.json(request);
 }
 
-const getPositivos = async (req, res) => {
-	const request = await Pedido.find({ casoFechado: true, infetado: true })
-	res.status(200).send(request)
-}
-
-const getNegativos = async (req, res) => {
+const getNegativos = async (req, res, next) => {
 	//({ $or: [{ casoFechado: true, resultadoInicial: false }, { casoFechado: true, resultadoInicial: true, resultadoFinal: false }] })
-	const request = await Pedido.find({ casoFechado: true, infetado: false })
-	res.status(200).send(request)
+	const request = await Pedido.find({ casoFechado: true, infetado: false }).catch(next);
+	res.json(request);
 }
 
-const countPerDay = async (req, res) => {
-	const request = await Pedido.countDocuments({ $or: [{ dataInicial: req.body.id }, { dataFinal: req.body.id }] })
-	res.status(200).send(request)
+const countPerDay = async (req, res, next) => {
+	const request = await Pedido.countDocuments({ $or: [{ dataInicial: req.body.id }, { dataFinal: req.body.id }] }).catch(next);
+	res.json({ countPerDay: request });
 }
 
-const downloadResultsFile = async (req, res) => {
-	try {
-		const requestInfo = await Pedido.findById( req.params.id );
+const downloadResultsFile = async (req, res, next) => {
+	const requestInfo = await Pedido.findById( req.params.id ).catch(next);
 
-		if (!requestInfo) {
-			res.status(404).send('Pedido de diagnóstico não existe')
-		}
-		else if (requestInfo.casoFechado === false) {
-			res.status(404).send('Pedido de diagnóstico ainda não foi concluido')
-		} 
-		else {
-			const filePath = requestInfo.filepath,
-					downloadName = `Resultado_Diagnostico_${ requestInfo.idRequest }.pdf`;
-			
-			res.download(filePath, downloadName);
-		}
-
-	} catch (e) {
-		console.log(e)
-		res.send(null)
+	if (!requestInfo) {
+		next({
+			message: 'Pedido de diagnóstico não existe',
+			status: 404
+		})
+	}
+	else if (requestInfo.casoFechado === false) {
+		next({
+			message: 'Pedido de diagnóstico ainda não foi concluido',
+			status: 404
+		})
+	} 
+	else {
+		const filePath = requestInfo.filepath,
+				downloadName = `Resultado_Diagnostico_${ requestInfo.idRequest }.pdf`;
+		
+		res.download(filePath, downloadName);
 	}
 }
 
 module.exports = {
 	fillPedido,
 	getAllPedidos,
+	getTecnicoPedidos,
+	getOpenPedidos,
 	getPedidobyID,
+	getUserPedidos,
 	getUserPedido,
 	deletePedido,
 	getSaude24Pedidos,
 	getGrupoRiscoPedidos,
 	getTrabalhadoresRisco,
-	getInfetados,
+	// getInfetados,
 	getCasosAbertos,
 	getPositivos,
 	getNegativos,

@@ -1,0 +1,151 @@
+{
+    "ErrorMessage": {
+        "type": "object",
+        "properties": {
+            "message": {
+                "type": "string"
+            }
+        }
+    },
+    "SessionUser": {
+        "type": "object",
+        "properties": {
+            "cc": {
+                "description": "User Citizen Card number",
+                "type": "string"
+            },
+            "role": {
+                "type": "string"
+            }
+        }
+    },
+
+    "UserInfo": {
+        "type": "object",
+        "properties": {
+            "CC": {
+                "description": "Citizen Card number pt-PT (DDDDDDDD D CCD | D - digit, C - char)",
+                "type": "string"
+            },
+            "firstName": {
+                "type": "string"
+            },
+            "lastName": {
+                "type": "string"
+            },
+            "genero": {
+                "type": "string"
+            },
+            "birthdate": {
+                "type": "string",
+                "format": "date"
+            },
+            "email": {
+                "type": "string"
+            },
+            "phoneNumber": {
+                "type": "number"
+            },
+            "role": {
+                "type": "string"
+            },
+            "estado": {
+                "type": "string"
+            },
+            "updated_at": {
+                "type": "string",
+                "format": "date"
+            }
+        }
+    },
+    "UserInfoUpdate": {
+        "type": "object",
+        "properties": {
+            "CC": {
+                "description": "Citizen Card number pt-PT (DDDDDDDD D CCD | D - digit, C - char)",
+                "type": "string"
+            },
+            "password": {
+                "type": "string"
+            },
+            "firstName": {
+                "type": "string"
+            },
+            "lastName": {
+                "type": "string"
+            },
+            "genero": {
+                "type": "string"
+            },
+            "birthdate": {
+                "type": "string",
+                "format": "date"
+            },
+            "email": {
+                "type": "string"
+            },
+            "phoneNumber": {
+                "type": "string"
+            }
+        }
+    },
+
+    "PedidoInfo": {
+        "type": "object",
+        "properties": {
+            "idRequest": {
+                "type": "string"
+            },
+            "CCutente": {
+                "type": "string"
+            },
+            "trabalhadorDeRisco": {
+                "type": "boolean"
+            },
+            "grupoDeRisco": {
+                "type": "boolean"
+            },
+            "encaminhado_saude24": {
+                "type": "boolean"
+            },
+            "tecnicoResponsavel": {
+                "type": "number"
+            },
+            "dataInicial": {
+                "type": "string",
+                "format": "date"
+            },
+            "resultadoInicial": {
+                "type": "boolean"
+            },
+            "dataFinal": {
+                "type": "string",
+                "format": "date"
+            },
+            "resultadoFinal": {
+                "type": "boolean"
+            },
+            "casoFechado": {
+                "type": "boolean"
+            },
+            "updated_at": {
+                "type": "string",
+                "format": "date"
+            }
+        }
+    },
+    "PedidoUpdate": {
+        "type": "object",
+        "properties": {
+            "msg": {
+                "type": "string"
+            },
+            "old": {
+                "$ref": "#definitions/PedidoInfo"
+            },
+            "new": {
+                "$ref": "#definitions/PedidoInfo"
+            }
+        }
+    }
+}
