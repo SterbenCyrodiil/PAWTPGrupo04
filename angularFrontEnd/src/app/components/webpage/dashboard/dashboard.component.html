@@ -1,0 +1,47 @@
+<mat-toolbar color="primary">
+  <mat-toolbar-row class="header">
+    <div class="aside">
+      <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()" color="secondary">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      <a mat-menu-item class="link" *ngIf="user && user.role !== 'TECNICO'" [routerLink]="[user.cc, 'user-info']" routerLinkActive="is-selected">
+        Perfil</a>
+      <a mat-menu-item class="link" routerLink='statistics' routerLinkActive="is-selected">
+        Estatisticas Globais</a>
+    </div>
+
+    <div>
+      <span *ngIf="user">Olá, <span style="font-size: medium;">{{user.name}}</span>!  </span>
+		  <button class="link" (click)="signOutHandler()">Sign Out</button>
+    </div>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<mat-sidenav-container fullscreen class="mat-sidenav-container">
+  <mat-sidenav #drawer mode="side" opened role="navigation" [fixedInViewport]="true" fixedTopGap=64>
+    <!-- Elementos SideNav para Utente -->
+    <mat-nav-list *ngIf="user.role === 'UTENTE'">
+      <a mat-list-item [routerLink]="[user.cc, 'last-request']">Pedido de Diagnostico em Curso</a>
+      <a mat-list-item [routerLink]="[user.cc, 'made-requests']">Historico de Pedidos</a>
+      <a mat-list-item routerLink='create-request'>Registar Novo Pedido de Diagnostico</a>
+    </mat-nav-list>
+    <!-- Elementos SideNav para Tecnico -->
+    <mat-nav-list *ngIf="user.role === 'TECNICO'"> 
+      <a mat-list-item routerLink='request-list' routerLinkActive="is-selected">Pedidos de Diagnostico em Curso</a>
+      <a mat-list-item routerLink='open-requests' routerLinkActive="is-selected">Pedidos de Diagnostico Pendentes</a>
+    </mat-nav-list>
+    <!-- Elementos SideNav para Admin -->
+    <mat-nav-list *ngIf="user.role === 'ADMIN'">
+      <a mat-list-item routerLink='user-listings'>Listagens Utilizadores</a>
+      <a mat-list-item routerLink='request-listings'>Listagens Pedidos Diagnostico</a>
+      <a mat-list-item routerLink='register-tecnico'>Registar Novo Tecnico</a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content class="mat-sidenav-content">
+    <div *ngIf="router.url === '/dashboard'">
+      <h2>Bem Vindo à página de Dashboard!</h2>
+      <p>Selecione uma das opções ao lado para começar a navegar ...</p>
+    </div>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

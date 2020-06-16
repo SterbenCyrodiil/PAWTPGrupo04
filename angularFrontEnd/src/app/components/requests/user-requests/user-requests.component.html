@@ -1,0 +1,48 @@
+<h1>Histórico de Pedidos realizados</h1>
+
+<div class="errors" *ngIf="errors">
+  {{ errors }}
+</div>
+
+<div *ngIf="!errors && !requests || requests.length === 0">
+  <p>Ainda não enviou pedidos para diagnóstico ...</p>
+</div>
+
+<div *ngIf="requests">
+  <mat-grid-list cols="4" rowHeight="4:1">
+    <ng-container>
+      <mat-grid-tile>
+        <b>RequestId</b>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <b>Utente</b>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <b>Prioridades</b>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <b>Detalhes</b>
+      </mat-grid-tile>
+    </ng-container>
+  </mat-grid-list>
+  <hr>
+  <mat-grid-list cols="4" rowHeight="4:1">
+    <ng-container *ngFor="let request of requests">
+      <mat-grid-tile>
+        {{ request.idRequest }}
+      </mat-grid-tile>
+      <mat-grid-tile>
+        {{ request.CCutente }}
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <span *ngIf="!request.trabalhadorDeRisco && !request.grupoDeRisco && !request.encaminhado_saude24">Sem prioridades especiais</span>
+        <span *ngIf="request.trabalhadorDeRisco">Trabalhador de Risco</span>
+        <span *ngIf="request.grupoDeRisco">Grupo de Risco</span>
+        <span *ngIf="request.encaminhado_saude24">Saude 24</span>
+      </mat-grid-tile>
+      <mat-grid-tile> 
+        <button mat-button [routerLink]="['../..', request._id, 'request-info']">Detalhes</button>
+      </mat-grid-tile>
+    </ng-container>
+  </mat-grid-list>
+</div>

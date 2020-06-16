@@ -1,0 +1,44 @@
+<h2 mat-dialog-title>Atualizar resultados do Diagnostico</h2>
+
+<form [formGroup]="form" (ngSubmit)="addTestResult()">
+  <div class="form-group">
+      <input type="file" (change)="uploadFile($event)">
+  </div>
+  <p>Selecionar resultado</p>
+  <div>
+      <div class="resultInput">
+          <input type="radio" id="positive" name="name" value="true" formControlName="name">
+          <label class="result" for="positive">Positive Result</label>
+      </div>
+      <div class="resultInput">
+          <input type="radio" id="negative" name="name" value="false" formControlName="name">
+          <label class="result" for="negative">Negative Result</label>
+      </div>
+  </div>
+
+  <div class="form-group">
+      <button class="btn btn-danger btn-block btn-lg">Create</button>
+  </div>
+</form>
+
+<mat-dialog-content [formGroup]="form" (ngSubmit)="addTestResult()">
+    
+    <mat-radio-group aria-label="Select an option">
+      <mat-label>Selecionar resultado do teste</mat-label>
+      <mat-radio-button formControlName="test" value="positivo">Teste positivo</mat-radio-button>
+      <mat-radio-button formControlName="test" value="negativo">Teste negativo</mat-radio-button>
+    </mat-radio-group>
+    
+    <mat-form-field *ngIf="!first">
+      <mat-label>Data para o segundo Teste (escolher quando o teste for negativo)</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="secondDate">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+ 
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button class="mat-raised-button"(click)="close()">Close</button>
+    <button class="mat-raised-button mat-primary"(click)="save()">Save</button>
+</mat-dialog-actions>
