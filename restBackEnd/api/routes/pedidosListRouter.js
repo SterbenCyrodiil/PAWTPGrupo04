@@ -20,7 +20,7 @@ requestListRouter.get('/', requestController.getAllPedidos);
 /* Listagem para Técnicos */
 /**
  * @swagger
- * /requests/s/tecnico/{id}:
+ * /requests/tecnico/{id}:
  *   get:
  *     summary: Get all unfinished requests belonging to a 'Tecnico'
  *     tags: [Pedidos]
@@ -36,7 +36,7 @@ requestListRouter.get('/tecnico/:id', requestController.getTecnicoPedidos);
 
 /**
  * @swagger
- * /requests/s/open:
+ * /requests/open/all:
  *   get:
  *     summary: Get all the unfinished Requests not belonging to any 'Tecnico'
  *     tags: [Pedidos]
@@ -128,7 +128,7 @@ requestListRouter.get('/trabalhadorRisco/all', requestController.getTrabalhadore
 
 /**
  * @swagger
- * /requests/s/positivos:
+ * /requests/positivos/all:
  *   get:
  *     summary: Get requests in DB in which users were found positive
  *     tags: [Pedidos]
@@ -142,7 +142,7 @@ requestListRouter.get('/positivos/all', requestController.getPositivos);
 
 /**
  * @swagger
- * /requests/s/negativos:
+ * /requests/negativos/all:
  *   get:
  *     summary: Get requests in DB in which users were found negative
  *     tags: [Pedidos]
@@ -156,7 +156,7 @@ requestListRouter.get('/negativos/all', requestController.getNegativos);
 
 /**
  * @swagger
- * /requests/s/countDay/{id}:
+ * /requests/countDay/{id}:
  *   get:
  *     summary: Get the total number of Tests made in a certain day
  *     tags: [Pedidos]
