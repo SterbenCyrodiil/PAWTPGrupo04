@@ -13,7 +13,7 @@ const options = {
             version: "1.0.0",
             title: "pawtpRestAPI"
         },
-		host: "localhost:3000",
+		host: "localhost:3333",
         basePath: "/api",
 		parameters,
 		definitions,
