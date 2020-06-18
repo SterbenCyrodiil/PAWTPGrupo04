@@ -12,7 +12,7 @@ const requestUpdateRouter = express.Router();
  *     summary: Updates the first test date of a specific Request
  *     tags: [Pedidos]
  *     consumes:
- *       - application/x-www-form-urlencoded
+ *       - application/json
  *     produces:
  *       - application/json
  *     parameters:
@@ -47,7 +47,7 @@ requestUpdateRouter.put('/firstDate/:id', updateRequestController.updateDataPrim
  *     description: A second Test may be scheduled if the result is 'false'. In this case the second Test date is mandatory. Otherwise, diagnosis is finished
  *     tags: [Pedidos]
  *     consumes:
- *       - application/x-www-form-urlencoded
+ *       - application/json
  *     produces:
  *       - application/json
  *     parameters:
@@ -84,7 +84,7 @@ requestUpdateRouter.put('/firstTest/:id', updateRequestController.updateResultad
  *     summary: Updates the second Test date of a specific Request
  *     tags: [Pedidos]
  *     consumes:
- *       - application/x-www-form-urlencoded
+ *       - application/json
  *     produces:
  *       - application/json
  *     parameters:
@@ -119,7 +119,7 @@ requestUpdateRouter.put('/secondDate/:id', updateRequestController.updateDataSeg
  *     description: After this Test the diagnosis if finished. A new Request needs to be made if more Tests are needed
  *     tags: [Pedidos]
  *     consumes:
- *       - application/x-www-form-urlencoded
+ *       - application/json
  *     produces:
  *       - application/json
  *     parameters:
@@ -152,7 +152,7 @@ requestUpdateRouter.put('/secondTest/:id', updateRequestController.updateResulta
  *     summary: Updates the Worker ('tecnico') who's in charge of this Request
  *     tags: [Pedidos]
  *     consumes:
- *       - application/x-www-form-urlencoded
+ *       - application/json
  *     produces:
  *       - application/json
  *     parameters:
