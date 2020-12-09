@@ -1,5 +1,5 @@
 <h2 align="center">
-  PAW | Centro de Análises COVID-19
+  Projeto Programação em Ambiente Web | Centro de Análises COVID-19
 </h2>
 
 <p>
